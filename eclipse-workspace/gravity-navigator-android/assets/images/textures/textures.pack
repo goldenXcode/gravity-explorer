@@ -1,0 +1,12 @@
+
+textures.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+spaceship_player
+  rotate: false
+  xy: 2, 2
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
