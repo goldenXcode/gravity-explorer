@@ -18,8 +18,8 @@ import com.badlogic.gdx.tools.imagepacker.TexturePacker2;
 public class TexturePacker {
 	
 	public static void main(String[] args) {
-		TexturePacker2.process("../gravity-navigator-android/assets/images", 
-				"../gravity-navigator-android/assets/images/textures", 
+		TexturePacker2.process("../gravity-navigator-android/assets/images/spritesheets", 
+				"../gravity-navigator-android/assets/images/spritesheets/textures", 
 				"textures.pack");
 	}
 }
