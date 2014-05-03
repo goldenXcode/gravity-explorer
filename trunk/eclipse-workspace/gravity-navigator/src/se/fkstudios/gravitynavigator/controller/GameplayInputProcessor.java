@@ -1,0 +1,103 @@
+package se.fkstudios.gravitynavigator.controller;
+
+import se.fkstudios.gravitynavigator.model.SpaceshipMapObject;
+import se.fkstudios.gravitynavigator.view.RenderingOptions;
+
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.math.Vector2;
+
+/**
+ * Input processor for the gameplay screen. Receives input events from mouse, keyboard and touch screens and 
+ * updates gameplay model accordingly.
+ * @author kristofer
+ */
+public class GameplayInputProcessor implements InputProcessor {
+
+	private int startDragScreenX;
+	private int startDragScreenY;
+	private int lengthForFullThurst;
+	private SpaceshipMapObject playerSpaceship; 
+	
+	/**
+	 * Creates a GameplayInputProcesor for given SpaceshipObject and viewport.
+	 * remark: Does not account future changes to resolution.
+	 * @param playerMapObject The player controlled object to control.
+	 * @param screenWidth Screen width in pixels.
+	 * @param screenHeight Screen height in pixels.
+	 */
+	public GameplayInputProcessor(SpaceshipMapObject playerMapObject, int screenWidth, int screenHeight) {
+		this.playerSpaceship = playerMapObject;
+		startDragScreenX = -1;
+		startDragScreenY = -1;
+		lengthForFullThurst = Math.round(Math.min(screenWidth, screenHeight) / 2);
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+
+		if (keycode == Input.Keys.D)
+			RenderingOptions.getInstance().debugRender = ! RenderingOptions.getInstance().debugRender;
+		
+		return true;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		startDragScreenX = screenX;
+		startDragScreenY = screenY;
+		return true;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		startDragScreenX = -1;
+		startDragScreenY = -1;
+		playerSpaceship.setThrust( new Vector2(0, 0));
+		return true;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		
+		int dragScreenX = screenX - startDragScreenX;
+		int dragScreenY = - (screenY - startDragScreenY);
+		
+		// sqrt( dragScrrenX^2 + dragScreenY^2 )
+		float dragLength = (float) Math.sqrt((Math.pow(dragScreenX, 2) + Math.pow(dragScreenY, 2))); 
+		float amountOfThrust = Math.min(1.0f, dragLength / lengthForFullThurst);
+
+		float thrustLength = amountOfThrust * playerSpaceship.getMaxThrust();
+		
+		float screenToModelRatio = thrustLength / dragLength;
+		
+		Vector2 newThrust = new Vector2(dragScreenX * screenToModelRatio, dragScreenY * screenToModelRatio);
+		playerSpaceship.setThrust(newThrust);
+		
+		return true;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+}
