@@ -8,8 +8,10 @@ public class Main {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "gravity-navigator";
 		cfg.useGL20 = false;
-		cfg.width = 800;
-		cfg.height = 600;
+		
+		// testing with IPhone 4 resolution. Rather typical smartphone resolution. 
+		cfg.width = 640;
+		cfg.height = 960;
 		
 		new LwjglApplication(new GravityNavigatorGame(), cfg);
 	}
