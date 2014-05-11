@@ -12,7 +12,7 @@ public final class ResourceDefs {
 	public static final String FILE_PATH_MAP_BACKGROUND_1 = "images/map_backgrounds/mab_background_01.png"; 
 	
 	/* Texture region names */
-	public static final String TEXTURE_NAME_SPACESHIP_PLAYER = "spaceship_player";
+	public static final String TEXTURE_REGION_NAME_SPACESHIP_PLAYER = "spaceship_player";
 	
 	/* Sound */
 	

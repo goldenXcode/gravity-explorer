@@ -67,10 +67,18 @@ public class ContinuousMap extends Map {
 	 * TODO: in future we want a map go be given a file and loading the map from it. 
 	 */
 	public void loadMapObjects() {
-		//TODO: specify a XML format for model map's start conditions. Preferably also create a map editor to create these.
+		// TODO: specify a XML format for model map's start conditions. 
+		// Preferably also create a map editor to create these.
 		Vector2 position = new Vector2(0, 0);
 		Vector2 velocity = new Vector2(0, 0);
-		playerSpaceship = new SpaceshipMapObject(position, 50, 50, velocity, 0, 100, ResourceDefs.TEXTURE_NAME_SPACESHIP_PLAYER, 10000);
+		playerSpaceship = new SpaceshipMapObject(position, 
+				50, 
+				50, 
+				velocity, 
+				0, 
+				100, 
+				ResourceDefs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER, 
+				10000);
 		gameplayLayer.getObjects().add(playerSpaceship);
 	}
 		
