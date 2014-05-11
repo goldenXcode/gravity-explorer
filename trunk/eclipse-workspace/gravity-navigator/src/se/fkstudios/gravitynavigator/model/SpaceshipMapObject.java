@@ -52,6 +52,7 @@ public class SpaceshipMapObject extends SimpleMapObject {
 	public void setVelocity(Vector2 velocity) {
 		super.setVelocity(velocity);
 		
-		setRotation(velocity.angle());
+		if (thrust.len2() > 0)
+			setRotation(thrust.angle());
 	}
 }
