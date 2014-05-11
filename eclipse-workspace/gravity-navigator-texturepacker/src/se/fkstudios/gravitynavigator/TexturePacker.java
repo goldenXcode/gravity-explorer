@@ -1,6 +1,7 @@
 package se.fkstudios.gravitynavigator;
 
 import com.badlogic.gdx.tools.imagepacker.TexturePacker2;
+import com.badlogic.gdx.tools.imagepacker.TexturePacker2.Settings;
 
 /**
  * Tiny program using libGDX's imagepacker to combine the game's images into one composite sprite sheet (one large 
@@ -18,7 +19,16 @@ import com.badlogic.gdx.tools.imagepacker.TexturePacker2;
 public class TexturePacker {
 	
 	public static void main(String[] args) {
-		TexturePacker2.process("../gravity-navigator-android/assets/images/spritesheets", 
+		
+		Settings settings = new Settings();
+		
+		// not all devices have support for bigger textures (without losing performance). 
+		// http://stackoverflow.com/questions/17292404/texture-packer-size-issue-in-libgdx
+		settings.maxHeight = 1024;
+		settings.maxWidth = 1024;
+	
+		TexturePacker2.process(settings, 
+				"../gravity-navigator-android/assets/images/spritesheets", 
 				"../gravity-navigator-android/assets/images/spritesheets/textures", 
 				"textures.pack");
 	}
