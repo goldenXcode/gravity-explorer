@@ -28,7 +28,11 @@ public class ContinuousMapRenderer extends Renderer {
 		float bakTexDrawWidth = map.getWidth();
 		float bakTexDrawHeight = map.getHeight();
 		
-		spriteBatch.draw(backgroundTexture, 0.0f, 0.0f, bakTexDrawWidth, bakTexDrawHeight);
+		spriteBatch.draw(backgroundTexture, 
+				0.0f, 
+				0.0f, 
+				bakTexDrawWidth * RenderingDefs.PIXELS_PER_UNIT, 
+				bakTexDrawHeight * RenderingDefs.PIXELS_PER_UNIT);
 		
 		spriteBatch.end();
 		
@@ -38,23 +42,36 @@ public class ContinuousMapRenderer extends Renderer {
 	
 	private void debugRender(Matrix4 projectionMatrix, ContinuousMap map) {
 		
-		// not optimal to create here but we don't want to create debugRenderer if 
-		// never running in debug mode. That would waste memory in final game.
+		// not optimal to create debugRenderer here. However, we don't want to create it if never used.
 		if (debugRenderer == null)
 			debugRenderer = new ShapeRenderer();
 		
 		debugRenderer.setProjectionMatrix(projectionMatrix);
 		debugRenderer.begin(ShapeType.Line);
 		debugRenderer.setColor(RenderingDefs.MAP_BORDER_COLOR);
-		debugRenderer.rect(0, 0, map.getWidth(), map.getHeight());
 		
+		debugRenderer.rect(
+				0, 
+				0, 
+				map.getWidth() * RenderingDefs.PIXELS_PER_UNIT, 
+				map.getHeight() * RenderingDefs.PIXELS_PER_UNIT);
+
+		for (int i = 0; i < (int)map.getWidth()*RenderingDefs.DEBUG_LINES_PER_UNIT; i++) {
+			debugRenderer.line(
+					(i / RenderingDefs.DEBUG_LINES_PER_UNIT) * RenderingDefs.PIXELS_PER_UNIT, 
+					0, 
+					(i / RenderingDefs.DEBUG_LINES_PER_UNIT) * RenderingDefs.PIXELS_PER_UNIT, 
+					(int)map.getHeight() * RenderingDefs.PIXELS_PER_UNIT);
+		}
 		
-		for (int i = 0; i < (int)map.getWidth(); i += RenderingDefs.MAP_GRID_LINE_SPACING)
-			debugRenderer.line(i, 0, i, (int)map.getHeight());
+		for (int i = 0; i < (int)map.getHeight()*RenderingDefs.DEBUG_LINES_PER_UNIT; i++) {
+			debugRenderer.line(
+					0, 
+					(i / RenderingDefs.DEBUG_LINES_PER_UNIT) * RenderingDefs.PIXELS_PER_UNIT, 
+					(int)map.getWidth() * RenderingDefs.PIXELS_PER_UNIT, 
+					(i / RenderingDefs.DEBUG_LINES_PER_UNIT) * RenderingDefs.PIXELS_PER_UNIT);
+		}
 		
-		for (int i = 0; i < (int)map.getHeight(); i += RenderingDefs.MAP_GRID_LINE_SPACING)
-			debugRenderer.line(0, i, (int)map.getWidth(), i);
-	
 		debugRenderer.end();
 	}
 }

@@ -5,6 +5,8 @@ import se.fkstudios.gravitynavigator.model.ContinuousMap;
 import se.fkstudios.gravitynavigator.model.SimpleMapObject;
 import se.fkstudios.gravitynavigator.model.SpaceshipMapObject;
 import se.fkstudios.gravitynavigator.view.ContinuousMapRenderer;
+import se.fkstudios.gravitynavigator.view.RenderingDefs;
+import se.fkstudios.gravitynavigator.view.RenderingOptions;
 import se.fkstudios.gravitynavigator.view.SimpleMapObjectRenderer;
 
 import com.badlogic.gdx.Gdx;
@@ -41,28 +43,42 @@ public class GameplayScreen implements Screen {
 	@Override
 	public void show() throws IllegalStateException {
 	    
-		map = new ContinuousMap(ResourceDefs.FILE_PATH_MAP_BACKGROUND_1, 4*1024, 4*512);
+		map = new ContinuousMap(ResourceDefs.FILE_PATH_MAP_BACKGROUND_1, 200, 100);
 	    
 		playerSpaceship = map.getPlayerSpaceship();
-	    	    
-		int screenWidth = Gdx.graphics.getWidth();
-		int screenHeight = Gdx.graphics.getHeight();
 		Vector2 playerMapObjectPos = playerSpaceship.getPosition();
 
-		camera = new OrthographicCamera(screenWidth, screenHeight);
-	    camera.position.set(playerMapObjectPos.x, playerMapObjectPos.y, 0.0f);
-	    camera.update();
+		camera = new OrthographicCamera(
+				RenderingDefs.VIEWPORT_WIDTH, 
+				RenderingDefs.VIEWPORT_HEIGHT);
 	    
-	    //remark: we used different input controllers for different devices. not anymore, but maybe in future. keep for a while! //Kristofer
+		camera.position.set(
+				playerMapObjectPos.x * RenderingDefs.PIXELS_PER_UNIT, 
+				playerMapObjectPos.y * RenderingDefs.PIXELS_PER_UNIT, 
+				0.0f);
+		
+	    camera.update();
+
+		int screenWidth = Gdx.graphics.getWidth();
+		int screenHeight = Gdx.graphics.getHeight();
+		
+	    //remark: we used different input controllers for different devices but not anymore. 
+		//Keep if we want to change this /kristofer
 	    switch(Gdx.app.getType()) {
 		    case Android:
-		    	inputProccessor = new GameplayInputProcessor(playerSpaceship, screenWidth, screenHeight);
+		    	inputProccessor = new GameplayInputProcessor(playerSpaceship, 
+		    			screenWidth, 
+		    			screenHeight);
 		    	break;
 		    case iOS:
-		    	inputProccessor = new GameplayInputProcessor(playerSpaceship, screenWidth, screenHeight);
+		    	inputProccessor = new GameplayInputProcessor(playerSpaceship, 
+		    			screenWidth, 
+		    			screenHeight);
 		    	break;
 		    case Desktop:
-		    	inputProccessor = new GameplayInputProcessor(playerSpaceship, screenWidth, screenHeight);
+		    	inputProccessor = new GameplayInputProcessor(playerSpaceship, 
+		    			screenWidth, 
+		    			screenHeight);
 		    	break;
 		    default:
 		    	throw new IllegalStateException("Input device not recognized");
@@ -155,11 +171,16 @@ public class GameplayScreen implements Screen {
 	 * Update camera's position and zoom based on spaceship's (player's) position and speed.
 	 */
 	private void updateCameraPosition(float delta) {	
+		
 		//update position
-		Vector2 targetPosition = playerSpaceship.getPosition();
+		Vector2 targetPosition = playerSpaceship.getPosition().cpy().scl(RenderingDefs.PIXELS_PER_UNIT);
 		Vector2 cameraPosition = new Vector2(camera.position.x, camera.position.y);
 		cameraPosition.lerp(targetPosition, delta);
-		camera.position.set(cameraPosition.x, cameraPosition.y, 0);
+
+		camera.position.set(
+				cameraPosition.x, 
+				cameraPosition.y,
+				0);
 		
 		//update zoom
 		float speed = playerSpaceship.getVelocity().len();
