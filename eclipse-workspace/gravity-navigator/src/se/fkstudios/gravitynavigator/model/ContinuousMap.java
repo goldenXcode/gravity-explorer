@@ -72,13 +72,13 @@ public class ContinuousMap extends Map {
 		Vector2 position = new Vector2(0, 0);
 		Vector2 velocity = new Vector2(0, 0);
 		playerSpaceship = new SpaceshipMapObject(position, 
-				50, 
-				50, 
+				0.1f, 
+				0.1f, 
 				velocity, 
 				0, 
 				100, 
 				ResourceDefs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER, 
-				10000);
+				100);
 		gameplayLayer.getObjects().add(playerSpaceship);
 	}
 		

@@ -42,12 +42,12 @@ public class SimpleMapObjectRenderer extends Renderer {
 		float offsetY = mapObject.getHeight() * 0.5f;
 		
 		spriteBatch.draw(texRegion, 
-				mapObject.getPosition().x - offsetX, 
-				mapObject.getPosition().y - offsetY, 
-				(mapObject.getWidth() / 2), 
-				(mapObject.getHeight() / 2), 
-				mapObject.getWidth(), 
-				mapObject.getHeight(), 
+				(mapObject.getPosition().x - offsetX) * RenderingDefs.PIXELS_PER_UNIT, 
+				(mapObject.getPosition().y - offsetY) * RenderingDefs.PIXELS_PER_UNIT, 
+				(mapObject.getWidth() / 2) * RenderingDefs.PIXELS_PER_UNIT, 
+				(mapObject.getHeight() / 2) * RenderingDefs.PIXELS_PER_UNIT, 
+				mapObject.getWidth() * RenderingDefs.PIXELS_PER_UNIT, 
+				mapObject.getHeight() * RenderingDefs.PIXELS_PER_UNIT, 
 				1.0f,
 				1.0f,
 				mapObject.getRotation());
@@ -72,10 +72,18 @@ public class SimpleMapObjectRenderer extends Renderer {
 		debugRenderer.begin(ShapeType.Line);
 		
 		debugRenderer.setColor(RenderingDefs.MAP_OBJECT_BORDER_COLOR);
-		debugRenderer.rect(position.x - mapObjectOffsetX, position.y - mapObjectOffsetY, mapObject.getWidth(), mapObject.getHeight());	
+		debugRenderer.rect(
+				(position.x - mapObjectOffsetX) * RenderingDefs.PIXELS_PER_UNIT, 
+				(position.y - mapObjectOffsetY) * RenderingDefs.PIXELS_PER_UNIT, 
+				mapObject.getWidth() * RenderingDefs.PIXELS_PER_UNIT, 
+				mapObject.getHeight() * RenderingDefs.PIXELS_PER_UNIT);	
 		
 		debugRenderer.setColor(RenderingDefs.MAP_OBJECT_CENTER_MARKER_COLOR);
-		debugRenderer.rect(position.x - 1, position.y - 1, 3, 3);	
+		debugRenderer.rect(
+				position.x * RenderingDefs.PIXELS_PER_UNIT - 1, 
+				position.y * RenderingDefs.PIXELS_PER_UNIT - 1, 
+				3, 
+				3);	
 		
 		debugRenderer.end();
 	}
