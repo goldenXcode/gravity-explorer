@@ -10,8 +10,8 @@ public class Main {
 		cfg.useGL20 = false;
 		
 		// testing with IPhone 4 resolution. Rather typical smartphone resolution. 
-		cfg.width = 640;
-		cfg.height = 960;
+		cfg.width = 960;
+		cfg.height = 640;
 		
 		new LwjglApplication(new GravityNavigatorGame(), cfg);
 	}
