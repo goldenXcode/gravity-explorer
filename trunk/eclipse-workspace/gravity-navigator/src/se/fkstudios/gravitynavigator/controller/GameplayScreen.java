@@ -43,7 +43,7 @@ public class GameplayScreen implements Screen {
 	@Override
 	public void show() throws IllegalStateException {
 	    
-		map = new ContinuousMap(ResourceDefs.FILE_PATH_MAP_BACKGROUND_1, 200, 100);
+		map = new ContinuousMap(ResourceDefs.FILE_PATH_MAP_BACKGROUND_1, 10, 5);
 	    
 		playerSpaceship = map.getPlayerSpaceship();
 		Vector2 playerMapObjectPos = playerSpaceship.getPosition();

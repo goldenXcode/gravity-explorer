@@ -69,7 +69,7 @@ public class ContinuousMap extends Map {
 	public void loadMapObjects() {
 		// TODO: specify a XML format for model map's start conditions. 
 		// Preferably also create a map editor to create these.
-		Vector2 position = new Vector2(0, 0);
+		Vector2 position = new Vector2(1, 1);
 		Vector2 velocity = new Vector2(0, 0);
 		playerSpaceship = new SpaceshipMapObject(position, 
 				0.1f, 
@@ -93,6 +93,24 @@ public class ContinuousMap extends Map {
 		
 		for (GameplayMapObject gameplayMapObject : gameplayMapObjects) {
 			gameplayMapObject.update(delta);
+			applyMapObjectPeriodicity(gameplayMapObject);
 		}
+	}
+
+	private void applyMapObjectPeriodicity(GameplayMapObject gameplayMapObject) {
+
+		Vector2 position = gameplayMapObject.getPosition();
+
+		if (position.x > this.getWidth())
+			position.x = position.x % getWidth();
+		
+		if (position.y > getHeight())
+			position.y = position.y % getHeight(); 
+		
+		if (position.x < 0)
+			position.x = Math.abs(position.x + getWidth());
+		
+		if (position.y < 0)
+			position.y = Math.abs(position.y + getHeight());
 	}
 }
