@@ -171,12 +171,30 @@ public class GameplayScreen implements Screen {
 	 * Update camera's position and zoom based on spaceship's (player's) position and speed.
 	 */
 	private void updateCameraPosition(float delta) {	
-		
+
 		//update position
 		Vector2 targetPosition = playerSpaceship.getPosition().cpy().scl(RenderingDefs.PIXELS_PER_UNIT);
 		Vector2 cameraPosition = new Vector2(camera.position.x, camera.position.y);
+		 
+		float jumpThresholdX = map.getWidth() * RenderingDefs.PIXELS_PER_UNIT * 0.5f;
+		float jumpThresholdY = map.getHeight() * RenderingDefs.PIXELS_PER_UNIT * 0.5f;
+		
+		boolean jumpLeft = cameraPosition.x - targetPosition.x < -jumpThresholdX;
+		boolean jumpRight = targetPosition.x - cameraPosition.x < -jumpThresholdX;
+		boolean jumpUp = targetPosition.y - cameraPosition.y < -jumpThresholdY; 
+		boolean jumpDown = cameraPosition.y - targetPosition.y < -jumpThresholdY;
+		
+		if (jumpLeft) 
+			cameraPosition.x = cameraPosition.x + map.getWidth() * RenderingDefs.PIXELS_PER_UNIT;
+		else if (jumpRight)
+			cameraPosition.x = cameraPosition.x - map.getWidth() * RenderingDefs.PIXELS_PER_UNIT;
+		else if (jumpUp)
+			cameraPosition.y = cameraPosition.y - map.getHeight() * RenderingDefs.PIXELS_PER_UNIT;
+		else if (jumpDown)
+			cameraPosition.y = cameraPosition.y + map.getHeight() * RenderingDefs.PIXELS_PER_UNIT;
+		
 		cameraPosition.lerp(targetPosition, delta);
-
+		
 		camera.position.set(
 				cameraPosition.x, 
 				cameraPosition.y,
