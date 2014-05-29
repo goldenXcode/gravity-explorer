@@ -79,7 +79,16 @@ public class ContinuousMap extends Map {
 				100, 
 				ResourceDefs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER, 
 				100);
-		gameplayLayer.getObjects().add(playerSpaceship);
+
+		SimpleMapObject asterioid1 = new SimpleMapObject(new Vector2(5, 5), 0.5f, 0.5f, 
+				new Vector2(0.2f, 0.1f), 0, 100, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_01);
+		SimpleMapObject asterioid2 = new SimpleMapObject(new Vector2(5, 5), 0.33f, 0.5f, 
+				new Vector2(0.2f, -0.4f), 0, 100, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_02);
+		
+		MapObjects gamplayMapObjects = gameplayLayer.getObjects();
+		gamplayMapObjects.add(playerSpaceship);
+		gamplayMapObjects.add(asterioid1);
+		gamplayMapObjects.add(asterioid2);
 	}
 		
 	/**

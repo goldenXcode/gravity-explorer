@@ -16,9 +16,9 @@ public final class ResourceDefs {
 	public static final String TEXTURE_PACK_FILE_PATH = "images/spritesheets/textures/textures.pack";
 	
 	/* Texture region names (in texture atlas) */
-	public static final String TEXTURE_REGION_NAME_SPACESHIP_PLAYER = "spaceship_player";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_01 = "asterioid_01";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_02 = "asterioid_02";
+	public static final String TEXTURE_REGION_NAME_SPACESHIP_PLAYER = "spaceshipPlayer";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_01 = "asterioid01";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_02 = "asterioid02";
 	
 	/* Sound */
 	
