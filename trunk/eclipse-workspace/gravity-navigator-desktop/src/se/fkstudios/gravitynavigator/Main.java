@@ -16,3 +16,5 @@ public class Main {
 		new LwjglApplication(new GravityNavigatorGame(), cfg);
 	}
 }
+
+// Fredrik va här 
