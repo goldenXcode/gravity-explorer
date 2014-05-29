@@ -17,6 +17,8 @@ public final class ResourceDefs {
 	
 	/* Texture region names (in texture atlas) */
 	public static final String TEXTURE_REGION_NAME_SPACESHIP_PLAYER = "spaceship_player";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_01 = "asterioid_01";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_02 = "asterioid_02";
 	
 	/* Sound */
 	
