@@ -1,11 +1,8 @@
 package se.fkstudios.gravitynavigator.view;
 
-import se.fkstudios.gravitynavigator.ResourceDefs;
 import se.fkstudios.gravitynavigator.model.SimpleMapObject;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -18,14 +15,8 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class SimpleMapObjectRenderer extends Renderer {
 
-	private TextureAtlas textureAtlas;	
-
 	/** debug rendering **/
 	private ShapeRenderer debugRenderer;
-	
-	public SimpleMapObjectRenderer() {
-		textureAtlas = new TextureAtlas(Gdx.files.internal(ResourceDefs.FILE_PATH_TEXTURE_PACK));
-	}
 	
 	/**
 	 * Render a SimpleMapObject.
@@ -36,7 +27,7 @@ public class SimpleMapObjectRenderer extends Renderer {
 		
 		spriteBatch.begin();
 		
-		TextureRegion texRegion = textureAtlas.findRegion(mapObject.getTextureName());
+		TextureRegion texRegion = TextureLoader.getInstance().getTextureRegion(mapObject.getTextureName());
 		
 		float offsetX = mapObject.getWidth() * 0.5f;
 		float offsetY = mapObject.getHeight() * 0.5f;

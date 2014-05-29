@@ -2,7 +2,6 @@ package se.fkstudios.gravitynavigator.view;
 
 import se.fkstudios.gravitynavigator.model.ContinuousMap;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -10,8 +9,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 
 public class ContinuousMapRenderer extends Renderer {
-	
-	Texture backgroundTexture;
 	
 	/** debug rendering **/
 	private ShapeRenderer debugRenderer;
@@ -24,7 +21,7 @@ public class ContinuousMapRenderer extends Renderer {
 	public void render(SpriteBatch spriteBatch, ContinuousMap map) {
 		spriteBatch.begin();
 		
-		backgroundTexture = new Texture(Gdx.files.internal(map.getFilePathBackgroundImage1()));
+		Texture backgroundTexture = TextureLoader.getInstance().getTexture(map.getFilePathBackgroundImage1());
 		float bakTexDrawWidth = map.getWidth();
 		float bakTexDrawHeight = map.getHeight();
 		
