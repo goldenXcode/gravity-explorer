@@ -69,8 +69,9 @@ public class ContinuousMap extends Map {
 	public void loadMapObjects() {
 		// TODO: specify a XML format for model map's start conditions. 
 		// Preferably also create a map editor to create these.
-		Vector2 position = new Vector2(1, 1);
-		Vector2 velocity = new Vector2(0, 0);
+		// Note: I'm thinking ModelDefs could contain the XML-parser. 
+		Vector2 position = ModelDefs.STARTING_POSITION;
+		Vector2 velocity = ModelDefs.STARTING_VELOCITY; 
 		playerSpaceship = new SpaceshipMapObject(position, 
 				0.1f, 
 				0.1f, 
