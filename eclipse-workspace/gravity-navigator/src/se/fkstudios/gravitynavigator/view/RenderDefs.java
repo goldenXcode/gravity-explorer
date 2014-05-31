@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Color;
  * Rendering specific definitions.
  * @author kristofer
  */
-public final class RenderingDefs {
+public final class RenderDefs {
 	
 	/* debug rendering */
 	public static final Color MAP_BORDER_COLOR = Color.MAGENTA;

@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
  * Spaceship gameplay object, the object the player controls. 
  * @author kristofer
  */
-public class SpaceshipMapObject extends SimpleMapObject {
+public class SpaceshipModel extends TextureMapObjectModel {
 
 	private Vector2 thrust;
 	private int maxThrust; //in Newton
@@ -28,7 +28,7 @@ public class SpaceshipMapObject extends SimpleMapObject {
 		this.maxThrust = maxThrust;
 	}
 
-	public SpaceshipMapObject(Vector2 position, float width, float height, Vector2 velocity, float rotation, int mass, String textureName, int maxThrust) {
+	public SpaceshipModel(Vector2 position, float width, float height, Vector2 velocity, float rotation, int mass, String textureName, int maxThrust) {
 		super(position, width, height, velocity, rotation, mass, textureName);
 		this.thrust = new Vector2(0, 0);
 		this.maxThrust = maxThrust;

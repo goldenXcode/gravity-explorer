@@ -6,11 +6,11 @@ import com.badlogic.gdx.math.Vector2;
  * Simplest visible gameplay object associated with a texture.
  * @author kristofer
  */
-public class SimpleMapObject extends GameplayMapObject {
+public class TextureMapObjectModel extends MapObjectModel {
 	
 	private final String textureName;
 	
-	public SimpleMapObject(Vector2 position, 
+	public TextureMapObjectModel(Vector2 position, 
 			float width,
 			float height, 
 			Vector2 velocity,

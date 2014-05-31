@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Array;
  * Represent a (TODO: should be, is not now) periodic map with floating point width and height. 
  * @author kristofer
  */
-public class ContinuousMap extends Map {
+public class PeriodicMapModel extends Map {
 	
 	private final String GAMEPLAY_LAYER_NAME = "GameplayLayer";
 	
@@ -20,7 +20,7 @@ public class ContinuousMap extends Map {
 	private float width;
 	private float height;
 	private MapLayer gameplayLayer;
-	private SpaceshipMapObject playerSpaceship;
+	private SpaceshipModel playerSpaceship;
 	
 	/**
 	 * Creates a continuous map. 
@@ -28,7 +28,7 @@ public class ContinuousMap extends Map {
 	 * @param width Width of map.
 	 * @param height Height of map.
 	 */
-	public ContinuousMap(String filePathBackgroundImage1, float width, float height) {
+	public PeriodicMapModel(String filePathBackgroundImage1, float width, float height) {
 		this.filePathBackgroundImage1 = filePathBackgroundImage1;
 		this.width = width;
 		this.height = height;
@@ -58,7 +58,7 @@ public class ContinuousMap extends Map {
 		this.height = height;
 	}
 	
-	public SpaceshipMapObject getPlayerSpaceship() {
+	public SpaceshipModel getPlayerSpaceship() {
 		return playerSpaceship;
 	}
 	
@@ -72,7 +72,7 @@ public class ContinuousMap extends Map {
 		// Note: I'm thinking ModelDefs could contain the XML-parser. 
 		Vector2 position = ModelDefs.STARTING_POSITION;
 		Vector2 velocity = ModelDefs.STARTING_VELOCITY; 
-		playerSpaceship = new SpaceshipMapObject(position, 
+		playerSpaceship = new SpaceshipModel(position, 
 				0.1f, 
 				0.1f, 
 				velocity, 
@@ -81,9 +81,9 @@ public class ContinuousMap extends Map {
 				ResourceDefs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER, 
 				100);
 
-		SimpleMapObject asterioid1 = new SimpleMapObject(new Vector2(5, 5), 0.5f, 0.5f, 
+		TextureMapObjectModel asterioid1 = new TextureMapObjectModel(new Vector2(5, 5), 0.5f, 0.5f, 
 				new Vector2(0.2f, 0.1f), 0, 100, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_01);
-		SimpleMapObject asterioid2 = new SimpleMapObject(new Vector2(5, 5), 0.33f, 0.5f, 
+		TextureMapObjectModel asterioid2 = new TextureMapObjectModel(new Vector2(5, 5), 0.33f, 0.5f, 
 				new Vector2(0.2f, -0.4f), 0, 100, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_02);
 		
 		MapObjects gamplayMapObjects = gameplayLayer.getObjects();
@@ -98,16 +98,16 @@ public class ContinuousMap extends Map {
 	 */
 	public void update(float delta) {
 		MapObjects allMapObjects = gameplayLayer.getObjects();
-		Array<GameplayMapObject> gameplayMapObjects = new Array<GameplayMapObject>(allMapObjects.getCount());
-		allMapObjects.getByType(GameplayMapObject.class, gameplayMapObjects);
+		Array<MapObjectModel> gameplayMapObjects = new Array<MapObjectModel>(allMapObjects.getCount());
+		allMapObjects.getByType(MapObjectModel.class, gameplayMapObjects);
 		
-		for (GameplayMapObject gameplayMapObject : gameplayMapObjects) {
+		for (MapObjectModel gameplayMapObject : gameplayMapObjects) {
 			gameplayMapObject.update(delta);
 			applyMapObjectPeriodicity(gameplayMapObject);
 		}
 	}
 
-	private void applyMapObjectPeriodicity(GameplayMapObject gameplayMapObject) {
+	private void applyMapObjectPeriodicity(MapObjectModel gameplayMapObject) {
 
 		Vector2 position = gameplayMapObject.getPosition();
 

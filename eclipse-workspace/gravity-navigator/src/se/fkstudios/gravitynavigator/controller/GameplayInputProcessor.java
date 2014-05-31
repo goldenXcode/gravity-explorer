@@ -1,7 +1,7 @@
 package se.fkstudios.gravitynavigator.controller;
 
-import se.fkstudios.gravitynavigator.model.SpaceshipMapObject;
-import se.fkstudios.gravitynavigator.view.RenderingOptions;
+import se.fkstudios.gravitynavigator.model.SpaceshipModel;
+import se.fkstudios.gravitynavigator.view.RenderOptions;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -17,7 +17,7 @@ public class GameplayInputProcessor implements InputProcessor {
 	private int startDragScreenX;
 	private int startDragScreenY;
 	private int lengthForFullThurst;
-	private SpaceshipMapObject playerSpaceship; 
+	private SpaceshipModel playerSpaceship; 
 	
 	/**
 	 * Creates a GameplayInputProcesor for given SpaceshipObject and viewport.
@@ -26,7 +26,7 @@ public class GameplayInputProcessor implements InputProcessor {
 	 * @param screenWidth Screen width in pixels.
 	 * @param screenHeight Screen height in pixels.
 	 */
-	public GameplayInputProcessor(SpaceshipMapObject playerMapObject, int screenWidth, int screenHeight) {
+	public GameplayInputProcessor(SpaceshipModel playerMapObject, int screenWidth, int screenHeight) {
 		this.playerSpaceship = playerMapObject;
 		startDragScreenX = -1;
 		startDragScreenY = -1;
@@ -37,7 +37,7 @@ public class GameplayInputProcessor implements InputProcessor {
 	public boolean keyDown(int keycode) {
 
 		if (keycode == Input.Keys.D)
-			RenderingOptions.getInstance().debugRender = ! RenderingOptions.getInstance().debugRender;
+			RenderOptions.getInstance().debugRender = ! RenderOptions.getInstance().debugRender;
 		
 		return true;
 	}

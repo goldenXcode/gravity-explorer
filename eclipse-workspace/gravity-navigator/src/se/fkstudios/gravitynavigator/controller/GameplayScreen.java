@@ -1,13 +1,13 @@
 package se.fkstudios.gravitynavigator.controller;
 
 import se.fkstudios.gravitynavigator.ResourceDefs;
-import se.fkstudios.gravitynavigator.model.ContinuousMap;
-import se.fkstudios.gravitynavigator.model.SimpleMapObject;
-import se.fkstudios.gravitynavigator.model.SpaceshipMapObject;
-import se.fkstudios.gravitynavigator.view.ContinuousMapRenderer;
-import se.fkstudios.gravitynavigator.view.RenderingDefs;
-import se.fkstudios.gravitynavigator.view.RenderingOptions;
-import se.fkstudios.gravitynavigator.view.SimpleMapObjectRenderer;
+import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
+import se.fkstudios.gravitynavigator.model.TextureMapObjectModel;
+import se.fkstudios.gravitynavigator.model.SpaceshipModel;
+import se.fkstudios.gravitynavigator.view.PeriodicMapRenderer;
+import se.fkstudios.gravitynavigator.view.RenderDefs;
+import se.fkstudios.gravitynavigator.view.RenderOptions;
+import se.fkstudios.gravitynavigator.view.TextureMapObjectRenderer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -28,8 +28,8 @@ import com.badlogic.gdx.utils.Scaling;
 public class GameplayScreen implements Screen {
 
 	//Model stuff
-	private ContinuousMap map;
-	private SpaceshipMapObject playerSpaceship;
+	private PeriodicMapModel map;
+	private SpaceshipModel playerSpaceship;
 
 	//Controller stuff
 	private InputProcessor inputProccessor;
@@ -37,24 +37,24 @@ public class GameplayScreen implements Screen {
 	//Rendering stuff
 	private OrthographicCamera camera;
 	private SpriteBatch spriteBatch;
-	private ContinuousMapRenderer mapRenderer;
-	private SimpleMapObjectRenderer staticMapObjectRenderer;
+	private PeriodicMapRenderer mapRenderer;
+	private TextureMapObjectRenderer staticMapObjectRenderer;
 	
 	@Override
 	public void show() throws IllegalStateException {
 	    
-		map = new ContinuousMap(ResourceDefs.TEXTURE_NAMES[0], 10, 5);
+		map = new PeriodicMapModel(ResourceDefs.TEXTURE_NAMES[0], 10, 5);
 	    
 		playerSpaceship = map.getPlayerSpaceship();
 		Vector2 playerMapObjectPos = playerSpaceship.getPosition();
 
 		camera = new OrthographicCamera(
-				RenderingDefs.VIEWPORT_WIDTH, 
-				RenderingDefs.VIEWPORT_HEIGHT);
+				RenderDefs.VIEWPORT_WIDTH, 
+				RenderDefs.VIEWPORT_HEIGHT);
 	    
 		camera.position.set(
-				playerMapObjectPos.x * RenderingDefs.PIXELS_PER_UNIT, 
-				playerMapObjectPos.y * RenderingDefs.PIXELS_PER_UNIT, 
+				playerMapObjectPos.x * RenderDefs.PIXELS_PER_UNIT, 
+				playerMapObjectPos.y * RenderDefs.PIXELS_PER_UNIT, 
 				0.0f);
 		
 	    camera.update();
@@ -88,8 +88,8 @@ public class GameplayScreen implements Screen {
 	    
 	    spriteBatch = new SpriteBatch();
 	    
-	    mapRenderer = new ContinuousMapRenderer();
-	    staticMapObjectRenderer = new SimpleMapObjectRenderer();
+	    mapRenderer = new PeriodicMapRenderer();
+	    staticMapObjectRenderer = new TextureMapObjectRenderer();
 	}
 
 	/*
@@ -122,14 +122,14 @@ public class GameplayScreen implements Screen {
 		        	
 		mapRenderer.render(spriteBatch, map);
 		
-		Array<SimpleMapObject> staticMapObjects;
+		Array<TextureMapObjectModel> staticMapObjects;
 		MapObjects allMapObjects;
 		
 		for (MapLayer layer : map.getLayers()) {	
 			allMapObjects = layer.getObjects();
-			staticMapObjects = allMapObjects.getByType(SimpleMapObject.class);
+			staticMapObjects = allMapObjects.getByType(TextureMapObjectModel.class);
 			
-			for (SimpleMapObject mapObj : staticMapObjects)
+			for (TextureMapObjectModel mapObj : staticMapObjects)
 				staticMapObjectRenderer.render(spriteBatch, mapObj);
 		}
 	}
@@ -173,11 +173,11 @@ public class GameplayScreen implements Screen {
 	private void updateCameraPosition(float delta) {	
 
 		//update position
-		Vector2 targetPosition = playerSpaceship.getPosition().cpy().scl(RenderingDefs.PIXELS_PER_UNIT);
+		Vector2 targetPosition = playerSpaceship.getPosition().cpy().scl(RenderDefs.PIXELS_PER_UNIT);
 		Vector2 cameraPosition = new Vector2(camera.position.x, camera.position.y);
 		 
-		float jumpThresholdX = map.getWidth() * RenderingDefs.PIXELS_PER_UNIT * 0.5f;
-		float jumpThresholdY = map.getHeight() * RenderingDefs.PIXELS_PER_UNIT * 0.5f;
+		float jumpThresholdX = map.getWidth() * RenderDefs.PIXELS_PER_UNIT * 0.5f;
+		float jumpThresholdY = map.getHeight() * RenderDefs.PIXELS_PER_UNIT * 0.5f;
 		
 		boolean jumpLeft = cameraPosition.x - targetPosition.x < -jumpThresholdX;
 		boolean jumpRight = targetPosition.x - cameraPosition.x < -jumpThresholdX;
@@ -185,13 +185,13 @@ public class GameplayScreen implements Screen {
 		boolean jumpDown = cameraPosition.y - targetPosition.y < -jumpThresholdY;
 		
 		if (jumpLeft) 
-			cameraPosition.x = cameraPosition.x + map.getWidth() * RenderingDefs.PIXELS_PER_UNIT;
+			cameraPosition.x = cameraPosition.x + map.getWidth() * RenderDefs.PIXELS_PER_UNIT;
 		else if (jumpRight)
-			cameraPosition.x = cameraPosition.x - map.getWidth() * RenderingDefs.PIXELS_PER_UNIT;
+			cameraPosition.x = cameraPosition.x - map.getWidth() * RenderDefs.PIXELS_PER_UNIT;
 		else if (jumpUp)
-			cameraPosition.y = cameraPosition.y - map.getHeight() * RenderingDefs.PIXELS_PER_UNIT;
+			cameraPosition.y = cameraPosition.y - map.getHeight() * RenderDefs.PIXELS_PER_UNIT;
 		else if (jumpDown)
-			cameraPosition.y = cameraPosition.y + map.getHeight() * RenderingDefs.PIXELS_PER_UNIT;
+			cameraPosition.y = cameraPosition.y + map.getHeight() * RenderDefs.PIXELS_PER_UNIT;
 		
 		cameraPosition.lerp(targetPosition, delta);
 		

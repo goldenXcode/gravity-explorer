@@ -1,6 +1,6 @@
 package se.fkstudios.gravitynavigator.view;
 
-import se.fkstudios.gravitynavigator.model.SimpleMapObject;
+import se.fkstudios.gravitynavigator.model.TextureMapObjectModel;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.Vector2;
  * Renders SimpleMapObjects.
  * @author kristofer
  */
-public class SimpleMapObjectRenderer extends Renderer {
+public class TextureMapObjectRenderer extends Renderer {
 
 	/** debug rendering **/
 	private ShapeRenderer debugRenderer;
@@ -23,7 +23,7 @@ public class SimpleMapObjectRenderer extends Renderer {
 	 * @param spriteBatch
 	 * @param mapObject
 	 */
-	public void render(SpriteBatch spriteBatch, SimpleMapObject mapObject) {
+	public void render(SpriteBatch spriteBatch, TextureMapObjectModel mapObject) {
 		
 		spriteBatch.begin();
 		
@@ -33,23 +33,23 @@ public class SimpleMapObjectRenderer extends Renderer {
 		float offsetY = mapObject.getHeight() * 0.5f;
 		
 		spriteBatch.draw(texRegion, 
-				(mapObject.getPosition().x - offsetX) * RenderingDefs.PIXELS_PER_UNIT, 
-				(mapObject.getPosition().y - offsetY) * RenderingDefs.PIXELS_PER_UNIT, 
-				(mapObject.getWidth() / 2) * RenderingDefs.PIXELS_PER_UNIT, 
-				(mapObject.getHeight() / 2) * RenderingDefs.PIXELS_PER_UNIT, 
-				mapObject.getWidth() * RenderingDefs.PIXELS_PER_UNIT, 
-				mapObject.getHeight() * RenderingDefs.PIXELS_PER_UNIT, 
+				(mapObject.getPosition().x - offsetX) * RenderDefs.PIXELS_PER_UNIT, 
+				(mapObject.getPosition().y - offsetY) * RenderDefs.PIXELS_PER_UNIT, 
+				(mapObject.getWidth() / 2) * RenderDefs.PIXELS_PER_UNIT, 
+				(mapObject.getHeight() / 2) * RenderDefs.PIXELS_PER_UNIT, 
+				mapObject.getWidth() * RenderDefs.PIXELS_PER_UNIT, 
+				mapObject.getHeight() * RenderDefs.PIXELS_PER_UNIT, 
 				1.0f,
 				1.0f,
 				mapObject.getRotation());
 		
 		spriteBatch.end();
 		
-		if (RenderingOptions.getInstance().debugRender)
+		if (RenderOptions.getInstance().debugRender)
 			debugRender(spriteBatch.getProjectionMatrix(), mapObject);
 	}
 	
-	private void debugRender(Matrix4 projectionMatrix, SimpleMapObject mapObject) {
+	private void debugRender(Matrix4 projectionMatrix, TextureMapObjectModel mapObject) {
 		
 		if (debugRenderer == null)
 			debugRenderer = new ShapeRenderer();
@@ -62,17 +62,17 @@ public class SimpleMapObjectRenderer extends Renderer {
 			
 		debugRenderer.begin(ShapeType.Line);
 		
-		debugRenderer.setColor(RenderingDefs.MAP_OBJECT_BORDER_COLOR);
+		debugRenderer.setColor(RenderDefs.MAP_OBJECT_BORDER_COLOR);
 		debugRenderer.rect(
-				(position.x - mapObjectOffsetX) * RenderingDefs.PIXELS_PER_UNIT, 
-				(position.y - mapObjectOffsetY) * RenderingDefs.PIXELS_PER_UNIT, 
-				mapObject.getWidth() * RenderingDefs.PIXELS_PER_UNIT, 
-				mapObject.getHeight() * RenderingDefs.PIXELS_PER_UNIT);	
+				(position.x - mapObjectOffsetX) * RenderDefs.PIXELS_PER_UNIT, 
+				(position.y - mapObjectOffsetY) * RenderDefs.PIXELS_PER_UNIT, 
+				mapObject.getWidth() * RenderDefs.PIXELS_PER_UNIT, 
+				mapObject.getHeight() * RenderDefs.PIXELS_PER_UNIT);	
 		
-		debugRenderer.setColor(RenderingDefs.MAP_OBJECT_CENTER_MARKER_COLOR);
+		debugRenderer.setColor(RenderDefs.MAP_OBJECT_CENTER_MARKER_COLOR);
 		debugRenderer.rect(
-				position.x * RenderingDefs.PIXELS_PER_UNIT - 1, 
-				position.y * RenderingDefs.PIXELS_PER_UNIT - 1, 
+				position.x * RenderDefs.PIXELS_PER_UNIT - 1, 
+				position.y * RenderDefs.PIXELS_PER_UNIT - 1, 
 				3, 
 				3);	
 		
