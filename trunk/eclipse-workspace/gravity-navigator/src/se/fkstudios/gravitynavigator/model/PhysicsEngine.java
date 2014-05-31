@@ -24,7 +24,7 @@ public class PhysicsEngine {
 	 * Note how computeGravitationalForce is symmetric with respect to o1 and o2
 	 * 
 	 */
-	private static float computeGravitationalForce (SimpleMapObject o1, SimpleMapObject o2)
+	private static float computeGravitationalForce (TextureMapObjectModel o1, TextureMapObjectModel o2)
 	{
 		int m1 = o1.getMass();
 		int m2 = o2.getMass(); 
@@ -39,7 +39,7 @@ public class PhysicsEngine {
 	 * The reason I'm not nesting these computations in one function is simply to separate velocities 
 	 * accelerations, forces etc. 
 	 */
-	private static float computeAcceleration(SimpleMapObject o1, SimpleMapObject o2, float delta) {
+	private static float computeAcceleration(TextureMapObjectModel o1, TextureMapObjectModel o2, float delta) {
 		return computeGravitationalForce(o1,o2)*delta; 
 		
 		

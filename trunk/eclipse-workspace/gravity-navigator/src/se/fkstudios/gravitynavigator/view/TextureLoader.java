@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 /**
  * Maps textures and texture regions to strings so that they are not loaded more than once. 
  * 
- * Implements the Singelton patterns. 
+ * Implements the Singleton patterns. 
  * 
  * @author kristofer
  */

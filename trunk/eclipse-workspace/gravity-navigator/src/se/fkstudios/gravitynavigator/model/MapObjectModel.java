@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
  * Modeling the properties of all gameplay map objects in game.
  * @author kristofer
  */
-public abstract class GameplayMapObject extends MapObject {
+public abstract class MapObjectModel extends MapObject {
 
 	private float width;
 	private float height;
@@ -16,7 +16,7 @@ public abstract class GameplayMapObject extends MapObject {
 	float rotation;
 	private int mass; // in kg
 	
-	public GameplayMapObject(Vector2 position, 
+	public MapObjectModel(Vector2 position, 
 			float width,
 			float height, 
 			Vector2 velocity,
