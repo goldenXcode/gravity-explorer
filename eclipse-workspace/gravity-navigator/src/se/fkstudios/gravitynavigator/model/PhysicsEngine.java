@@ -19,7 +19,7 @@ public class PhysicsEngine {
 	}
 	
 	
-	
+	// TODO: fixa så att den jobbar periodiskt 
 	public static void applyGravity (float delta) 
 	{
 		//System.out.println("gravity applied");
@@ -44,8 +44,7 @@ public class PhysicsEngine {
 		int m1 = o1.getMass();
 		int m2 = o2.getMass(); 
 		float G = ModelDefs.GRAVITATIONAL_CONSTANT; 
-		float distance = o1.getPosition().dst(o2.getPosition()); // här är problemet
-		//float distance = 1;
+		float distance = o1.getPosition().dst(o2.getPosition()); 
 		float f;
 		
 		if (distance != 0) {
@@ -60,16 +59,11 @@ public class PhysicsEngine {
 		Vector2 p2 = o2.getPosition().cpy();
 		Vector2 diff = p1.sub(p2);
 		Vector2 direction;
-		System.out.println(diff.dot(diff));
 		if (diff.dot(diff) != 0) {
 			direction = diff.div((float) Math.sqrt(diff.dot(diff)));
 		}
 		else
 			direction = new Vector2(0,0);
-		//System.out.println(direction.dot(direction));
-		//return direction.scl(f).cpy();
-		//System.out.println("o1 =" + o1.getPosition().x);
-		//System.out.println("o2 =" + o2.getPosition().x);
 		return direction;
 	}
 	
@@ -82,11 +76,5 @@ public class PhysicsEngine {
 		return computeGravitationalForce(o1,o2).scl(delta); 
 		
 	}
-	
-	/*
-	 * For troubleshooting purposes. 
-	 * 
-	 */
-	
 	
 }
