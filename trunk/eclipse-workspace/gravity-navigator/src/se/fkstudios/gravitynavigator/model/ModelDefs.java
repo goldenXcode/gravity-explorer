@@ -13,6 +13,6 @@ public final class ModelDefs {
 	public static Vector2 STARTING_POSITION = new Vector2(0,0);
 	public static Vector2 STARTING_VELOCITY = new Vector2(0,0);
 	
-	public static float GRAVITATIONAL_CONSTANT = 1;
+	public static float GRAVITATIONAL_CONSTANT = 0.001f;
 
 }
