@@ -15,21 +15,26 @@ public class PhysicsEngine {
 	
 	public static void setMapObjects (MapObjectModel m[]) {
 		allMapObjects = m; 
+		System.out.println("map objects set for physics engine");
 	}
 	
 	
-	/*
+	
 	public static void applyGravity (float delta) 
 	{
-		for (MapObjectModel d : allMapObjects) {
-			for (MapObjectModel e : allMapObjects){
-				float velocityBoost = computeAcceleration(d,e,delta);
-				e.setVelocity(velocity);
+		//System.out.println("gravity applied");
+		for (int i =0;i<allMapObjects.length ; i++) {
+			for (int j =0;j<allMapObjects.length ; j++){
+				//System.out.println(i + "" + j);
+				MapObjectModel a = allMapObjects[i];
+				MapObjectModel b = allMapObjects[j];
+				Vector2 velocityBoost = computeAcceleration(a,b,delta);
+				b.setVelocity(b.getVelocity().add(velocityBoost));
 			}
 			
 		}
 	}
-	*/	
+	
 	/*
 	 * Note how computeGravitationalForce is symmetric with respect to o1 and o2
 	 * 
@@ -39,12 +44,33 @@ public class PhysicsEngine {
 		int m1 = o1.getMass();
 		int m2 = o2.getMass(); 
 		float G = ModelDefs.GRAVITATIONAL_CONSTANT; 
-		float distance = o1.getPosition().dst(o2.getPosition());
-		float f = G*m1*m2/(distance*distance); // Newtons law of gravity
+		float distance = o1.getPosition().dst(o2.getPosition()); // här är problemet
+		//float distance = 1;
+		float f;
+		
+		if (distance != 0) {
+			f = G*m1*m2/(distance*distance); // Newtons law of gravity
+			
+		}
+		else 
+			f = 0;
+		
 		// gives the size of the force. Now we'll need the direction
-		Vector2 diff = o1.getPosition().sub(o1.getPosition());
-		Vector2 direction = diff.div((float) Math.sqrt(diff.dot(diff)));
-		return direction.scl(f);
+		Vector2 p1 = o1.getPosition().cpy();
+		Vector2 p2 = o2.getPosition().cpy();
+		Vector2 diff = p1.sub(p2);
+		Vector2 direction;
+		System.out.println(diff.dot(diff));
+		if (diff.dot(diff) != 0) {
+			direction = diff.div((float) Math.sqrt(diff.dot(diff)));
+		}
+		else
+			direction = new Vector2(0,0);
+		//System.out.println(direction.dot(direction));
+		//return direction.scl(f).cpy();
+		//System.out.println("o1 =" + o1.getPosition().x);
+		//System.out.println("o2 =" + o2.getPosition().x);
+		return direction;
 	}
 	
 	/*
@@ -55,7 +81,12 @@ public class PhysicsEngine {
 	private static Vector2 computeAcceleration(MapObjectModel o1, MapObjectModel o2, float delta) {
 		return computeGravitationalForce(o1,o2).scl(delta); 
 		
-		
 	}
+	
+	/*
+	 * For troubleshooting purposes. 
+	 * 
+	 */
+	
 	
 }
