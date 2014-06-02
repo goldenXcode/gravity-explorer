@@ -107,8 +107,13 @@ public class PhysicsEngine {
 		return computeGravitationalForce(o1,o2).scl(delta); 	
 	}
 	
-	private static Vector2 computeAcceleration(Vector2 p1, int m1, Vector2 p2, int m2) {
-		return computeGravitationalForce(p1,m1,p2,m2);
+	private static Vector2 computeAcceleration(Vector2 p1, int m1, Vector2 p2, int m2, float delta) {
+		return computeGravitationalForce(p1,m1,p2,m2).cpy().scl(delta);
+	}
+	
+	private static Vector2 computeAcceleration(Vector2 direction,float distance, int m1, int m2, float delta) {
+		float f = computeScalarGravitationalForce(m1,m2,distance);
+		return direction.cpy().scl(f).scl(delta);
 	}
 	
 	private static float computeScalarGravitationalForce (int m1,int m2,float d) {
@@ -121,34 +126,40 @@ public class PhysicsEngine {
 		return 0;
 	}
 	
-/*// brainfuck, fixar sen 
+	private static Vector2 computeForceDirection (MapObjectModel o1,MapObjectModel o2) {
+		Vector2 p1 = o1.getPosition().cpy();
+		Vector2 p2 = o2.getPosition().cpy();
+		Vector2 diff = p1.sub(p2);
+		Vector2 direction;
+		if (diff.dot(diff) != 0) {
+			direction = diff.div((float) Math.sqrt(diff.dot(diff)));
+		}
+		else
+			direction = new Vector2(0,0);
+		return direction;
+	}
+	
+	private static float distance (MapObjectModel o1,MapObjectModel o2) {
+		Vector2 p1 = o1.getPosition().cpy();
+		Vector2 p2 = o2.getPosition().cpy();
+		Vector2 diff = p1.sub(p2);
+		return (float) Math.sqrt(diff.dot(diff));
+	}
+	
 	private static Vector2 computePeriodicCompensation(MapObjectModel o1, MapObjectModel o2, float delta)  {
-		Vector2 accel = computeAcceleration(o1,o2,delta);
-		float x = accel.x;
-		float y = accel.y; 
 		Vector2 p1 = o1.getPosition();
 		Vector2 p2 = o2.getPosition(); 
 		int m1 = o1.getMass();
 		int m2 = o2.getMass(); 
-		int ansX;
-		int ansY; 
-		
-		if (x> 0 && y >0) {
-			Vector2 a = computeAcceleration(p1,m1,p2,m2)
-			
-		}	
-		else if (x>0 && y<0) {
-			
-		}	
-		else if (x<0 && y>0) {
-			
-		}	
-		else if (x<0 && y <0) {
-			
-		}
+		Vector2 forceDirection = computeForceDirection(o1,o2);
+		float dist = distance(o1,o2);
+		float f = computeScalarGravitationalForce(m1,m2,dist);
+		return new Vector2(0,0);
+
 				
 		
 	}
-	*/
+	
+	
 	
 }
