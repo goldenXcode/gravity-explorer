@@ -12,6 +12,7 @@ public abstract class MapObjectModel extends MapObject {
 	private float width;
 	private float height;
 	private Vector2 position;
+	private Vector2 acceleration;
 	private Vector2 velocity;
 	float rotation;
 	private int mass; // in kg
@@ -29,6 +30,7 @@ public abstract class MapObjectModel extends MapObject {
 		this.velocity = velocity;
 		this.rotation = rotation;
 		this.mass = mass;
+		this.acceleration = new Vector2(0, 0);
 	}
 	
 	public float getWidth() {
@@ -79,11 +81,20 @@ public abstract class MapObjectModel extends MapObject {
 		this.mass = mass;
 	}
 	
+	public Vector2 getAcceleration() {
+		return acceleration;
+	}
+	
+	public void setAcceleration(Vector2 acceleration) {
+		this.acceleration = acceleration;
+	}
+	
 	/**
 	 * Update the object for next game loop iteration.
 	 * @param delta Time in seconds since last update call.
 	 */
 	public void update(float delta) {
-		position.add(velocity.cpy().scl(delta));
+		setVelocity(velocity.cpy().add(acceleration.cpy().scl(delta)));
+		setPosition(position.cpy().add(velocity.cpy().scl(delta)));
 	}
 }

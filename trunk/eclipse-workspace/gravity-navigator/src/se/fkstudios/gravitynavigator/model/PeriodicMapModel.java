@@ -77,21 +77,22 @@ public class PeriodicMapModel extends Map {
 				0.1f, 
 				velocity, 
 				0, 
-				100, 
+				1, 
 				ResourceDefs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER, 
-				100);
+				1);
 
-		TextureMapObjectModel asterioid1 = new TextureMapObjectModel(new Vector2(5, 5), 0.5f, 0.5f, 
-				new Vector2(0.2f, 0.1f), 0, 10000, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_01);
-		TextureMapObjectModel asterioid2 = new TextureMapObjectModel(new Vector2(5, 5), 0.33f, 0.5f, 
-				new Vector2(0.2f, -0.4f), 0, 10000, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_02);
+		TextureMapObjectModel asterioid1 = new TextureMapObjectModel(new Vector2(4.5f, 4.5f), 0.5f, 0.5f, 
+				new Vector2(0.0f, 0.0f), 0, 1000, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_01);
+//		TextureMapObjectModel asterioid2 = new TextureMapObjectModel(new Vector2(5, 5), 0.33f, 0.5f, 
+//				new Vector2(0.2f, -0.4f), 0, 10000, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_02);
 		
 		MapObjects gamplayMapObjects = gameplayLayer.getObjects();
 		gamplayMapObjects.add(playerSpaceship);
 		gamplayMapObjects.add(asterioid1);
 		//gamplayMapObjects.add(asterioid2);
-		MapObjectModel[] mapObjects = {playerSpaceship,asterioid1};
+		MapObjectModel[] mapObjects = { playerSpaceship, asterioid1 };
 		PhysicsEngine.setMapObjects(mapObjects);
+		PhysicsEngine.setPeriodicMapModel(this);
 		
 	}
 		
@@ -100,10 +101,17 @@ public class PeriodicMapModel extends Map {
 	 * @param delta Time in seconds since last update call.
 	 */
 	public void update(float delta) {
-		PhysicsEngine.applyGravity(delta);
+		
 		MapObjects allMapObjects = gameplayLayer.getObjects();
 		Array<MapObjectModel> gameplayMapObjects = new Array<MapObjectModel>(allMapObjects.getCount());
 		allMapObjects.getByType(MapObjectModel.class, gameplayMapObjects);
+		
+		for (MapObjectModel gameplayMapObject : gameplayMapObjects) {
+			gameplayMapObject.setAcceleration(new Vector2(0,0));
+			applyMapObjectPeriodicity(gameplayMapObject);
+		}
+		
+		PhysicsEngine.applyGravity();
 		
 		for (MapObjectModel gameplayMapObject : gameplayMapObjects) {
 			gameplayMapObject.update(delta);
