@@ -53,20 +53,20 @@ public class PeriodicMapRenderer extends Renderer {
 				map.getWidth() * RenderDefs.PIXELS_PER_UNIT, 
 				map.getHeight() * RenderDefs.PIXELS_PER_UNIT);
 
-		for (int i = 0; i < (int)map.getWidth()*RenderDefs.DEBUG_LINES_PER_UNIT; i++) {
+		for (int i = 0; i < (int)map.getWidth(); i+= RenderDefs.UNIT_PER_DEBUG_LINE) {
 			debugRenderer.line(
-					(i / RenderDefs.DEBUG_LINES_PER_UNIT) * RenderDefs.PIXELS_PER_UNIT, 
+					i * RenderDefs.PIXELS_PER_UNIT, 
 					0, 
-					(i / RenderDefs.DEBUG_LINES_PER_UNIT) * RenderDefs.PIXELS_PER_UNIT, 
+					i * RenderDefs.PIXELS_PER_UNIT, 
 					(int)map.getHeight() * RenderDefs.PIXELS_PER_UNIT);
 		}
 		
-		for (int i = 0; i < (int)map.getHeight()*RenderDefs.DEBUG_LINES_PER_UNIT; i++) {
+		for (int i = 0; i < (int)map.getHeight(); i+= RenderDefs.UNIT_PER_DEBUG_LINE) {
 			debugRenderer.line(
 					0, 
-					(i / RenderDefs.DEBUG_LINES_PER_UNIT) * RenderDefs.PIXELS_PER_UNIT, 
+					i * RenderDefs.PIXELS_PER_UNIT, 
 					(int)map.getWidth() * RenderDefs.PIXELS_PER_UNIT, 
-					(i / RenderDefs.DEBUG_LINES_PER_UNIT) * RenderDefs.PIXELS_PER_UNIT);
+					i * RenderDefs.PIXELS_PER_UNIT);
 		}
 		
 		debugRenderer.end();
