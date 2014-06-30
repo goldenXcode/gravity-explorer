@@ -89,6 +89,7 @@ public class PeriodicMapModel extends Map {
 		MapObjects gamplayMapObjects = gameplayLayer.getObjects();
 		gamplayMapObjects.add(playerSpaceship);
 		gamplayMapObjects.add(asterioid1);
+		asterioid1.setRotationalSpeed(50f);
 		//gamplayMapObjects.add(asterioid2);
 		MapObjectModel[] mapObjects = { playerSpaceship, asterioid1 };
 		PhysicsEngine.setMapObjects(mapObjects);

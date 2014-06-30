@@ -33,6 +33,8 @@ public class PhysicsEngine {
 				MapObjectModel mapObject2 = allMapObjects[j];
 				Vector2 acceleration = computeAcceleration(mapObject1, mapObject2).div(mapObject2.getMass());
 				mapObject2.getAcceleration().add(acceleration);
+				if ( detectCollision(mapObject1,mapObject2) && mapObject1 != mapObject2) 				// for test purposes
+					System.out.println("collision detected"); 
 			}
 		}
 	}
@@ -44,6 +46,7 @@ public class PhysicsEngine {
 	{
 		return computeAcceleration(mapObject1.getPosition(), mapObject2.getPosition(), mapObject1.getMass(), mapObject2.getMass()); 
 	}
+	
 	
 	private static Vector2 computeAcceleration(Vector2 position1, Vector2 position2,float mass1,float mass2 )
 	{
@@ -64,6 +67,8 @@ public class PhysicsEngine {
 		return direction.scl(force);
 	}
 	
+	
+	// name should be changed to shortestDistanceVector since it doesn't actually return a distance. Will do later.. 
 	private static Vector2 shortestDistance(Vector2 position1, Vector2 position2) {
 		float x1 = position1.x; 
 		float x2 = position2.x; 
@@ -91,12 +96,24 @@ public class PhysicsEngine {
 		else {
 			result.y = -yDistance2;
 		}
-		
-		return result;
-		
-//		return new Vector2 (Math.min(xDistance1,xDistance2),Math.min(yDistance1,yDistance2)); 
+
+		return result;	
+	}
+	
+	private static boolean detectCollision (MapObjectModel mapObject1, MapObjectModel mapObject2) {
+		Vector2 position1 = mapObject1.getPosition(); 
+		Vector2 position2 = mapObject2.getPosition(); 
+		float width1 = mapObject1.getWidth(); 
+		float width2 = mapObject2.getWidth(); 
+		float distance = shortestDistance(position1, position2).len();
+		if (distance < width1 + width2)
+			return true; 
+		else 
+			return false; 
 		
 	}
+	
+	
 
 
 	
