@@ -52,8 +52,8 @@ public class PhysicsEngine {
 		float cutoff = 0.3f;
 
 		float force;
-		if (distance.len() > cutoff) { // Newtons law of gravity
-			force = ( ModelDefs.GRAVITATIONAL_CONSTANT * mass1 * mass2 ) / (distance.len()*distance.len()); 
+		if (distance.len() > cutoff) { // cutoff to prevent singularities arising from zero distance between objects
+			force = ( ModelDefs.GRAVITATIONAL_CONSTANT * mass1 * mass2 ) / (distance.len()*distance.len()); // Newtons law of gravity
 		}
 		else {
 			force = 0;
@@ -73,22 +73,24 @@ public class PhysicsEngine {
 		float mapHeight = periodicMap.getHeight(); 
 		
 		float xDistance1 = x1 - x2; 
-		float xDistance2 = Math.abs(x1 - x2) + mapWidth; 
+		float xDistance2 = -(x1 - x2) + mapWidth; 
 		
 		float yDistance1 = y1 - y2; 
-		float yDistance2 = Math.abs(y1 - y2) + mapHeight;
+		float yDistance2 = -(y1 - y2) + mapHeight; // yDistance2 == yDistance1 + 5, not good 
 		
 		Vector2 result = new Vector2();
 		
 		if (Math.abs(xDistance1) < Math.abs(xDistance2))
 			result.x = xDistance1;
-		else
-			result.x = xDistance2;
+		else 
+			result.x = -xDistance2;
+			
 		
 		if (Math.abs(yDistance1) < Math.abs(yDistance2))
 			result.y = yDistance1;
-		else
-			result.y = yDistance2;
+		else {
+			result.y = -yDistance2;
+		}
 		
 		return result;
 		
