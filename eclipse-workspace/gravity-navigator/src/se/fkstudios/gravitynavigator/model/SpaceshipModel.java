@@ -38,7 +38,7 @@ public class SpaceshipModel extends TextureMapObjectModel {
 	public void update(float delta) {
 		int mass = getMass();
 		Vector2 acceleration = thrust.cpy().div(mass);
-		System.out.println("thurst: " + thrust.toString());
+		//System.out.println("thurst: " + thrust.toString());
 		getAcceleration().add(acceleration);
 		super.update(delta);
 	} 	
