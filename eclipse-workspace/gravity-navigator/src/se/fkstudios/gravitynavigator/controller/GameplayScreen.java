@@ -15,6 +15,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.math.Vector2;
@@ -38,7 +39,7 @@ public class GameplayScreen implements Screen {
 	private OrthographicCamera camera;
 	private SpriteBatch spriteBatch;
 	private PeriodicMapRenderer mapRenderer;
-	private TextureMapObjectRenderer staticMapObjectRenderer;
+	private TextureMapObjectRenderer textureMapObjectRenderer;
 	
 	@Override
 	public void show() throws IllegalStateException {
@@ -89,7 +90,8 @@ public class GameplayScreen implements Screen {
 	    spriteBatch = new SpriteBatch();
 	    
 	    mapRenderer = new PeriodicMapRenderer();
-	    staticMapObjectRenderer = new TextureMapObjectRenderer();
+	    textureMapObjectRenderer = new TextureMapObjectRenderer(new ShapeRenderer(), spriteBatch,
+	    		map.getWidth(), map.getHeight(), camera.viewportWidth, camera.viewportHeight);
 	}
 
 	/*
@@ -122,21 +124,22 @@ public class GameplayScreen implements Screen {
 		        	
 		mapRenderer.render(spriteBatch, map);
 		
-		Array<TextureMapObjectModel> staticMapObjects;
+		Array<TextureMapObjectModel> textureMapObjects;
 		MapObjects allMapObjects;
 		
 		for (MapLayer layer : map.getLayers()) {	
 			allMapObjects = layer.getObjects();
-			staticMapObjects = allMapObjects.getByType(TextureMapObjectModel.class);
+			textureMapObjects = allMapObjects.getByType(TextureMapObjectModel.class);
 			
-			for (TextureMapObjectModel mapObj : staticMapObjects)
-				staticMapObjectRenderer.render(spriteBatch, mapObj);
+			for (TextureMapObjectModel textureMapObject : textureMapObjects)
+				textureMapObjectRenderer.render(textureMapObject, camera.position);
 		}
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		Vector2 size = Scaling.fit.apply(camera.viewportWidth, camera.viewportHeight, width, height);
+		Vector2 size = Scaling.fit.apply(camera.viewportWidth, camera.viewportHeight,  width, height);
+		
         int viewportX = (int)(width - size.x) / 2;
         int viewportY = (int)(height - size.y) / 2;
         int viewportWidth = (int)size.x;

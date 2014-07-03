@@ -19,19 +19,19 @@ public class PeriodicMapRenderer extends Renderer {
 	 * @param map the map to render.
 	 */
 	public void render(SpriteBatch spriteBatch, PeriodicMapModel map) {
-		spriteBatch.begin();
-		
-		Texture backgroundTexture = TextureLoader.getInstance().getTexture(map.getFilePathBackgroundImage1());
-		float bakTexDrawWidth = map.getWidth();
-		float bakTexDrawHeight = map.getHeight();
-		
-		spriteBatch.draw(backgroundTexture, 
-				0.0f, 
-				0.0f, 
-				bakTexDrawWidth * RenderDefs.PIXELS_PER_UNIT, 
-				bakTexDrawHeight * RenderDefs.PIXELS_PER_UNIT);
-		
-		spriteBatch.end();
+//		spriteBatch.begin();
+//		
+//		Texture backgroundTexture = TextureLoader.getInstance().getTexture(map.getFilePathBackgroundImage1());
+//		float bakTexDrawWidth = map.getWidth();
+//		float bakTexDrawHeight = map.getHeight();
+//		
+//		spriteBatch.draw(backgroundTexture, 
+//				0.0f, 
+//				0.0f, 
+//				bakTexDrawWidth * RenderDefs.PIXELS_PER_UNIT, 
+//				bakTexDrawHeight * RenderDefs.PIXELS_PER_UNIT);
+//		
+//		spriteBatch.end();
 		
 		if (RenderOptions.getInstance().debugRender)
 			debugRender(spriteBatch.getProjectionMatrix(), map);
