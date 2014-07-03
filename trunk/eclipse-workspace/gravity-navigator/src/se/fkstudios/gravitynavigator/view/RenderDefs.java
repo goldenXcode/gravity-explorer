@@ -17,8 +17,8 @@ public final class RenderDefs {
 	
 
 	/* viewport  */ 
-	public static final int VIEWPORT_WIDTH = 980;
-	public static final int VIEWPORT_HEIGHT = 640;
+	public static final int VIEWPORT_WIDTH = 490;
+	public static final int VIEWPORT_HEIGHT = 320;
 	public static final int PIXELS_PER_UNIT = 100;
 
 }
