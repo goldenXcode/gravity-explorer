@@ -41,8 +41,41 @@ public class GameplayScreen implements Screen {
 	private PeriodicMapRenderer mapRenderer;
 	private TextureMapObjectRenderer textureMapObjectRenderer;
 	
+	// ad-hoc visibility-solution. The inputprocessor needs access to the camera. There might be a more correct solution. 
+	public static GameplayScreen CURRENT_INSTANCE; 
+	
+	public int cameraMode; 
+	public static int CAMERA_TIGHT = 0; 
+	public static int CAMERA_LOOSE = 1; 
+	
+	public void setCameraMode (int camMode) 
+	{
+		cameraMode = camMode; 
+	}
+	
+	public int getCameraMode () {
+		return cameraMode; 
+		
+	}
+	
+	public void zoomIn()
+	{
+	    camera.zoom += -0.1f;
+	}
+	
+	public void zoomOut() 
+	{
+		camera.zoom += 0.1f; 
+	}
+	
+	public void zoom (float amount) {
+		camera.zoom += (amount); 
+		
+	}
 	@Override
 	public void show() throws IllegalStateException {
+		
+		setCameraMode(CAMERA_LOOSE); 
 	    
 		map = new PeriodicMapModel(ResourceDefs.TEXTURE_NAMES[0], 10, 5);
 	    
@@ -92,6 +125,7 @@ public class GameplayScreen implements Screen {
 	    mapRenderer = new PeriodicMapRenderer();
 	    textureMapObjectRenderer = new TextureMapObjectRenderer(new ShapeRenderer(), spriteBatch,
 	    		map.getWidth(), map.getHeight(), camera.viewportWidth, camera.viewportHeight);
+	    CURRENT_INSTANCE = this; 
 	}
 
 	/*
@@ -174,7 +208,8 @@ public class GameplayScreen implements Screen {
 	 * Update camera's position and zoom based on spaceship's (player's) position and speed.
 	 */
 	private void updateCameraPosition(float delta) {	
-
+		
+	
 		//update position
 		Vector2 targetPosition = playerSpaceship.getPosition().cpy().scl(RenderDefs.PIXELS_PER_UNIT);
 		Vector2 cameraPosition = new Vector2(camera.position.x, camera.position.y);
@@ -196,20 +231,29 @@ public class GameplayScreen implements Screen {
 		else if (jumpDown)
 			cameraPosition.y = cameraPosition.y + map.getHeight() * RenderDefs.PIXELS_PER_UNIT;
 		
-		cameraPosition.lerp(targetPosition, delta);
 		
-		camera.position.set(
+	
+			cameraPosition.lerp(targetPosition, delta);
+			
+			if (cameraMode == CAMERA_LOOSE) {
+				camera.position.set(
 				cameraPosition.x, 
 				cameraPosition.y,
 				0);
+			}
+			else {
+				camera.position.set(targetPosition.x,targetPosition.y,0);
+				
+			}
 		
 		//update zoom
-		float speed = playerSpaceship.getVelocity().len();
-		float maxZoom = 2;
-		float minZoom = 1;
-		camera.zoom = Math.min(maxZoom, minZoom + speed * 0.0005f);
+		//float speed = playerSpaceship.getVelocity().len();
+		//float maxZoom = 2;
+		//float minZoom = 1;
+		//camera.zoom = Math.min(maxZoom, minZoom + speed * 0.0005f);
 			
 		camera.update();
 		spriteBatch.setProjectionMatrix(camera.combined);
+		
 	}
 }

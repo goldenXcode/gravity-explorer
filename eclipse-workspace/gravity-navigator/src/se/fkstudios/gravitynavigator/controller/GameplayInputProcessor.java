@@ -39,7 +39,27 @@ public class GameplayInputProcessor implements InputProcessor {
 		if (keycode == Input.Keys.D)
 			RenderOptions.getInstance().debugRender = ! RenderOptions.getInstance().debugRender;
 		
+	
+		
+		if (keycode == Input.Keys.A)
+			GameplayScreen.CURRENT_INSTANCE.zoomIn(); 
+		
+		if (keycode == Input.Keys.S)
+			GameplayScreen.CURRENT_INSTANCE.zoomOut(); 
+		
+		if (keycode == Input.Keys.C) {
+			int mode = GameplayScreen.CURRENT_INSTANCE.getCameraMode(); 
+			if (mode == (GameplayScreen.CAMERA_TIGHT))
+					GameplayScreen.CURRENT_INSTANCE.setCameraMode(GameplayScreen.CAMERA_LOOSE);
+			else 
+				GameplayScreen.CURRENT_INSTANCE.setCameraMode(GameplayScreen.CAMERA_TIGHT);
+			
+		System.out.println(mode); 	
+		}
+		
+		
 		return true;
+			
 	}
 
 	@Override
@@ -98,6 +118,7 @@ public class GameplayInputProcessor implements InputProcessor {
 	@Override
 	public boolean scrolled(int amount) {
 		// TODO Auto-generated method stub
+		GameplayScreen.CURRENT_INSTANCE.zoom(amount*0.1f); 
 		return false;
 	}
 }
