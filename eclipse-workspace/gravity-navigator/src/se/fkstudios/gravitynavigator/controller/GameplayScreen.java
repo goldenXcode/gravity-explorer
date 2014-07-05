@@ -106,7 +106,6 @@ public class GameplayScreen implements Screen {
 	public void render(float delta) {
 		updateModel(delta);
 		camera.updatePosition(delta, playerSpaceship.getPosition(), map.getWidth(), map.getHeight());
-		spriteBatch.setProjectionMatrix(camera.combined);	
 		realRender();
 	}
 	
@@ -126,6 +125,8 @@ public class GameplayScreen implements Screen {
 		Gdx.gl.glClearColor(0.1f, 0.1f,  0.1f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		        	
+		spriteBatch.setProjectionMatrix(camera.combined);
+		
 		mapRenderer.render(spriteBatch, map);
 		
 		Array<TextureMapObjectModel> textureMapObjects;
