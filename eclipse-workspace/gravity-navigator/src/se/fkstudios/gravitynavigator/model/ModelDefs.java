@@ -14,5 +14,8 @@ public final class ModelDefs {
 	public static Vector2 STARTING_VELOCITY = new Vector2(0,0);
 	
 	public static float GRAVITATIONAL_CONSTANT = 0.001f;
+	
+	public static float MAP_WIDTH = 20;
+	public static float MAP_HEIGHT = 20; 
 
 }
