@@ -1,5 +1,7 @@
 package se.fkstudios.gravitynavigator.model;
 
+import java.util.Arrays;
+
 import com.badlogic.gdx.math.Vector2;
 
 /** 
@@ -16,8 +18,14 @@ public class PhysicsEngine {
 		allMapObjects = mapObjectModels;
 	}
 	
+	
 	public static void setPeriodicMapModel(PeriodicMapModel map) {
 		periodicMap = map; 
+	}
+	
+	public static void flushAllObjects()  {
+		MapObjectModel newArray[] = {};
+		setMapObjects(newArray);
 	}
 	
 	/**
@@ -111,6 +119,17 @@ public class PhysicsEngine {
 		else 
 			return false; 
 		
+	}
+	
+	private static <T> T[] append(T[] arr, T element) {
+	    final int N = arr.length;
+	    arr = Arrays.copyOf(arr, N + 1);
+	    arr[N] = element;
+	    return arr;
+	}
+	
+	public static void add(MapObjectModel model) {
+		setMapObjects(append(allMapObjects,model)); 
 	}
 	
 	

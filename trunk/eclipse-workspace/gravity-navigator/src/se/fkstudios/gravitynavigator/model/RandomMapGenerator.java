@@ -11,13 +11,21 @@ public class RandomMapGenerator {
 	/*
 	 * Inputs  a PeriodicMapModel and generates a random map on it. 
 	 */
-	public static PeriodicMapModel generateMap(PeriodicMapModel map) {
-		return map; 
+	public static TextureMapObjectModel[] generateMapObjects(int numberOfObjects) {
+		// PhysicsEngine.flushAllObjects();
+		TextureMapObjectModel[] models = new TextureMapObjectModel[numberOfObjects];
+		for (int i = 0; i < numberOfObjects; i++) {
+			models[i] = generateAsteroid(2f);
+		}
+		return models; 
+	
+		
 	}
 	
 	public static TextureMapObjectModel generateAsteroid (float radius) {
 		int mass = (int) calculateMass(radius);
-		TextureMapObjectModel asteroid = new TextureMapObjectModel(new Vector2((float)randomInt(0,10), (float)randomInt(0,5)), radius, radius, 
+		TextureMapObjectModel asteroid = new TextureMapObjectModel(new Vector2((float)randomInt(0,(int) ModelDefs.MAP_WIDTH), 
+				(float)randomInt(0,(int) ModelDefs.MAP_HEIGHT)), radius, radius, 
 				new Vector2(0.2f, 0.0f), 0, mass, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_01);
 		// density of object = 1273 kg/m² 
 		return asteroid; 

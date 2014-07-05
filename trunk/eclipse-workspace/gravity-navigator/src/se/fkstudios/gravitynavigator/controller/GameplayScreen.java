@@ -1,6 +1,7 @@
 package se.fkstudios.gravitynavigator.controller;
 
 import se.fkstudios.gravitynavigator.ResourceDefs;
+import se.fkstudios.gravitynavigator.model.ModelDefs;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 import se.fkstudios.gravitynavigator.model.SpaceshipModel;
 import se.fkstudios.gravitynavigator.model.TextureMapObjectModel;
@@ -44,7 +45,7 @@ public class GameplayScreen implements Screen {
 	@Override
 	public void show() throws IllegalStateException {
 				
-	    map = new PeriodicMapModel(ResourceDefs.TEXTURE_NAMES[0], 50, 33);
+	    map = new PeriodicMapModel(ResourceDefs.TEXTURE_NAMES[0], ModelDefs.MAP_WIDTH, ModelDefs.MAP_HEIGHT);
 	    
 		playerSpaceship = map.getPlayerSpaceship();
 		Vector2 playerMapObjectPos = playerSpaceship.getPosition();
