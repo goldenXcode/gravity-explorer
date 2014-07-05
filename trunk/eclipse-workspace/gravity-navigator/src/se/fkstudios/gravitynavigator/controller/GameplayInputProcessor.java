@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 /**
  * Input processor for the gameplay screen. Receives input events from mouse, keyboard and touch screens and 
- * updates gameplay model accordingly.
+ * updates model and controller accordingly.
  * @author kristofer
  */
 public class GameplayInputProcessor implements InputProcessor {
@@ -17,7 +17,8 @@ public class GameplayInputProcessor implements InputProcessor {
 	private int startDragScreenX;
 	private int startDragScreenY;
 	private int lengthForFullThurst;
-	private SpaceshipModel playerSpaceship; 
+	private SpaceshipModel playerSpaceship;
+	private GameplayCamera camera;
 	
 	/**
 	 * Creates a GameplayInputProcesor for given SpaceshipObject and viewport.
@@ -26,8 +27,9 @@ public class GameplayInputProcessor implements InputProcessor {
 	 * @param screenWidth Screen width in pixels.
 	 * @param screenHeight Screen height in pixels.
 	 */
-	public GameplayInputProcessor(SpaceshipModel playerMapObject, int screenWidth, int screenHeight) {
+	public GameplayInputProcessor(SpaceshipModel playerMapObject, GameplayCamera camera, int screenWidth, int screenHeight) {
 		this.playerSpaceship = playerMapObject;
+		this.camera = camera;
 		startDragScreenX = -1;
 		startDragScreenY = -1;
 		lengthForFullThurst = Math.round(Math.min(screenWidth, screenHeight) / 2);
@@ -35,31 +37,24 @@ public class GameplayInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
-
-		if (keycode == Input.Keys.D)
+		
+		if (keycode == Input.Keys.D){
 			RenderOptions.getInstance().debugRender = ! RenderOptions.getInstance().debugRender;
-		
-	
-		
-		if (keycode == Input.Keys.A)
-			GameplayScreen.CURRENT_INSTANCE.zoomIn(); 
-		
-		if (keycode == Input.Keys.S)
-			GameplayScreen.CURRENT_INSTANCE.zoomOut(); 
-		
-		if (keycode == Input.Keys.C) {
-			int mode = GameplayScreen.CURRENT_INSTANCE.getCameraMode(); 
-			if (mode == (GameplayScreen.CAMERA_TIGHT))
-					GameplayScreen.CURRENT_INSTANCE.setCameraMode(GameplayScreen.CAMERA_LOOSE);
-			else 
-				GameplayScreen.CURRENT_INSTANCE.setCameraMode(GameplayScreen.CAMERA_TIGHT);
-			
-		System.out.println(mode); 	
 		}
-		
-		
-		return true;
-			
+		else if (keycode == Input.Keys.A) {
+			camera.zoomIn(); 
+		}
+		else if (keycode == Input.Keys.S) {
+			camera.zoomOut(); 
+		}
+		else if (keycode == Input.Keys.C) {
+			GameplayCamera.CameraMode mode =  camera.getCameraMode(); 
+			if (mode == (GameplayCamera.CameraMode.TIGHT))
+					camera.setCameraMode(GameplayCamera.CameraMode.LOOSE);
+			else 
+				camera.setCameraMode(GameplayCamera.CameraMode.TIGHT);
+		}
+		return true;	
 	}
 
 	@Override
@@ -117,8 +112,7 @@ public class GameplayInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
-		GameplayScreen.CURRENT_INSTANCE.zoom(amount*0.1f); 
+		camera.zoom(amount*0.1f); 
 		return false;
 	}
 }
