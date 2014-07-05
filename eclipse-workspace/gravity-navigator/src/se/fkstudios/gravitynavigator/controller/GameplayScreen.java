@@ -2,18 +2,16 @@ package se.fkstudios.gravitynavigator.controller;
 
 import se.fkstudios.gravitynavigator.ResourceDefs;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
-import se.fkstudios.gravitynavigator.model.TextureMapObjectModel;
 import se.fkstudios.gravitynavigator.model.SpaceshipModel;
+import se.fkstudios.gravitynavigator.model.TextureMapObjectModel;
 import se.fkstudios.gravitynavigator.view.PeriodicMapRenderer;
 import se.fkstudios.gravitynavigator.view.RenderDefs;
-import se.fkstudios.gravitynavigator.view.RenderOptions;
 import se.fkstudios.gravitynavigator.view.TextureMapObjectRenderer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
@@ -28,61 +26,30 @@ import com.badlogic.gdx.utils.Scaling;
  */
 public class GameplayScreen implements Screen {
 
-	//Model stuff
+	//Model
 	private PeriodicMapModel map;
 	private SpaceshipModel playerSpaceship;
 
-	//Controller stuff
+	//Controller
 	private InputProcessor inputProccessor;
 	
-	//Rendering stuff
-	private OrthographicCamera camera;
+	//Camera
+	private GameplayCamera camera;
+	
+	//Rendering
 	private SpriteBatch spriteBatch;
 	private PeriodicMapRenderer mapRenderer;
 	private TextureMapObjectRenderer textureMapObjectRenderer;
-	
-	// ad-hoc visibility-solution. The inputprocessor needs access to the camera. There might be a more correct solution. 
-	public static GameplayScreen CURRENT_INSTANCE; 
-	
-	public int cameraMode; 
-	public static int CAMERA_TIGHT = 0; 
-	public static int CAMERA_LOOSE = 1; 
-	
-	public void setCameraMode (int camMode) 
-	{
-		cameraMode = camMode; 
-	}
-	
-	public int getCameraMode () {
-		return cameraMode; 
-		
-	}
-	
-	public void zoomIn()
-	{
-	    camera.zoom += -0.1f;
-	}
-	
-	public void zoomOut() 
-	{
-		camera.zoom += 0.1f; 
-	}
-	
-	public void zoom (float amount) {
-		camera.zoom += (amount); 
-		
-	}
+
 	@Override
 	public void show() throws IllegalStateException {
-		
-		setCameraMode(CAMERA_LOOSE); 
-	    
-		map = new PeriodicMapModel(ResourceDefs.TEXTURE_NAMES[0], 10, 5);
+				
+	    map = new PeriodicMapModel(ResourceDefs.TEXTURE_NAMES[0], 50, 33);
 	    
 		playerSpaceship = map.getPlayerSpaceship();
 		Vector2 playerMapObjectPos = playerSpaceship.getPosition();
 
-		camera = new OrthographicCamera(
+		camera = new GameplayCamera(
 				RenderDefs.VIEWPORT_WIDTH, 
 				RenderDefs.VIEWPORT_HEIGHT);
 	    
@@ -97,20 +64,23 @@ public class GameplayScreen implements Screen {
 		int screenHeight = Gdx.graphics.getHeight();
 		
 	    //remark: we used different input controllers for different devices but not anymore. 
-		//Keep if we want to change this /kristofer
+		//We keep the code if we want to change this back /kristofer
 	    switch(Gdx.app.getType()) {
 		    case Android:
 		    	inputProccessor = new GameplayInputProcessor(playerSpaceship, 
+		    			camera,
 		    			screenWidth, 
 		    			screenHeight);
 		    	break;
 		    case iOS:
 		    	inputProccessor = new GameplayInputProcessor(playerSpaceship, 
+		    			camera,
 		    			screenWidth, 
 		    			screenHeight);
 		    	break;
 		    case Desktop:
 		    	inputProccessor = new GameplayInputProcessor(playerSpaceship, 
+		    			camera,
 		    			screenWidth, 
 		    			screenHeight);
 		    	break;
@@ -125,7 +95,6 @@ public class GameplayScreen implements Screen {
 	    mapRenderer = new PeriodicMapRenderer();
 	    textureMapObjectRenderer = new TextureMapObjectRenderer(new ShapeRenderer(), spriteBatch,
 	    		map.getWidth(), map.getHeight(), camera.viewportWidth, camera.viewportHeight);
-	    CURRENT_INSTANCE = this; 
 	}
 
 	/*
@@ -136,7 +105,8 @@ public class GameplayScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		updateModel(delta);
-		updateCameraPosition( delta);		
+		camera.updatePosition(delta, playerSpaceship.getPosition(), map.getWidth(), map.getHeight());
+		spriteBatch.setProjectionMatrix(camera.combined);	
 		realRender();
 	}
 	
@@ -202,58 +172,5 @@ public class GameplayScreen implements Screen {
 	@Override
 	public void dispose() {
 		Gdx.input.setInputProcessor(null);
-	}
-	
-	/**
-	 * Update camera's position and zoom based on spaceship's (player's) position and speed.
-	 */
-	private void updateCameraPosition(float delta) {	
-		
-	
-		//update position
-		Vector2 targetPosition = playerSpaceship.getPosition().cpy().scl(RenderDefs.PIXELS_PER_UNIT);
-		Vector2 cameraPosition = new Vector2(camera.position.x, camera.position.y);
-		 
-		float jumpThresholdX = map.getWidth() * RenderDefs.PIXELS_PER_UNIT * 0.5f;
-		float jumpThresholdY = map.getHeight() * RenderDefs.PIXELS_PER_UNIT * 0.5f;
-		
-		boolean jumpLeft = cameraPosition.x - targetPosition.x < -jumpThresholdX;
-		boolean jumpRight = targetPosition.x - cameraPosition.x < -jumpThresholdX;
-		boolean jumpUp = targetPosition.y - cameraPosition.y < -jumpThresholdY; 
-		boolean jumpDown = cameraPosition.y - targetPosition.y < -jumpThresholdY;
-		
-		if (jumpLeft) 
-			cameraPosition.x = cameraPosition.x + map.getWidth() * RenderDefs.PIXELS_PER_UNIT;
-		else if (jumpRight)
-			cameraPosition.x = cameraPosition.x - map.getWidth() * RenderDefs.PIXELS_PER_UNIT;
-		else if (jumpUp)
-			cameraPosition.y = cameraPosition.y - map.getHeight() * RenderDefs.PIXELS_PER_UNIT;
-		else if (jumpDown)
-			cameraPosition.y = cameraPosition.y + map.getHeight() * RenderDefs.PIXELS_PER_UNIT;
-		
-		
-	
-			cameraPosition.lerp(targetPosition, delta);
-			
-			if (cameraMode == CAMERA_LOOSE) {
-				camera.position.set(
-				cameraPosition.x, 
-				cameraPosition.y,
-				0);
-			}
-			else {
-				camera.position.set(targetPosition.x,targetPosition.y,0);
-				
-			}
-		
-		//update zoom
-		//float speed = playerSpaceship.getVelocity().len();
-		//float maxZoom = 2;
-		//float minZoom = 1;
-		//camera.zoom = Math.min(maxZoom, minZoom + speed * 0.0005f);
-			
-		camera.update();
-		spriteBatch.setProjectionMatrix(camera.combined);
-		
 	}
 }
