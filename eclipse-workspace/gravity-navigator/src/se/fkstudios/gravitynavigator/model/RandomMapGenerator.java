@@ -15,13 +15,16 @@ public class RandomMapGenerator {
 		// PhysicsEngine.flushAllObjects();
 		TextureMapObjectModel[] models = new TextureMapObjectModel[numberOfObjects];
 		for (int i = 0; i < numberOfObjects; i++) {
-			models[i] = generateAsteroid(2f);
+			MapObjectModel asteroid = generateAsteroid(2f);
+			asteroid.setRotationalSpeed(randomFloat((-1f)*ModelDefs.MAX_ROTATIONAL_VELOCITY,ModelDefs.MAX_ROTATIONAL_VELOCITY));
+			models[i] = (TextureMapObjectModel) asteroid; 
 		}
 		return models; 
 	
 		
 	}
-	
+
+
 	public static TextureMapObjectModel generateAsteroid (float radius) {
 		int mass = (int) calculateMass(radius);
 		TextureMapObjectModel asteroid = new TextureMapObjectModel(new Vector2((float)randomInt(0,(int) ModelDefs.MAP_WIDTH), 
@@ -31,9 +34,6 @@ public class RandomMapGenerator {
 		return asteroid; 
 	}
 	
-//	public static MapObjectModel generatePlanet () {
-//		
-//	}
 	
 	
 	
@@ -62,6 +62,10 @@ public class RandomMapGenerator {
 
 	    return randomNum;
 	}
+	
+	private static float  randomFloat(float min, float max) {
+		  return (float) (Math.random() * (max-min) + min);
+		}
 	
 	
 	

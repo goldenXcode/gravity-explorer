@@ -83,17 +83,17 @@ public class PeriodicMapModel extends Map {
 
 //		TextureMapObjectModel asterioid1 = new TextureMapObjectModel(new Vector2(4.5f, 4.5f), 0.5f, 0.5f, 
 //				new Vector2(0.2f, 0.0f), 0, 1000, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_01);
-		TextureMapObjectModel asterioid1 = RandomMapGenerator.generateAsteroid(2f);
+		//TextureMapObjectModel asterioid1 = RandomMapGenerator.generateAsteroid(2f);
 //		TextureMapObjectModel asterioid2 = new TextureMapObjectModel(new Vector2(2, 1), 0.33f, 0.5f, 
 //				new Vector2(0.01f, -0.4f), 0, 10, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_02);
 //		TextureMapObjectModel asterioid3 = RandomMapGenerator.generateAsteroid(1f);
-		TextureMapObjectModel[] asteroids = RandomMapGenerator.generateMapObjects(1);
+		TextureMapObjectModel[] asteroids = RandomMapGenerator.generateMapObjects(ModelDefs.NUMBER_OF_ASTEROIDS);
 		
 		MapObjects gamplayMapObjects = gameplayLayer.getObjects();
 		gamplayMapObjects.add(playerSpaceship);
 		//gamplayMapObjects.add(asterioid1);
 		//gamplayMapObjects.add(asterioid2);
-		asterioid1.setRotationalSpeed(50f);
+		//asterioid1.setRotationalSpeed(50f);
 		//asterioid2.setRotationalSpeed(-20f);
 		//MapObjectModel[] mapObjects = { playerSpaceship, asterioid1};
 		PhysicsEngine.setMapObjects(asteroids);

@@ -17,5 +17,9 @@ public final class ModelDefs {
 	
 	public static float MAP_WIDTH = 20;
 	public static float MAP_HEIGHT = 20; 
-
+	
+	public static int NUMBER_OF_ASTEROIDS = 1; 
+	
+	public static float MAX_ROTATIONAL_VELOCITY = 20; 
+	public static float MIN_ROTATIONAL_VELOCITY = 0; 
 }
