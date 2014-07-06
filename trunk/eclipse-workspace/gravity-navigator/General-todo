@@ -1,0 +1,5 @@
+- Hitta felet med den failande gravitationen. (testa den alternativa periodicitetsvarianten) 
+- Implementera funktion för att beräkna orbital velocity för ett föremål. 
+- Fixa justerbar scrollspeed. 
+- Fixa renderingen så att den funkar med zoom 
+- fixa så att skeppet kan ses efter lång utscrollning ( typ en cirkel eller whatever) 
