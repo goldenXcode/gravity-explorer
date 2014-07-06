@@ -42,13 +42,22 @@ public class RandomMapGenerator {
 		return asteroid; 
 	}
 	
+	public static PlanetarySystemComponent generateLinearPlanetarySystem (int depth) {
+		PlanetarySystemComponent topNode = (PlanetarySystemComponent) generatePlanet(10); 
+		return topNode; 
+	}
+	
 	public static TextureMapObjectModel generateOrbitingAsteroid(float distance, TextureMapObjectModel planet, float radius) {
 		int mass = (int) calculateMass(radius);
 		Vector2 planetPosition = planet.getPosition();
-		Vector2 asteroidPosition = new Vector2(planetPosition.x, planetPosition.y - distance);
 		float asteroidSpeed = calculateOrbitingVelocity(distance, planet.getMass());
+		float rotation = randomFloat(0,360);
+		Vector2 displacementVector = new Vector2(0,-distance).rotate(rotation);
+		Vector2 asteroidPosition = new Vector2(planetPosition.x, planetPosition.y).add(displacementVector);
+		Vector2 asteroidVelocity = new Vector2((-1f)*asteroidSpeed, 0.0f).rotate(rotation);
+
 		TextureMapObjectModel asteroid = new TextureMapObjectModel(asteroidPosition, radius, radius, 
-				new Vector2((-1f)*asteroidSpeed, 0.0f), 0, mass, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_01);
+				asteroidVelocity, 0, mass, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_01);
 		// density of object = 1273 kg/m² 
 		return asteroid; 
 		
@@ -62,7 +71,7 @@ public class RandomMapGenerator {
 	
 	
 	/*
-	 * Assumes homogenous mass distribution and calculates a (circular) objects mass given it's radius.  
+	 * Assumes homogeneous mass distribution and calculates a (circular) objects mass given it's radius.  
 	 */
 	private static float calculateMass(float radius) {
 
