@@ -4,4 +4,6 @@
 - Fixa renderingen så att den funkar med zoom 
 - fixa så att skeppet kan ses efter lång utscrollning ( typ en cirkel eller whatever) 
 - fixa rundare texturer
-- hitta felet med kollisionsdetektionen
+- hitta felet med kollisionsdetektionen - done 
+- fixa planetär trädstruktur. 
+- fixa rotation i RandomMapGenerator. 
