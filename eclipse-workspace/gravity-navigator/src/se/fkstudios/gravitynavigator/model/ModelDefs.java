@@ -22,4 +22,8 @@ public final class ModelDefs {
 	
 	public static float MAX_ROTATIONAL_VELOCITY = 20; 
 	public static float MIN_ROTATIONAL_VELOCITY = 0; 
+	
+	public static float SCROLLING_SPEED_MODIFIER = 5; 
+	
+	public static int MAX_THRUST = 3; 
 }
