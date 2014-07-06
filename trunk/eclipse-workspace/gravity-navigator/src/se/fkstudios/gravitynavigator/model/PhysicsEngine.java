@@ -114,11 +114,13 @@ public class PhysicsEngine {
 		float width1 = mapObject1.getWidth(); 
 		float width2 = mapObject2.getWidth(); 
 		float distance = shortestDistance(position1, position2).len();
-		if (distance < width1 + width2)
+		if ((distance < width1/2 + width2/2 ) && distance > 0.1f) {
+			System.out.println(" width1: " + width1 + " width2: " + width2 + " distance: " + distance);
 			return true; 
-		else 
+		}
+		else { 
 			return false; 
-		
+		}
 	}
 	
 	private static <T> T[] append(T[] arr, T element) {

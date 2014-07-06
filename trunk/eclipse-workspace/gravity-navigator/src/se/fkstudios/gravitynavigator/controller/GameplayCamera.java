@@ -1,5 +1,6 @@
 package se.fkstudios.gravitynavigator.controller;
 
+import se.fkstudios.gravitynavigator.model.ModelDefs;
 import se.fkstudios.gravitynavigator.view.RenderDefs;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -38,7 +39,7 @@ public class GameplayCamera extends OrthographicCamera {
 	}
 	
 	public void zoom (float amount) {
-		zoom += amount; 	
+		zoom += amount*ModelDefs.SCROLLING_SPEED_MODIFIER; 	
 	}
 
 	/**
