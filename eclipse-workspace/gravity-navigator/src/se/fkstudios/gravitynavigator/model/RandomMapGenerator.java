@@ -34,6 +34,30 @@ public class RandomMapGenerator {
 		return asteroid; 
 	}
 	
+	public static TextureMapObjectModel generatePlanet (float radius) {
+		int mass = (int) calculateMass(radius);
+		TextureMapObjectModel asteroid = new TextureMapObjectModel(centreOfUniverse(), radius, radius, 
+				new Vector2(0.2f, 0.0f), 0, mass, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_01);
+		// density of object = 1273 kg/m² 
+		return asteroid; 
+	}
+	
+	public static TextureMapObjectModel generateOrbitingAsteroid(float distance, TextureMapObjectModel planet, float radius) {
+		int mass = (int) calculateMass(radius);
+		Vector2 planetPosition = planet.getPosition();
+		Vector2 asteroidPosition = new Vector2(planetPosition.x, planetPosition.y - distance);
+		float asteroidSpeed = calculateOrbitingVelocity(distance, planet.getMass());
+		TextureMapObjectModel asteroid = new TextureMapObjectModel(asteroidPosition, radius, radius, 
+				new Vector2((-1f)*asteroidSpeed, 0.0f), 0, mass, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_01);
+		// density of object = 1273 kg/m² 
+		return asteroid; 
+		
+	}
+	
+	private static Vector2 centreOfUniverse()  {
+		return new Vector2(ModelDefs.MAP_WIDTH/2,ModelDefs.MAP_HEIGHT/2); 
+	}
+	
 	
 	
 	
@@ -66,6 +90,12 @@ public class RandomMapGenerator {
 	private static float  randomFloat(float min, float max) {
 		  return (float) (Math.random() * (max-min) + min);
 		}
+	
+	private static float calculateOrbitingVelocity(float distance, float planetMass) {
+		return (float) Math.sqrt(ModelDefs.GRAVITATIONAL_CONSTANT*planetMass/distance);
+	}
+	
+
 	
 	
 	
