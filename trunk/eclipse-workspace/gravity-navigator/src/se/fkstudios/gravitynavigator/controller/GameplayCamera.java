@@ -1,7 +1,6 @@
 package se.fkstudios.gravitynavigator.controller;
 
-import se.fkstudios.gravitynavigator.model.ModelDefs;
-import se.fkstudios.gravitynavigator.view.RenderDefs;
+import se.fkstudios.gravitynavigator.Defs;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
@@ -47,7 +46,7 @@ public class GameplayCamera extends OrthographicCamera {
 	}
 	
 	public void zoom (float amount) {
-		zoom += amount * ModelDefs.SCROLLING_SPEED_MODIFIER; 	
+		zoom += amount * Defs.SCROLLING_SPEED_MODIFIER; 	
 	}
 
 	/**
@@ -67,11 +66,11 @@ public class GameplayCamera extends OrthographicCamera {
 	 */
 	public void updatePosition(float delta, Vector2 targetPosition, float mapWidth, float mapHeight) {	
 		//update position
-		Vector2 targetScreenPosition = targetPosition.cpy().scl(RenderDefs.PIXELS_PER_UNIT);
+		Vector2 targetScreenPosition = targetPosition.cpy().scl(Defs.PIXELS_PER_UNIT);
 		Vector2 cameraPosition = new Vector2(position.x, position.y);
 		 
-		float jumpThresholdX = mapWidth * RenderDefs.PIXELS_PER_UNIT * 0.5f;
-		float jumpThresholdY = mapHeight * RenderDefs.PIXELS_PER_UNIT * 0.5f;
+		float jumpThresholdX = mapWidth * Defs.PIXELS_PER_UNIT * 0.5f;
+		float jumpThresholdY = mapHeight * Defs.PIXELS_PER_UNIT * 0.5f;
 		
 		boolean jumpLeft = cameraPosition.x - targetScreenPosition.x < -jumpThresholdX;
 		boolean jumpRight = targetScreenPosition.x - cameraPosition.x < -jumpThresholdX;
@@ -79,13 +78,13 @@ public class GameplayCamera extends OrthographicCamera {
 		boolean jumpDown = cameraPosition.y - targetScreenPosition.y < -jumpThresholdY;
 		
 		if (jumpLeft) 
-			cameraPosition.x = cameraPosition.x + mapWidth * RenderDefs.PIXELS_PER_UNIT;
+			cameraPosition.x = cameraPosition.x + mapWidth * Defs.PIXELS_PER_UNIT;
 		else if (jumpRight)
-			cameraPosition.x = cameraPosition.x - mapWidth * RenderDefs.PIXELS_PER_UNIT;
+			cameraPosition.x = cameraPosition.x - mapWidth * Defs.PIXELS_PER_UNIT;
 		else if (jumpUp)
-			cameraPosition.y = cameraPosition.y - mapHeight * RenderDefs.PIXELS_PER_UNIT;
+			cameraPosition.y = cameraPosition.y - mapHeight * Defs.PIXELS_PER_UNIT;
 		else if (jumpDown)
-			cameraPosition.y = cameraPosition.y + mapHeight * RenderDefs.PIXELS_PER_UNIT;
+			cameraPosition.y = cameraPosition.y + mapHeight * Defs.PIXELS_PER_UNIT;
 		
 		cameraPosition.lerp(targetScreenPosition, delta);
 			

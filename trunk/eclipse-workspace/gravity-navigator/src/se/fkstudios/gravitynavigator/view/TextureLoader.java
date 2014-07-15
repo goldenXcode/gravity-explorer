@@ -2,7 +2,7 @@ package se.fkstudios.gravitynavigator.view;
 
 import java.util.HashMap;
 
-import se.fkstudios.gravitynavigator.ResourceDefs;
+import se.fkstudios.gravitynavigator.Defs;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -25,13 +25,13 @@ public class TextureLoader {
 	
 	private TextureLoader() {
 		
-		textureAtlas = new TextureAtlas(Gdx.files.internal(ResourceDefs.TEXTURE_PACK_FILE_PATH));
+		textureAtlas = new TextureAtlas(Gdx.files.internal(Defs.TEXTURE_PACK_FILE_PATH));
 		
-		textureMapper = new HashMap<>(ResourceDefs.TEXTURE_FILE_PATHS.length);
-		for (int i = 0; i < ResourceDefs.TEXTURE_FILE_PATHS.length; i++) {
+		textureMapper = new HashMap<>(Defs.TEXTURE_FILE_PATHS.length);
+		for (int i = 0; i < Defs.TEXTURE_FILE_PATHS.length; i++) {
 
-			String name = ResourceDefs.TEXTURE_NAMES[i];
-			String path = ResourceDefs.TEXTURE_FILE_PATHS[i];
+			String name = Defs.TEXTURE_NAMES[i];
+			String path = Defs.TEXTURE_FILE_PATHS[i];
 			Texture texture = new Texture(Gdx.files.internal(path));
 			textureMapper.put(name, texture);
 		}

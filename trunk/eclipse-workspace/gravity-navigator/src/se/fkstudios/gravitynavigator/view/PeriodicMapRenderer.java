@@ -1,74 +1,72 @@
 package se.fkstudios.gravitynavigator.view;
 
+import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 
-public class PeriodicMapRenderer extends Renderer {
-	
+public class PeriodicMapRenderer {
+
 	/** debug rendering **/
 	private ShapeRenderer debugRenderer;
-	
+
 	/**
 	 * Renders a ContinouosMap using a SpriteBatch.
-	 * @param spriteBatch The spritebatch used to draw textures.
-	 * @param map the map to render.
+	 * 
+	 * @param spriteBatch
+	 *            The spritebatch used to draw textures.
+	 * @param map
+	 *            the map to render.
 	 */
 	public void render(SpriteBatch spriteBatch, PeriodicMapModel map) {
-//		spriteBatch.begin();
-//		
-//		Texture backgroundTexture = TextureLoader.getInstance().getTexture(map.getFilePathBackgroundImage1());
-//		float bakTexDrawWidth = map.getWidth();
-//		float bakTexDrawHeight = map.getHeight();
-//		
-//		spriteBatch.draw(backgroundTexture, 
-//				0.0f, 
-//				0.0f, 
-//				bakTexDrawWidth * RenderDefs.PIXELS_PER_UNIT, 
-//				bakTexDrawHeight * RenderDefs.PIXELS_PER_UNIT);
-//		
-//		spriteBatch.end();
-		
+		// spriteBatch.begin();
+		//
+		// Texture backgroundTexture =
+		// TextureLoader.getInstance().getTexture(map.getFilePathBackgroundImage1());
+		// float bakTexDrawWidth = map.getWidth();
+		// float bakTexDrawHeight = map.getHeight();
+		//
+		// spriteBatch.draw(backgroundTexture,
+		// 0.0f,
+		// 0.0f,
+		// bakTexDrawWidth * Defs.PIXELS_PER_UNIT,
+		// bakTexDrawHeight * Defs.PIXELS_PER_UNIT);
+		//
+		// spriteBatch.end();
+
 		if (RenderOptions.getInstance().debugRender)
 			debugRender(spriteBatch.getProjectionMatrix(), map);
 	}
-	
+
 	private void debugRender(Matrix4 projectionMatrix, PeriodicMapModel map) {
-		
-		// not optimal to create debugRenderer here. However, we don't want to create it if never used.
+
+		// not optimal to create debugRenderer here. However, we don't want to
+		// create it if never used.
 		if (debugRenderer == null)
 			debugRenderer = new ShapeRenderer();
-		
+
 		debugRenderer.setProjectionMatrix(projectionMatrix);
 		debugRenderer.begin(ShapeType.Line);
-		debugRenderer.setColor(RenderDefs.MAP_BORDER_COLOR);
-		
-		debugRenderer.rect(
-				0, 
-				0, 
-				map.getWidth() * RenderDefs.PIXELS_PER_UNIT, 
-				map.getHeight() * RenderDefs.PIXELS_PER_UNIT);
+		debugRenderer.setColor(Defs.MAP_BORDER_COLOR);
 
-		for (int i = 0; i < (int)map.getWidth(); i+= RenderDefs.UNIT_PER_DEBUG_LINE) {
-			debugRenderer.line(
-					i * RenderDefs.PIXELS_PER_UNIT, 
-					0, 
-					i * RenderDefs.PIXELS_PER_UNIT, 
-					(int)map.getHeight() * RenderDefs.PIXELS_PER_UNIT);
+		debugRenderer.rect(0, 0, map.getWidth() * Defs.PIXELS_PER_UNIT,
+				map.getHeight() * Defs.PIXELS_PER_UNIT);
+
+		for (int i = 0; i < (int) map.getWidth(); i += Defs.UNIT_PER_DEBUG_LINE) {
+			debugRenderer.line(i * Defs.PIXELS_PER_UNIT, 0, i
+					* Defs.PIXELS_PER_UNIT, (int) map.getHeight()
+					* Defs.PIXELS_PER_UNIT);
 		}
-		
-		for (int i = 0; i < (int)map.getHeight(); i+= RenderDefs.UNIT_PER_DEBUG_LINE) {
-			debugRenderer.line(
-					0, 
-					i * RenderDefs.PIXELS_PER_UNIT, 
-					(int)map.getWidth() * RenderDefs.PIXELS_PER_UNIT, 
-					i * RenderDefs.PIXELS_PER_UNIT);
+
+		for (int i = 0; i < (int) map.getHeight(); i += Defs.UNIT_PER_DEBUG_LINE) {
+			debugRenderer.line(0, i * Defs.PIXELS_PER_UNIT,
+					(int) map.getWidth() * Defs.PIXELS_PER_UNIT, i
+							* Defs.PIXELS_PER_UNIT);
 		}
-		
+
 		debugRenderer.end();
 	}
 }

@@ -2,6 +2,8 @@ package se.fkstudios.gravitynavigator.model;
 
 import java.util.Arrays;
 
+import se.fkstudios.gravitynavigator.Defs;
+
 import com.badlogic.gdx.math.Vector2;
 
 /** 
@@ -64,7 +66,7 @@ public class PhysicsEngine {
 
 		float force;
 		if (distance.len() > cutoff) { // cutoff to prevent singularities arising from zero distance between objects
-			force = ( ModelDefs.GRAVITATIONAL_CONSTANT * mass1 * mass2 ) / (distance.len()*distance.len()); // Newtons law of gravity
+			force = ( Defs.GRAVITATIONAL_CONSTANT * mass1 * mass2 ) / (distance.len()*distance.len()); // Newtons law of gravity
 		}
 		else {
 			force = 0;
