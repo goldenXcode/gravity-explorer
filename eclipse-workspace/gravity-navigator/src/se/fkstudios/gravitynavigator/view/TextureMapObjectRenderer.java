@@ -1,5 +1,6 @@
 package se.fkstudios.gravitynavigator.view;
 
+import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.TextureMapObjectModel;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,13 +10,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 /**
  * Renders SimpleMapObjects.
  * @author kristofer
  */
-public class TextureMapObjectRenderer extends Renderer {
+public class TextureMapObjectRenderer {
 
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch spriteBatch;
@@ -29,23 +29,23 @@ public class TextureMapObjectRenderer extends Renderer {
 		
 		this.shapeRenderer = shapeRenderer;
 		this.spriteBatch = spriteBatch;
-		this.mapScreenWidth = mapWidth * RenderDefs.PIXELS_PER_UNIT;
-		this.mapScreenHeight = mapHeight * RenderDefs.PIXELS_PER_UNIT;
+		this.mapScreenWidth = mapWidth * Defs.PIXELS_PER_UNIT;
+		this.mapScreenHeight = mapHeight * Defs.PIXELS_PER_UNIT;
 	}
 	
 	public void render(TextureMapObjectModel mapObject, Rectangle viewport) {
 		
-		float textureOriginX = (mapObject.getWidth() / 2) * RenderDefs.PIXELS_PER_UNIT;
-		float textureOriginY = (mapObject.getHeight() / 2) * RenderDefs.PIXELS_PER_UNIT;
+		float textureOriginX = (mapObject.getWidth() / 2) * Defs.PIXELS_PER_UNIT;
+		float textureOriginY = (mapObject.getHeight() / 2) * Defs.PIXELS_PER_UNIT;
 		
-		float textureWidth = mapObject.getWidth() * RenderDefs.PIXELS_PER_UNIT;
-		float textureHeight = mapObject.getHeight() * RenderDefs.PIXELS_PER_UNIT;
+		float textureWidth = mapObject.getWidth() * Defs.PIXELS_PER_UNIT;
+		float textureHeight = mapObject.getHeight() * Defs.PIXELS_PER_UNIT;
 
 		//since position is the middle of the object but we render the texture from the bottom left corner. 
 		float offsetX = mapObject.getWidth() * 0.5f;
 		float offsetY = mapObject.getHeight() * 0.5f;
-		float mapObjectScreenPositionX = (mapObject.getPosition().x - offsetX) * RenderDefs.PIXELS_PER_UNIT;  
-		float mapObjectScreenPositionY = (mapObject.getPosition().y - offsetY) * RenderDefs.PIXELS_PER_UNIT;
+		float mapObjectScreenPositionX = (mapObject.getPosition().x - offsetX) * Defs.PIXELS_PER_UNIT;  
+		float mapObjectScreenPositionY = (mapObject.getPosition().y - offsetY) * Defs.PIXELS_PER_UNIT;
 		
 		TextureRegion textureRegion = TextureLoader.getInstance().getTextureRegion(mapObject.getTextureName());
 
@@ -187,17 +187,17 @@ public class TextureMapObjectRenderer extends Renderer {
 			
 		shapeRenderer.begin(ShapeType.Line);
 		
-		shapeRenderer.setColor(RenderDefs.MAP_OBJECT_BORDER_COLOR);
+		shapeRenderer.setColor(Defs.MAP_OBJECT_BORDER_COLOR);
 		shapeRenderer.rect(
-				(position.x - mapObjectOffsetX) * RenderDefs.PIXELS_PER_UNIT, 
-				(position.y - mapObjectOffsetY) * RenderDefs.PIXELS_PER_UNIT, 
-				mapObject.getWidth() * RenderDefs.PIXELS_PER_UNIT, 
-				mapObject.getHeight() * RenderDefs.PIXELS_PER_UNIT);	
+				(position.x - mapObjectOffsetX) * Defs.PIXELS_PER_UNIT, 
+				(position.y - mapObjectOffsetY) * Defs.PIXELS_PER_UNIT, 
+				mapObject.getWidth() * Defs.PIXELS_PER_UNIT, 
+				mapObject.getHeight() * Defs.PIXELS_PER_UNIT);	
 		
-		shapeRenderer.setColor(RenderDefs.MAP_OBJECT_CENTER_MARKER_COLOR);
+		shapeRenderer.setColor(Defs.MAP_OBJECT_CENTER_MARKER_COLOR);
 		shapeRenderer.rect(
-				position.x * RenderDefs.PIXELS_PER_UNIT - 1, 
-				position.y * RenderDefs.PIXELS_PER_UNIT - 1, 
+				position.x * Defs.PIXELS_PER_UNIT - 1, 
+				position.y * Defs.PIXELS_PER_UNIT - 1, 
 				3, 
 				3);	
 		

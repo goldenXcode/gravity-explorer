@@ -1,12 +1,10 @@
 package se.fkstudios.gravitynavigator.controller;
 
-import se.fkstudios.gravitynavigator.ResourceDefs;
-import se.fkstudios.gravitynavigator.model.ModelDefs;
+import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 import se.fkstudios.gravitynavigator.model.SpaceshipModel;
 import se.fkstudios.gravitynavigator.model.TextureMapObjectModel;
 import se.fkstudios.gravitynavigator.view.PeriodicMapRenderer;
-import se.fkstudios.gravitynavigator.view.RenderDefs;
 import se.fkstudios.gravitynavigator.view.TextureMapObjectRenderer;
 
 import com.badlogic.gdx.Gdx;
@@ -45,18 +43,18 @@ public class GameplayScreen implements Screen {
 	@Override
 	public void show() throws IllegalStateException {
 				
-	    map = new PeriodicMapModel(ResourceDefs.TEXTURE_NAMES[0], ModelDefs.MAP_WIDTH, ModelDefs.MAP_HEIGHT);
+	    map = new PeriodicMapModel(Defs.TEXTURE_NAMES[0], Defs.MAP_WIDTH, Defs.MAP_HEIGHT);
 	    
 		playerSpaceship = map.getPlayerSpaceship();
 		Vector2 playerMapObjectPos = playerSpaceship.getPosition();
 
 		camera = new GameplayCamera(
-				RenderDefs.VIEWPORT_WIDTH, 
-				RenderDefs.VIEWPORT_HEIGHT);
+				Defs.VIEWPORT_WIDTH, 
+				Defs.VIEWPORT_HEIGHT);
 	    
 		camera.position.set(
-				playerMapObjectPos.x * RenderDefs.PIXELS_PER_UNIT, 
-				playerMapObjectPos.y * RenderDefs.PIXELS_PER_UNIT, 
+				playerMapObjectPos.x * Defs.PIXELS_PER_UNIT, 
+				playerMapObjectPos.y * Defs.PIXELS_PER_UNIT, 
 				0.0f);
 		
 	    camera.update();

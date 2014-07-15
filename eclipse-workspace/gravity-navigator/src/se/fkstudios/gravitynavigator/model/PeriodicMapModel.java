@@ -1,6 +1,6 @@
 package se.fkstudios.gravitynavigator.model;
 
-import se.fkstudios.gravitynavigator.ResourceDefs;
+import se.fkstudios.gravitynavigator.Defs;
 
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapLayer;
@@ -70,21 +70,21 @@ public class PeriodicMapModel extends Map {
 		// TODO: specify a XML format for model map's start conditions. 
 		// Preferably also create a map editor to create these.
 		// Note: I'm thinking ModelDefs could contain the XML-parser. 
-		Vector2 position = ModelDefs.STARTING_POSITION;
-		Vector2 velocity = ModelDefs.STARTING_VELOCITY; 
+		Vector2 position = Defs.STARTING_POSITION;
+		Vector2 velocity = Defs.STARTING_VELOCITY; 
 		playerSpaceship = new SpaceshipModel(position, 
 				0.1f, 
 				0.1f, 
 				velocity, 
 				0, 
 				1, 
-				ResourceDefs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER, 
-				ModelDefs.MAX_THRUST);
+				Defs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER, 
+				Defs.MAX_THRUST);
 
 
 //		TextureMapObjectModel asterioid2 = new TextureMapObjectModel(new Vector2(2, 1), 0.33f, 0.5f, 
 //				new Vector2(0.01f, -0.4f), 0, 10, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_02);
-		TextureMapObjectModel[] asteroids = RandomMapGenerator.generateMapObjects(ModelDefs.NUMBER_OF_ASTEROIDS);
+		TextureMapObjectModel[] asteroids = RandomMapGenerator.generateMapObjects(Defs.NUMBER_OF_ASTEROIDS);
 		
 		MapObjects gamplayMapObjects = gameplayLayer.getObjects();
 		
