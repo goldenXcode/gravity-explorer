@@ -1,5 +1,8 @@
 package se.fkstudios.gravitynavigator.controller;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
 import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 import se.fkstudios.gravitynavigator.model.SpaceshipModel;
@@ -104,6 +107,7 @@ public class GameplayScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		updateModel(delta);
+		mapRenderer.setText("Running in " + Float.toString(round(1/delta,2)) + " FPS");
 		camera.updatePosition(delta, playerSpaceship.getPosition(), map.getWidth(), map.getHeight());
 		camera.update();
 		realRender();
@@ -111,7 +115,7 @@ public class GameplayScreen implements Screen {
 	
 	/** 
 	 * Updates model state.
-	 * @param delta The time in seconds since the last call to updateGameState. 
+	 * @param delta The time in sedconds since the last call to updateGameState. 
 	 */
 	private void updateModel(float delta) {
 		map.update(delta);
@@ -174,4 +178,10 @@ public class GameplayScreen implements Screen {
 	public void dispose() {
 		Gdx.input.setInputProcessor(null);
 	}
+	
+    private float round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
+    }
 }

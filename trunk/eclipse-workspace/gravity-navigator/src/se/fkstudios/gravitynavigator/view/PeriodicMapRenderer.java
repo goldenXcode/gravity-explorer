@@ -3,12 +3,28 @@ package se.fkstudios.gravitynavigator.view;
 import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 
+
+
+
 public class PeriodicMapRenderer {
+	
+	private String consoleText; 
+	
+	public void setText(String text ) {
+		consoleText = text; 
+		
+	}
+	
+	public PeriodicMapRenderer() {
+		setText("Welcome!");
+		
+	}
 
 	/** debug rendering **/
 	private ShapeRenderer debugRenderer;
@@ -39,6 +55,7 @@ public class PeriodicMapRenderer {
 
 		if (RenderOptions.getInstance().debugRender)
 			debugRender(spriteBatch.getProjectionMatrix(), map);
+		drawConsole(map, spriteBatch, consoleText);
 	}
 
 	private void debugRender(Matrix4 projectionMatrix, PeriodicMapModel map) {
@@ -68,5 +85,17 @@ public class PeriodicMapRenderer {
 		}
 
 		debugRenderer.end();
+	}
+	
+	private void drawConsole( PeriodicMapModel map, SpriteBatch spriteBatch, String text) {
+        BitmapFont font;
+        CharSequence str = text;
+        spriteBatch = new SpriteBatch();
+        font = new BitmapFont();
+
+        spriteBatch.begin();
+        font.draw(spriteBatch, str, 20, 20);
+        spriteBatch.end();
+		
 	}
 }
