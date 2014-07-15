@@ -77,9 +77,8 @@ public class PhysicsEngine {
 		return direction.scl(force);
 	}
 	
-	
 	// name should be changed to shortestDistanceVector since it doesn't actually return a distance. Will do later.. 
-	private static Vector2 shortestDistance(Vector2 position1, Vector2 position2) {
+	public static Vector2 shortestDistance(Vector2 position1, Vector2 position2) {
 		float x1 = position1.x; 
 		float x2 = position2.x; 
 		float y1 = position1.y; 
@@ -99,13 +98,11 @@ public class PhysicsEngine {
 			result.x = xDistance1;
 		else 
 			result.x = -xDistance2;
-			
-		
+				
 		if (Math.abs(yDistance1) < Math.abs(yDistance2))
 			result.y = yDistance1;
-		else {
+		else
 			result.y = -yDistance2;
-		}
 
 		return result;	
 	}
