@@ -73,8 +73,8 @@ public class PeriodicMapModel extends Map {
 		Vector2 position = Defs.STARTING_POSITION;
 		Vector2 velocity = Defs.STARTING_VELOCITY; 
 		playerSpaceship = new SpaceshipModel(position, 
-				0.1f, 
-				0.1f, 
+				1.0f, 
+				1.0f, 
 				velocity, 
 				0, 
 				1, 
@@ -87,8 +87,6 @@ public class PeriodicMapModel extends Map {
 		TextureMapObjectModel[] asteroids = RandomMapGenerator.generateMapObjects(Defs.NUMBER_OF_ASTEROIDS);
 		
 		MapObjects gamplayMapObjects = gameplayLayer.getObjects();
-		
-
 		
 		PhysicsEngine.setPeriodicMapModel(this);
 
