@@ -95,7 +95,7 @@ public class GameplayScreen implements Screen {
 	    
 	    mapRenderer = new PeriodicMapRenderer();
 	    textureMapObjectRenderer = new TextureMapObjectRenderer(new ShapeRenderer(), spriteBatch,
-	    		map.getWidth(), map.getHeight(), camera.viewportWidth, camera.viewportHeight);
+	    		map.getWidth(), map.getHeight());
 	}
 
 	/*
@@ -107,8 +107,9 @@ public class GameplayScreen implements Screen {
 	public void render(float delta) {
 		updateModel(delta);
 		camera.updatePosition(delta, playerSpaceship.getPosition(), map.getWidth(), map.getHeight());
+		camera.update();
 		realRender();
-	}
+	}	
 	
 	/** 
 	 * Updates model state.
@@ -138,7 +139,7 @@ public class GameplayScreen implements Screen {
 			textureMapObjects = allMapObjects.getByType(TextureMapObjectModel.class);
 			
 			for (TextureMapObjectModel textureMapObject : textureMapObjects)
-				textureMapObjectRenderer.render(textureMapObject, camera.position);
+				textureMapObjectRenderer.render(textureMapObject, camera.getViewport());
 		}
 	}
 

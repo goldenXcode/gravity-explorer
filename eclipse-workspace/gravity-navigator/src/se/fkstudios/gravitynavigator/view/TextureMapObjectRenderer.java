@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -20,47 +21,35 @@ public class TextureMapObjectRenderer extends Renderer {
 	private SpriteBatch spriteBatch;
 	private float mapScreenWidth;
 	private float mapScreenHeight;
-	private float viewportWidth;
-	private float viewportHeight;
 	
 	public TextureMapObjectRenderer(ShapeRenderer shapeRenderer,
 			SpriteBatch spriteBatch,
 			float mapWidth,
-			float mapHeight,
-			float viewportWidth,
-			float viewportHeight) {
+			float mapHeight) {
 		
 		this.shapeRenderer = shapeRenderer;
 		this.spriteBatch = spriteBatch;
 		this.mapScreenWidth = mapWidth * RenderDefs.PIXELS_PER_UNIT;
 		this.mapScreenHeight = mapHeight * RenderDefs.PIXELS_PER_UNIT;
-		this.viewportHeight = viewportHeight;
-		this.viewportWidth = viewportWidth;
 	}
 	
-	/**
-	 * Render a SimpleMapObject.
-	 * @param spriteBatch
-	 * @param mapObject
-	 */
-	public void render(TextureMapObjectModel mapObject, Vector3 cameraPosition) {
+	public void render(TextureMapObjectModel mapObject, Rectangle viewport) {
 		
-		spriteBatch.begin();
-		
-		//since position is in the middle of the object and we render the texture from the bottom left corner. 
-		float offsetX = mapObject.getWidth() * 0.5f;
-		float offsetY = mapObject.getHeight() * 0.5f;
-				
 		float textureOriginX = (mapObject.getWidth() / 2) * RenderDefs.PIXELS_PER_UNIT;
 		float textureOriginY = (mapObject.getHeight() / 2) * RenderDefs.PIXELS_PER_UNIT;
 		
 		float textureWidth = mapObject.getWidth() * RenderDefs.PIXELS_PER_UNIT;
 		float textureHeight = mapObject.getHeight() * RenderDefs.PIXELS_PER_UNIT;
 
+		//since position is the middle of the object but we render the texture from the bottom left corner. 
+		float offsetX = mapObject.getWidth() * 0.5f;
+		float offsetY = mapObject.getHeight() * 0.5f;
 		float mapObjectScreenPositionX = (mapObject.getPosition().x - offsetX) * RenderDefs.PIXELS_PER_UNIT;  
 		float mapObjectScreenPositionY = (mapObject.getPosition().y - offsetY) * RenderDefs.PIXELS_PER_UNIT;
 		
 		TextureRegion textureRegion = TextureLoader.getInstance().getTextureRegion(mapObject.getTextureName());
+
+		spriteBatch.begin();
 		
 		spriteBatch.draw(textureRegion, 
 				mapObjectScreenPositionX, 
@@ -75,10 +64,10 @@ public class TextureMapObjectRenderer extends Renderer {
 		
 		//TODO refactor to enum in GameplayScreen. 
 		// and.. exists 5 more cases, overlap top, bottom and left for example, or all. but whatever...
-		boolean overlapBottom = (cameraPosition.y - viewportHeight / 2) < 0;
-		boolean overlapTop = (cameraPosition.y + viewportHeight / 2) > mapScreenHeight;
-		boolean overlapLeft = (cameraPosition.x - viewportWidth / 2) < 0;
-		boolean overlapRight = (cameraPosition.x + viewportWidth / 2) > mapScreenWidth;
+		boolean overlapBottom = viewport.y < 0;
+		boolean overlapTop = (viewport.y + viewport.height) > mapScreenHeight;
+		boolean overlapLeft = viewport.x < 0;
+		boolean overlapRight = (viewport.x + viewport.width) > mapScreenWidth;
 		boolean overlapRightTop = overlapRight && overlapTop;
 		boolean overlapRightBottom = overlapRight && overlapBottom;
 		boolean overlapLeftTop = overlapLeft && overlapTop;
@@ -187,7 +176,7 @@ public class TextureMapObjectRenderer extends Renderer {
 		if (RenderOptions.getInstance().debugRender)
 			debugRender(spriteBatch.getProjectionMatrix(), mapObject);
 	}
-
+	
 	private void debugRender(Matrix4 projectionMatrix, TextureMapObjectModel mapObject) {
 		
 		shapeRenderer.setProjectionMatrix(projectionMatrix);
@@ -214,5 +203,4 @@ public class TextureMapObjectRenderer extends Renderer {
 		
 		shapeRenderer.end();
 	}
-
 }

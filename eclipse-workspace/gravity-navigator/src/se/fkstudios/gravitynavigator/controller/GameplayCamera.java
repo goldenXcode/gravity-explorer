@@ -4,6 +4,7 @@ import se.fkstudios.gravitynavigator.model.ModelDefs;
 import se.fkstudios.gravitynavigator.view.RenderDefs;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class GameplayCamera extends OrthographicCamera {
@@ -12,9 +13,16 @@ public class GameplayCamera extends OrthographicCamera {
 	
 	private CameraMode cameraMode;
 	
+	/**
+	 * WARNING: Only updated after getViewport() was called.
+	 * tempViewport should only be used by getViewport() for optimization.
+	 */
+	private Rectangle tempViewport; 
+	
 	public GameplayCamera(float viewportWidth, float viewportHeight) {
 		super(viewportWidth, viewportHeight);
 		cameraMode = CameraMode.LOOSE;
+		tempViewport = new Rectangle(0,0, viewportWidth, viewportHeight);
 	}
 	
 	public GameplayCamera(float viewportWidth, float viewportHeight, CameraMode cameraMode) {
@@ -39,9 +47,21 @@ public class GameplayCamera extends OrthographicCamera {
 	}
 	
 	public void zoom (float amount) {
-		zoom += amount*ModelDefs.SCROLLING_SPEED_MODIFIER; 	
+		zoom += amount * ModelDefs.SCROLLING_SPEED_MODIFIER; 	
 	}
 
+	/**
+	 * Gets the viewport accounting zoom and position.
+	 * @return the viewport as a rectangle.
+	 */
+	public Rectangle getViewport() {
+		tempViewport.x = position.x - zoom * viewportWidth / 2;
+		tempViewport.y = position.y - zoom * viewportHeight / 2;
+		tempViewport.width = zoom * viewportWidth;
+		tempViewport.height = zoom * viewportHeight;
+		return tempViewport;
+	}
+	
 	/**
 	 * Update camera's position and zoom based on spaceship's (player's) position and speed.
 	 */
@@ -73,13 +93,5 @@ public class GameplayCamera extends OrthographicCamera {
 			position.set(cameraPosition.x, cameraPosition.y, 0);
 		else
 			position.set(targetScreenPosition.x, targetScreenPosition.y, 0);
-		
-		//update zoom
-		//float speed = playerSpaceship.getVelocity().len();
-		//float maxZoom = 2;
-		//float minZoom = 1;
-		//camera.zoom = Math.min(maxZoom, minZoom + speed * 0.0005f);
-			
-		update();
 	}
 }
