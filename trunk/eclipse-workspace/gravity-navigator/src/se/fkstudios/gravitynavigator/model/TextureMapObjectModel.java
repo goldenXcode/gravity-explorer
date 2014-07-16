@@ -10,6 +10,12 @@ public class TextureMapObjectModel extends MapObjectModel {
 	
 	private final String textureName;
 	
+	public float getRadius() {
+		float result = (float) (Math.sqrt(Math.pow(getWidth(), 2) +Math.pow(getHeight(), 2)));
+		return result; 
+		
+	}
+	
 	public TextureMapObjectModel(Vector2 position, 
 			float width,
 			float height, 
