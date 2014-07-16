@@ -5,70 +5,70 @@ filter: Nearest,Nearest
 repeat: none
 asteroid01
   rotate: false
-  xy: 260, 498
+  xy: 260, 522
   size: 55, 53
   orig: 55, 53
   offset: 0, 0
   index: -1
 asteroid02
   rotate: false
-  xy: 518, 767
+  xy: 518, 791
   size: 48, 42
   orig: 48, 42
   offset: 0, 0
   index: -1
 asteroid03
   rotate: false
-  xy: 260, 465
+  xy: 260, 489
   size: 30, 31
   orig: 30, 31
   offset: 0, 0
   index: -1
 asteroid04
   rotate: false
-  xy: 317, 525
+  xy: 317, 549
   size: 18, 26
   orig: 18, 26
   offset: 0, 0
   index: -1
 asteroid05
   rotate: false
-  xy: 568, 797
+  xy: 568, 821
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 asteroid06
   rotate: false
-  xy: 518, 744
+  xy: 518, 768
   size: 21, 21
   orig: 21, 21
   offset: 0, 0
   index: -1
 planet01
   rotate: false
-  xy: 2, 553
+  xy: 2, 577
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 planet02
   rotate: false
-  xy: 2, 295
+  xy: 2, 319
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 planet03
   rotate: false
-  xy: 260, 553
+  xy: 260, 577
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 planet04
   rotate: false
-  xy: 2, 37
+  xy: 2, 61
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
@@ -76,7 +76,7 @@ planet04
 spaceship01
   rotate: false
   xy: 2, 2
-  size: 57, 33
-  orig: 57, 33
+  size: 33, 57
+  orig: 33, 57
   offset: 0, 0
   index: -1
