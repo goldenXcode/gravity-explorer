@@ -130,7 +130,20 @@ public class PhysicsEngine {
 	}
 	
 	public static void add(MapObjectModel model) {
+		if (allMapObjects == null){
+			System.out.println("warning: trying to add mapObjects to nullarray in PhysicsEngine");
+			allMapObjects = new MapObjectModel[1]; 
+			allMapObjects[0] = model; 
+		}
+		else {
 		setMapObjects(append(allMapObjects,model)); 
+		}
+	}
+	
+	public static void add(MapObjectModel[] models) {
+		for (int i = 0; i<models.length; i++) {
+			add(models[i]);
+		}
 	}
 	
 	

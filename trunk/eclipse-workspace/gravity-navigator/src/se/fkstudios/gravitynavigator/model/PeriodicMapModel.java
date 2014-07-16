@@ -91,7 +91,7 @@ public class PeriodicMapModel extends Map {
 		PhysicsEngine.setPeriodicMapModel(this);
 
 		//adding the asteroids 
-		PhysicsEngine.setMapObjects(asteroids);
+		PhysicsEngine.add(asteroids);
 		for (int i = 0; i< asteroids.length; i++) {
 			gamplayMapObjects.add(asteroids[i]); 
 		}
