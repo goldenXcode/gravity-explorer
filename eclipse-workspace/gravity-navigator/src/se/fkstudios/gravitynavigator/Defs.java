@@ -22,7 +22,7 @@ public final class Defs {
 	public static float MAP_WIDTH = 50;
 	public static float MAP_HEIGHT = 50; 
 	
-	public static int NUMBER_OF_ASTEROIDS = 0; 
+	public static int NUMBER_OF_ASTEROIDS = 1; 
 	
 	public static float MAX_ROTATIONAL_VELOCITY = 20; 
 	public static float MIN_ROTATIONAL_VELOCITY = 0; 
