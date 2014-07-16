@@ -1,7 +1,6 @@
 package se.fkstudios.gravitynavigator.controller;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 
 import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;

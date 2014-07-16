@@ -217,7 +217,7 @@ public class TextureMapObjectRenderer {
 		float width = modelViewPort.width / 2 + mapObject.getWidth() / 2;
 		double maxViewportWidthHeight = Math.sqrt(Math.pow(height, 2) + Math.pow(width, 2));
 		
-		float shortestDistance = PhysicsEngine.shortestDistance(
+		float shortestDistance = PhysicsEngine.shortestDistanceVector(
 				new Vector2(modelViewPort.x + modelViewPort.width / 2, 
 						modelViewPort.y + modelViewPort.height / 2),
 				mapObject.getPosition()).len();

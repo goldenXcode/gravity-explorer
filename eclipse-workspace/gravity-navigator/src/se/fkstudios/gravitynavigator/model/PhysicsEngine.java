@@ -60,7 +60,7 @@ public class PhysicsEngine {
 	
 	private static Vector2 computeAcceleration(Vector2 position1, Vector2 position2,float mass1,float mass2 )
 	{
-		Vector2 distance = shortestDistance(position1, position2); 
+		Vector2 distance = shortestDistanceVector(position1, position2); 
 
 		float cutoff = 0.3f;
 
@@ -77,8 +77,26 @@ public class PhysicsEngine {
 		return direction.scl(force);
 	}
 	
-	// name should be changed to shortestDistanceVector since it doesn't actually return a distance. Will do later.. 
-	public static Vector2 shortestDistance(Vector2 position1, Vector2 position2) {
+
+	/**
+	 * Computes the shortest vector from position1 to position2 with respect to periodicity.  
+	 * @param position1 from position.
+	 * @param position2 to position.
+	 * @return the shortest vector from position1 to position2.
+	 */
+	public static Vector2 shortestDistanceVector(Vector2 position1, Vector2 position2) {
+		Vector2 result1 = shortestDistanceVectorHelper(position1, position2);
+		Vector2 result2 = shortestDistanceVectorHelper(position2, position1).scl(-1);	
+		if (result1.len2() < result2.len2())
+			return result1;
+		else
+			return result2;
+	}
+	
+	/**
+	 * Computes the shortest vector from position1 to position2 considering alternative positions of position2.
+	 */
+	private static Vector2 shortestDistanceVectorHelper(Vector2 position1, Vector2 position2) {
 		float x1 = position1.x; 
 		float x2 = position2.x; 
 		float y1 = position1.y; 
@@ -103,8 +121,8 @@ public class PhysicsEngine {
 			result.y = yDistance1;
 		else
 			result.y = -yDistance2;
-
-		return result;	
+		
+		return result;
 	}
 	
 	private static boolean detectCollision (MapObjectModel mapObject1, MapObjectModel mapObject2) {
@@ -112,7 +130,7 @@ public class PhysicsEngine {
 		Vector2 position2 = mapObject2.getPosition(); 
 		float width1 = mapObject1.getWidth(); 
 		float width2 = mapObject2.getWidth(); 
-		float distance = shortestDistance(position1, position2).len();
+		float distance = shortestDistanceVector(position1, position2).len();
 		if ((distance < width1/2 + width2/2 ) && distance > 0.1f) {
 			System.out.println(" width1: " + width1 + " width2: " + width2 + " distance: " + distance);
 			return true; 
@@ -144,103 +162,5 @@ public class PhysicsEngine {
 		for (int i = 0; i<models.length; i++) {
 			add(models[i]);
 		}
-	}
-	
-	
-
-
-	
-//	/********************** SAVE FOR LATER NOT USED ATM *********************/
-	
-//	private static float mapWidth;
-//	private static float mapHeight;
-	
-//	private static void setMapDimensions(Vector2 v) {
-//		mapWidth = v.x;
-//		mapHeight = v.y; 
-//	}
-
-//	/**
-//	 * Computes acceleration of an object due to gravity by integrating with respect to some small time delta
-//	 * The reason I'm not nesting these computations in one function is simply to separate velocities 
-//	 * accelerations, forces etc. 
-//	 */
-//	private static Vector2 computeAcceleration(MapObjectModel mapObjectModel1, MapObjectModel mapObjectModel2, float delta) {
-//		return computeGravitationalForce(mapObjectModel1, mapObjectModel2).scl(delta); 	
-//	}
-	
-//	private static Vector2 computeGravitationalForce (Vector2 p1, int m1, Vector2 p2, int m2)
-//	{
-//		float G = ModelDefs.GRAVITATIONAL_CONSTANT; 
-//		float distance = p1.dst(p2); 
-//		float f;
-//		
-//		if (distance != 0) {
-//			f = G*m1*m2/(distance*distance); // Newtons law of gravity
-//			
-//		}
-//		else 
-//			f = 0;
-//		
-//		// gives the size of the force. Now we'll need the direction
-//		Vector2 diff = p1.sub(p2);
-//		Vector2 direction;
-//		if (diff.dot(diff) != 0) {
-//			direction = diff.div((float) Math.sqrt(diff.dot(diff)));
-//		}
-//		else
-//			direction = new Vector2(0,0);
-//		return direction.cpy();
-//	}
-	
-//	private static Vector2 computeAcceleration(Vector2 p1, int m1, Vector2 p2, int m2, float delta) {
-//	return computeGravitationalForce(p1,m1,p2,m2).cpy().scl(delta);
-//}
-//
-//private static Vector2 computeAcceleration(Vector2 direction,float distance, int m1, int m2, float delta) {
-//	float f = computeScalarGravitationalForce(m1,m2,distance);
-//	return direction.cpy().scl(f).scl(delta);
-//}
-	
-//	private static Vector2 computePeriodicCompensation(MapObjectModel o1, MapObjectModel o2, float delta)  {
-//		Vector2 p1 = o1.getPosition();
-//		Vector2 p2 = o2.getPosition(); 
-//		int m1 = o1.getMass();
-//		int m2 = o2.getMass(); 
-//		Vector2 forceDirection = computeForceDirection(o1,o2);
-//		float dist = distance(o1,o2);
-//		float f = computeScalarGravitationalForce(m1,m2,dist);
-//		return new Vector2(0,0);
-//	}
-	
-//	private static Vector2 computeForceDirection (MapObjectModel o1,MapObjectModel o2) {
-//		Vector2 p1 = o1.getPosition().cpy();
-//		Vector2 p2 = o2.getPosition().cpy();
-//		Vector2 diff = p1.sub(p2);
-//		Vector2 direction;
-//		if (diff.dot(diff) != 0) {
-//			direction = diff.div((float) Math.sqrt(diff.dot(diff)));
-//		}
-//		else
-//			direction = new Vector2(0,0);
-//		return direction;
-//	}
-//	
-//	private static float distance (MapObjectModel o1,MapObjectModel o2) {
-//		Vector2 p1 = o1.getPosition().cpy();
-//		Vector2 p2 = o2.getPosition().cpy();
-//		Vector2 diff = p1.sub(p2);
-//		return (float) Math.sqrt(diff.dot(diff));
-//	}
-	
-//	private static float computeScalarGravitationalForce (int m1,int m2,float d) {
-//	if (d != 0) {
-//		float G = ModelDefs.GRAVITATIONAL_CONSTANT; 
-//		return G*m1*m2/(d*d); // Newtons law of gravity
-//		
-//	}
-//	else 
-//		return 0;
-//	}
-	
+	}	
 }

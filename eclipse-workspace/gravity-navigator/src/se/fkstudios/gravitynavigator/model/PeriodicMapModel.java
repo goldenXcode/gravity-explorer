@@ -73,8 +73,8 @@ public class PeriodicMapModel extends Map {
 		Vector2 position = Defs.STARTING_POSITION;
 		Vector2 velocity = Defs.STARTING_VELOCITY; 
 		playerSpaceship = new SpaceshipModel(position, 
-				1.0f, 
-				1.0f, 
+				0.33f, 
+				0.57f, 
 				velocity, 
 				0, 
 				1, 
