@@ -1,29 +1,29 @@
 package se.fkstudios.gravitynavigator.view;
 
 import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.controller.GameplayCamera;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
-
-
-
+import com.badlogic.gdx.math.Rectangle;
 
 public class PeriodicMapRenderer {
 	
 	private String consoleText; 
+	private SpriteBatch spriteBatch;
 	
-	public void setText(String text ) {
+	public void setConsoleText(String text ) {
 		consoleText = text; 
-		
 	}
 	
-	public PeriodicMapRenderer() {
-		setText("Welcome!");
-		
+	public PeriodicMapRenderer(SpriteBatch spriteBatch) {
+		this.spriteBatch = spriteBatch;
+		setConsoleText("Welcome!");
 	}
 
 	/** debug rendering **/
@@ -37,25 +37,24 @@ public class PeriodicMapRenderer {
 	 * @param map
 	 *            the map to render.
 	 */
-	public void render(SpriteBatch spriteBatch, PeriodicMapModel map) {
-		// spriteBatch.begin();
-		//
-		// Texture backgroundTexture =
-		// TextureLoader.getInstance().getTexture(map.getFilePathBackgroundImage1());
-		// float bakTexDrawWidth = map.getWidth();
-		// float bakTexDrawHeight = map.getHeight();
-		//
-		// spriteBatch.draw(backgroundTexture,
-		// 0.0f,
-		// 0.0f,
-		// bakTexDrawWidth * Defs.PIXELS_PER_UNIT,
-		// bakTexDrawHeight * Defs.PIXELS_PER_UNIT);
-		//
-		// spriteBatch.end();
-
+	public void render(PeriodicMapModel map, GameplayCamera camera) {
+		
+		Texture backgroundTexture = TextureLoader.getInstance().getTexture(map.getFilePathBackgroundImageLayer1());
+		
+		spriteBatch.begin();
+		
+		spriteBatch.draw(backgroundTexture,
+			0,
+			0,
+			camera.viewportWidth,
+			camera.viewportHeight);
+		
 		if (RenderOptions.getInstance().debugRender)
 			debugRender(spriteBatch.getProjectionMatrix(), map);
+		
 		drawConsole(map, spriteBatch, consoleText);
+
+		spriteBatch.end();
 	}
 
 	private void debugRender(Matrix4 projectionMatrix, PeriodicMapModel map) {
@@ -96,6 +95,5 @@ public class PeriodicMapRenderer {
         spriteBatch.begin();
         font.draw(spriteBatch, str, 20, 20);
         spriteBatch.end();
-		
 	}
 }

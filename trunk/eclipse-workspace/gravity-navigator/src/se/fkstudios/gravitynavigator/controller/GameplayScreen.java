@@ -93,7 +93,7 @@ public class GameplayScreen implements Screen {
 	    
 	    spriteBatch = new SpriteBatch();
 	    
-	    mapRenderer = new PeriodicMapRenderer();
+	    mapRenderer = new PeriodicMapRenderer(spriteBatch);
 	    textureMapObjectRenderer = new TextureMapObjectRenderer(new ShapeRenderer(), spriteBatch,
 	    		map.getWidth(), map.getHeight());
 	}
@@ -106,7 +106,7 @@ public class GameplayScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		updateModel(delta);
-		mapRenderer.setText("Running in " + Float.toString(round(1/delta,2)) + " FPS");
+		mapRenderer.setConsoleText("Running in " + Float.toString(round(1/delta,2)) + " FPS");
 		camera.updatePosition(delta, playerSpaceship.getPosition(), map.getWidth(), map.getHeight());
 		camera.update();
 		realRender();
@@ -114,7 +114,7 @@ public class GameplayScreen implements Screen {
 	
 	/** 
 	 * Updates model state.
-	 * @param delta The time in sedconds since the last call to updateGameState. 
+	 * @param delta The time in seconds since the last call to updateGameState. 
 	 */
 	private void updateModel(float delta) {
 		map.update(delta);
@@ -127,10 +127,10 @@ public class GameplayScreen implements Screen {
 		//clear buffer.
 		Gdx.gl.glClearColor(0.1f, 0.1f,  0.1f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		        	
+		
 		spriteBatch.setProjectionMatrix(camera.combined);
 		
-		mapRenderer.render(spriteBatch, map);
+		mapRenderer.render(map, camera);
 		
 		Array<TextureMapObjectModel> textureMapObjects;
 		MapObjects allMapObjects;

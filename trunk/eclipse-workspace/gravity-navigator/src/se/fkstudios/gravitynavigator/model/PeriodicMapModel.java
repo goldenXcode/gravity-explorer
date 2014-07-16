@@ -16,7 +16,7 @@ public class PeriodicMapModel extends Map {
 	
 	private final String GAMEPLAY_LAYER_NAME = "GameplayLayer";
 	
-	private String filePathBackgroundImage1;
+	private String filePathBackgroundImageLayer1;
 	private float width;
 	private float height;
 	private MapLayer gameplayLayer;
@@ -24,12 +24,12 @@ public class PeriodicMapModel extends Map {
 	
 	/**
 	 * Creates a continuous map. 
-	 * @param filePathBackgroundImage1 Name of the texture to display as background.
+	 * @param filePathBackgroundImageLayer1 Name of the texture to display as background.
 	 * @param width Width of map.
 	 * @param height Height of map.
 	 */
-	public PeriodicMapModel(String filePathBackgroundImage1, float width, float height) {
-		this.filePathBackgroundImage1 = filePathBackgroundImage1;
+	public PeriodicMapModel(String filePathBackgroundImageLayer1, float width, float height) {
+		this.filePathBackgroundImageLayer1 = filePathBackgroundImageLayer1;
 		this.width = width;
 		this.height = height;
 		gameplayLayer = new MapLayer();
@@ -38,8 +38,8 @@ public class PeriodicMapModel extends Map {
 		loadMapObjects();
 	}
 		
-	public String getFilePathBackgroundImage1() {
-		return filePathBackgroundImage1;
+	public String getFilePathBackgroundImageLayer1() {
+		return filePathBackgroundImageLayer1;
 	}
 
 	public float getWidth() {
