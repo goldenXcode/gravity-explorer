@@ -84,17 +84,18 @@ public class PeriodicMapModel extends Map {
 
 //		TextureMapObjectModel asterioid2 = new TextureMapObjectModel(new Vector2(2, 1), 0.33f, 0.5f, 
 //				new Vector2(0.01f, -0.4f), 0, 10, ResourceDefs.TEXTURE_REGION_NAME_ASTERIOID_02);
-		TextureMapObjectModel[] asteroids = RandomMapGenerator.generateMapObjects(Defs.NUMBER_OF_ASTEROIDS);
+	
 		
 		MapObjects gamplayMapObjects = gameplayLayer.getObjects();
 		
 		PhysicsEngine.setPeriodicMapModel(this);
 
-		//adding the asteroids 
-		PhysicsEngine.add(asteroids);
-		for (int i = 0; i< asteroids.length; i++) {
-			gamplayMapObjects.add(asteroids[i]); 
-		}
+//		//adding the asteroids 
+//		TextureMapObjectModel[] asteroids = RandomMapGenerator.generateMapObjects(Defs.NUMBER_OF_ASTEROIDS);
+//		PhysicsEngine.add(asteroids);
+//		for (int i = 0; i< asteroids.length; i++) {
+//			gamplayMapObjects.add(asteroids[i]); 
+//		}
 		
 		// adding the planet 
 		TextureMapObjectModel planet = RandomMapGenerator.generatePlanet(10f);
@@ -105,10 +106,12 @@ public class PeriodicMapModel extends Map {
 		gamplayMapObjects.add(playerSpaceship);
 		PhysicsEngine.add(playerSpaceship);
 		
-		// adding the orbiting asteroid
-		TextureMapObjectModel orbiter = RandomMapGenerator.generateOrbitingAsteroid(10f, planet, 1f);
-		gamplayMapObjects.add(orbiter);
-		PhysicsEngine.add(orbiter);
+		// adding the orbiting asteroids
+		TextureMapObjectModel[] orbiters = RandomMapGenerator.generateOrbitingAsteroids(10f, planet,7f,7);
+		for (int i = 0; i< orbiters.length; i++) {
+			gamplayMapObjects.add(orbiters[i]); 
+		}
+		PhysicsEngine.add(orbiters);
 		
 	}
 		
