@@ -3,24 +3,80 @@ textures.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-asterioid01
+asteroid01
+  rotate: false
+  xy: 260, 498
+  size: 55, 53
+  orig: 55, 53
+  offset: 0, 0
+  index: -1
+asteroid02
+  rotate: false
+  xy: 518, 767
+  size: 48, 42
+  orig: 48, 42
+  offset: 0, 0
+  index: -1
+asteroid03
+  rotate: false
+  xy: 260, 465
+  size: 30, 31
+  orig: 30, 31
+  offset: 0, 0
+  index: -1
+asteroid04
+  rotate: false
+  xy: 317, 525
+  size: 18, 26
+  orig: 18, 26
+  offset: 0, 0
+  index: -1
+asteroid05
+  rotate: false
+  xy: 568, 797
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
+asteroid06
+  rotate: false
+  xy: 518, 744
+  size: 21, 21
+  orig: 21, 21
+  offset: 0, 0
+  index: -1
+planet01
+  rotate: false
+  xy: 2, 553
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+planet02
+  rotate: false
+  xy: 2, 295
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+planet03
+  rotate: false
+  xy: 260, 553
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+planet04
+  rotate: false
+  xy: 2, 37
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+spaceship01
   rotate: false
   xy: 2, 2
-  size: 50, 50
-  orig: 50, 50
-  offset: 0, 0
-  index: -1
-asterioid02
-  rotate: false
-  xy: 106, 2
-  size: 33, 50
-  orig: 33, 50
-  offset: 0, 0
-  index: -1
-spaceshipPlayer
-  rotate: false
-  xy: 54, 2
-  size: 50, 50
-  orig: 50, 50
+  size: 57, 33
+  orig: 57, 33
   offset: 0, 0
   index: -1
