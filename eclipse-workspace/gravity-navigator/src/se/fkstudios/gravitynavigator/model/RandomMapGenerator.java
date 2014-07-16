@@ -114,10 +114,4 @@ public class RandomMapGenerator {
 	private static float calculateOrbitingVelocity(float distance, float planetMass) {
 		return (float) Math.sqrt(Defs.GRAVITATIONAL_CONSTANT*planetMass/distance);
 	}
-	
-
-	
-	
-	
-
 }
