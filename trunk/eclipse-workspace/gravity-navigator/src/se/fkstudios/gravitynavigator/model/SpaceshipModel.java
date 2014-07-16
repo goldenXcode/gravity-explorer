@@ -38,7 +38,6 @@ public class SpaceshipModel extends TextureMapObjectModel {
 	public void update(float delta) {
 		int mass = getMass();
 		Vector2 acceleration = thrust.cpy().div(mass);
-		//System.out.println("thurst: " + thrust.toString());
 		getAcceleration().add(acceleration);
 		super.update(delta);
 	} 	
@@ -51,6 +50,7 @@ public class SpaceshipModel extends TextureMapObjectModel {
 		super.setVelocity(velocity);
 		
 		if (thrust.len2() > 0)
-			setRotation(thrust.angle());
+			//LibGdx render with rotation 0 from y-axis while Vector2 class calculate angle from x-axis. 
+			setRotation(thrust.angle() - 90);
 	}
 }

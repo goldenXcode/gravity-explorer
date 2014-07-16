@@ -19,8 +19,8 @@ public final class Defs {
 	
 	public static float GRAVITATIONAL_CONSTANT = 0.001f;
 	
-	public static float MAP_WIDTH = 100;
-	public static float MAP_HEIGHT = 100; 
+	public static float MAP_WIDTH = 200;
+	public static float MAP_HEIGHT = 200; 
 	
 	public static int NUMBER_OF_ASTEROIDS = 1; 
 	
@@ -50,7 +50,7 @@ public final class Defs {
 	public static final Color MAP_OBJECT_BORDER_COLOR = Color.CYAN;
 	public static final Color MAP_OBJECT_CENTER_MARKER_COLOR = Color.CYAN;
 	public static final Color INPUT_DRAG_LINE_COLOR = Color.RED;
-	public static final int UNIT_PER_DEBUG_LINE = 1;
+	public static final int UNIT_PER_DEBUG_LINE = 10;
 	
 	/* viewport  */ 
 	public static final int VIEWPORT_WIDTH = 490;
@@ -65,14 +65,23 @@ public final class Defs {
 	/* Graphics */
 	
 	/** WARNING: Indexes in TEXTURE_FILE_PATHS and TEXTURE_NAMES must match! */
-	public static final String[] TEXTURE_FILE_PATHS = {"images/map_backgrounds/mab_background_01.png"};
+	public static final String[] TEXTURE_FILE_PATHS = {
+		"images/map_backgrounds/map_01_background_layer1.png"};
+	
 	/** WARNING: Indexes in TEXTURE_FILE_PATHS and TEXTURE_NAMES must match! */
-	public static final String[] TEXTURE_NAMES = {"map_background_01"}; 
+	public static final String[] TEXTURE_NAMES = {"map_01_background_layer1"}; 
+	
 	public static final String TEXTURE_PACK_FILE_PATH = "images/spritesheets/textures/textures.pack";
 	
-	public static final String TEXTURE_REGION_NAME_SPACESHIP_PLAYER = "spaceshipPlayer";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_01 = "asterioid01";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_02 = "asterioid02";
+	public static final String TEXTURE_REGION_NAME_SPACESHIP_PLAYER = "spaceship01";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_01 = "asteroid01";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_02 = "asteroid02";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_03 = "asteroid03";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_04 = "asteroid04";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_05 = "asteroid05";
+	public static final String TEXTURE_REGION_NAME_PLANET_01 = "planet01";
+	public static final String TEXTURE_REGION_NAME_PLANET_02 = "planet02";
+	public static final String TEXTURE_REGION_NAME_PLANET_03 = "planet03";
 	
 	/* Sound */
 	
