@@ -66,22 +66,22 @@ public final class Defs {
 	
 	/** WARNING: Indexes in TEXTURE_FILE_PATHS and TEXTURE_NAMES must match! */
 	public static final String[] TEXTURE_FILE_PATHS = {
-		"images/map_backgrounds/map01backgroundlayer1.png"};
+		"images/map_backgrounds/map-01-background-layer1.png"};
 	
 	/** WARNING: Indexes in TEXTURE_FILE_PATHS and TEXTURE_NAMES must match! */
-	public static final String[] TEXTURE_NAMES = {"map01backgroundlayer1"}; 
+	public static final String[] TEXTURE_NAMES = {"map-01-background-layer1"}; 
 	
 	public static final String TEXTURE_PACK_FILE_PATH = "images/spritesheets/textures/textures.pack";
 	
-	public static final String TEXTURE_REGION_NAME_SPACESHIP_PLAYER = "spaceship01";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_01 = "asteroid01";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_02 = "asteroid02";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_03 = "asteroid03";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_04 = "asteroid04";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_05 = "asteroid05";
-	public static final String TEXTURE_REGION_NAME_PLANET_01 = "planet01";
-	public static final String TEXTURE_REGION_NAME_PLANET_02 = "planet02";
-	public static final String TEXTURE_REGION_NAME_PLANET_03 = "planet03";
+	public static final String TEXTURE_REGION_NAME_SPACESHIP_PLAYER = "spaceship-01";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_01 = "asteroid-01";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_02 = "asteroid-02";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_03 = "asteroid-03";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_04 = "asteroid-04";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID_05 = "asteroid-05";
+	public static final String TEXTURE_REGION_NAME_PLANET_01 = "planet-01";
+	public static final String TEXTURE_REGION_NAME_PLANET_02 = "planet-02";
+	public static final String TEXTURE_REGION_NAME_PLANET_03 = "planet-03";
 	
 	/* Sound */
 	
