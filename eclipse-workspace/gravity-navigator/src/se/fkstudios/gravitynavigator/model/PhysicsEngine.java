@@ -3,6 +3,7 @@ package se.fkstudios.gravitynavigator.model;
 import java.util.Arrays;
 
 import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.view.RenderOptions;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -43,7 +44,7 @@ public class PhysicsEngine {
 				MapObjectModel mapObject2 = allMapObjects[j];
 				Vector2 acceleration = computeAcceleration(mapObject1, mapObject2).div(mapObject2.getMass());
 				mapObject2.getAcceleration().add(acceleration);
-				if ( detectCollision(mapObject1,mapObject2) && mapObject1 != mapObject2) 				// for test purposes
+				if (RenderOptions.getInstance().debugRender && detectCollision(mapObject1,mapObject2) && mapObject1 != mapObject2)
 					System.out.println("collision detected"); 
 			}
 		}
@@ -131,13 +132,13 @@ public class PhysicsEngine {
 		float width1 = mapObject1.getWidth(); 
 		float width2 = mapObject2.getWidth(); 
 		float distance = shortestDistanceVector(position1, position2).len();
-		if ((distance < width1/2 + width2/2 ) && distance > 0.1f) {
-			System.out.println(" width1: " + width1 + " width2: " + width2 + " distance: " + distance);
-			return true; 
-		}
-		else { 
-			return false; 
-		}
+		
+		boolean result = (distance < width1/2 + width2/2 ) && distance > 0.1f;
+		
+		if (RenderOptions.getInstance().debugRender && result)
+				System.out.println(" width1: " + width1 + " width2: " + width2 + " distance: " + distance);
+		
+		return result;
 	}
 	
 	private static <T> T[] append(T[] arr, T element) {
@@ -149,7 +150,6 @@ public class PhysicsEngine {
 	
 	public static void add(MapObjectModel model) {
 		if (allMapObjects == null){
-			System.out.println("warning: trying to add mapObjects to nullarray in PhysicsEngine");
 			allMapObjects = new MapObjectModel[1]; 
 			allMapObjects[0] = model; 
 		}
