@@ -3,77 +3,77 @@ textures.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-asteroid01
+asteroid-01
   rotate: false
   xy: 260, 522
   size: 55, 53
   orig: 55, 53
   offset: 0, 0
   index: -1
-asteroid02
+asteroid-02
   rotate: false
   xy: 518, 791
   size: 48, 42
   orig: 48, 42
   offset: 0, 0
   index: -1
-asteroid03
+asteroid-03
   rotate: false
   xy: 260, 489
   size: 30, 31
   orig: 30, 31
   offset: 0, 0
   index: -1
-asteroid04
+asteroid-04
   rotate: false
   xy: 317, 549
   size: 18, 26
   orig: 18, 26
   offset: 0, 0
   index: -1
-asteroid05
+asteroid-05
   rotate: false
   xy: 568, 821
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
-asteroid06
+asteroid-06
   rotate: false
   xy: 518, 768
   size: 21, 21
   orig: 21, 21
   offset: 0, 0
   index: -1
-planet01
+planet-01
   rotate: false
   xy: 2, 577
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
-planet02
+planet-02
   rotate: false
   xy: 2, 319
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
-planet03
+planet-03
   rotate: false
   xy: 260, 577
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
-planet04
+planet-04
   rotate: false
   xy: 2, 61
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
-spaceship01
+spaceship-01
   rotate: false
   xy: 2, 2
   size: 33, 57

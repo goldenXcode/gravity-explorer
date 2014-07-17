@@ -1,7 +1,6 @@
 package se.fkstudios.gravitynavigator.view;
 
 import se.fkstudios.gravitynavigator.Defs;
-import se.fkstudios.gravitynavigator.controller.GameplayCamera;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 
 import com.badlogic.gdx.graphics.Texture;
@@ -14,56 +13,56 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class PeriodicMapRenderer {
 	
-	private String consoleText; 
+	/* "real game" rendering */
 	private SpriteBatch spriteBatch;
 	
+	/* debug rendering */
+	private ShapeRenderer debugRenderer;
+	
+	/* console rendering */
+	private SpriteBatch consoleSpriteBatch;
+	private BitmapFont consolFont;
+	private String consoleText; 
+	
+	public PeriodicMapRenderer(SpriteBatch spriteBatch) {
+		this.spriteBatch = spriteBatch;
+		this.debugRenderer = new ShapeRenderer();
+		this.consoleSpriteBatch = new SpriteBatch();
+		this.consolFont = new BitmapFont();
+		setConsoleText("Welcome!");
+	}
+
 	public void setConsoleText(String text ) {
 		consoleText = text; 
 	}
 	
-	public PeriodicMapRenderer(SpriteBatch spriteBatch) {
-		this.spriteBatch = spriteBatch;
-		setConsoleText("Welcome!");
-	}
-
-	/** debug rendering **/
-	private ShapeRenderer debugRenderer;
-
 	/**
-	 * Renders a ContinouosMap using a SpriteBatch.
-	 * 
-	 * @param spriteBatch
-	 *            The spritebatch used to draw textures.
-	 * @param map
-	 *            the map to render.
+	 * Renders a periodic map.
+	 * @param map the map to be rendered.
+	 * @param viewport the current viewport of player's camera. 
 	 */
-	public void render(PeriodicMapModel map, GameplayCamera camera) {
+	public void render(PeriodicMapModel map, Rectangle viewport) {
 		
 		Texture backgroundTexture = TextureLoader.getInstance().getTexture(map.getFilePathBackgroundImageLayer1());
 		
 		spriteBatch.begin();
 		
+		//REMARK: assumes the backgoundTexture has width = height.
 		spriteBatch.draw(backgroundTexture,
-			0f,
-			0f,
-			64f,
-			64f);
+			viewport.x,
+			viewport.y,
+			Math.max(viewport.width, viewport.height),
+			Math.max(viewport.width, viewport.height));
 		
-		if (RenderOptions.getInstance().debugRender)
-			debugRender(spriteBatch.getProjectionMatrix(), map);
-		
-		drawConsole(map, spriteBatch, consoleText);
-
 		spriteBatch.end();
+		
+		if (RenderOptions.getInstance().debugRender) {
+			drawConsole();
+			debugRender(spriteBatch.getProjectionMatrix(), map);
+		}
 	}
 
 	private void debugRender(Matrix4 projectionMatrix, PeriodicMapModel map) {
-
-		// not optimal to create debugRenderer here. However, we don't want to
-		// create it if never used.
-		if (debugRenderer == null)
-			debugRenderer = new ShapeRenderer();
-
 		debugRenderer.setProjectionMatrix(projectionMatrix);
 		debugRenderer.begin(ShapeType.Line);
 		debugRenderer.setColor(Defs.MAP_BORDER_COLOR);
@@ -86,14 +85,9 @@ public class PeriodicMapRenderer {
 		debugRenderer.end();
 	}
 	
-	private void drawConsole( PeriodicMapModel map, SpriteBatch spriteBatch, String text) {
-        BitmapFont font;
-        CharSequence str = text;
-        spriteBatch = new SpriteBatch();
-        font = new BitmapFont();
-
-        spriteBatch.begin();
-        font.draw(spriteBatch, str, 20, 20);
-        spriteBatch.end();
+	private void drawConsole() {
+        consoleSpriteBatch.begin();
+        consolFont.draw(consoleSpriteBatch, consoleText, 20, 20);
+        consoleSpriteBatch.end();
 	}
 }

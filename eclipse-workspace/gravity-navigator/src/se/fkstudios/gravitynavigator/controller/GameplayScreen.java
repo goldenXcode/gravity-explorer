@@ -130,7 +130,7 @@ public class GameplayScreen implements Screen {
 		
 		spriteBatch.setProjectionMatrix(camera.combined);
 		
-		mapRenderer.render(map, camera);
+		mapRenderer.render(map, camera.getViewport());
 		
 		Array<TextureMapObjectModel> textureMapObjects;
 		MapObjects allMapObjects;
