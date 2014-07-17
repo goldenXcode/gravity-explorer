@@ -44,10 +44,10 @@ public class PeriodicMapRenderer {
 		spriteBatch.begin();
 		
 		spriteBatch.draw(backgroundTexture,
-			0,
-			0,
-			camera.viewportWidth,
-			camera.viewportHeight);
+			0f,
+			0f,
+			64f,
+			64f);
 		
 		if (RenderOptions.getInstance().debugRender)
 			debugRender(spriteBatch.getProjectionMatrix(), map);
