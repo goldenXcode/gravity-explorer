@@ -45,8 +45,18 @@ public class GameplayCamera extends OrthographicCamera {
 		zoom += 0.1f; 
 	}
 	
-	public void zoom (float amount) {
-		zoom += amount * Defs.SCROLLING_SPEED_MODIFIER; 	
+	public void zoom (double d) {
+		zoom += d * Defs.SCROLLING_SPEED_MODIFIER; 	
+	}
+	
+	/* 
+	 *  Returns the "radius" of the viewport squared. Ignored the sqrt as an optimization. 
+	 *  getZoom is still monotone in both x and y of the viewportwidth
+	 */
+	public float getZoom() {
+		float x = getViewport().x; 
+		float y = getViewport().y; 
+		return (float) (Math.pow(x, 2) + Math.pow(y, 2)); 
 	}
 
 	/**

@@ -4,17 +4,29 @@ import com.badlogic.gdx.math.Vector2;
 
 public class PlanetarySystemComponent extends TextureMapObjectModel {
 	
-	public PlanetarySystemComponent(Vector2 position, float width,
-			float height, Vector2 velocity, float rotation, int mass,
-			String textureName) {
-		super(position, width, height, velocity, rotation, mass, textureName);
+	private float distanceToParent; 
+	
+	public void setDistanceToParent (float distance) {
+		distanceToParent = distance; 
+	}
+	
+	public float getDistanceToParent () {
+		return distanceToParent; 
 	}
 	
 	public PlanetarySystemComponent(Vector2 position, float width,
 			float height, Vector2 velocity, float rotation, int mass,
-			String textureName, TextureMapObjectModel model) {
+			String textureName,float distance) {
+		super(position, width, height, velocity, rotation, mass, textureName);
+		setDistanceToParent(distance);
+	}
+	
+	public PlanetarySystemComponent(Vector2 position, float width,
+			float height, Vector2 velocity, float rotation, int mass,
+			String textureName, TextureMapObjectModel model, float distance) {
 		super(position, width, height, velocity, rotation, mass, textureName);
 		setParentNode (model); 
+		setDistanceToParent(distance);
 	}
 
 	private TextureMapObjectModel parentNode; 
@@ -36,8 +48,6 @@ public class PlanetarySystemComponent extends TextureMapObjectModel {
 		childrenNodes = children; 
 	}
 	
-	public static void main(String[] args) {
-		System.out.println("hehuhest");
-	}
+	
 
 }
