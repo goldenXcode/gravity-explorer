@@ -27,7 +27,7 @@ public final class Defs {
 	public static float MAX_ROTATIONAL_VELOCITY = 20; 
 	public static float MIN_ROTATIONAL_VELOCITY = 0; 
 	
-	public static int MAX_THRUST = 10; 
+	public static int MAX_THRUST = 30; 
 	
 	public static float PLANET_TO_ASTEROID_SIZE_RATIO = 0.1f; 
 	
@@ -38,7 +38,7 @@ public final class Defs {
      ************************************* Controller ************************************* 
      ************************************************************************************** */
 	
-	public static float SCROLLING_SPEED_MODIFIER = 5; 
+	public static float SCROLLING_SPEED_MODIFIER = 0.1f; 
 
 	
     /* ************************************************************************************
