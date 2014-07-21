@@ -33,6 +33,7 @@ public class RandomMapGenerator {
 				(float)randomInt(0,(int) Defs.MAP_HEIGHT)), radius, radius, 
 				new Vector2(0.2f, 0.0f), 0, mass, Defs.TEXTURE_REGION_NAME_ASTERIOID_01);
 		// density of object = 1273 kg/m² 
+		asteroid.setDistanceToParent(0);
 		return asteroid; 
 	}
 	
@@ -41,6 +42,7 @@ public class RandomMapGenerator {
 		TextureMapObjectModel asteroid = new TextureMapObjectModel(centreOfUniverse(), radius, radius, 
 				new Vector2(0.2f, 0.0f), 0, mass, Defs.TEXTURE_REGION_NAME_ASTERIOID_01);
 		// density of object = 1273 kg/m² 
+		asteroid.setDistanceToParent(0); 
 		return asteroid; 
 	}
 	
@@ -60,16 +62,21 @@ public class RandomMapGenerator {
 
 		TextureMapObjectModel asteroid = new TextureMapObjectModel(asteroidPosition, radius, radius, 
 				asteroidVelocity, 0, mass, Defs.TEXTURE_REGION_NAME_ASTERIOID_01);
+		asteroid.setDistanceToParent(distance);
 		// density of object = 1273 kg/m² 
+		asteroid.setParentNode(planet);
+		asteroid.setDistanceToParent(distance);
 		return asteroid; 
 		
 	}
 	
 	public static TextureMapObjectModel[] generateOrbitingAsteroids(float distance, TextureMapObjectModel planet, float spacing, int numberOfAsteroids) {
 		TextureMapObjectModel[] asteroids = new TextureMapObjectModel[numberOfAsteroids]; 
-		float asteroidRadius = planet.getRadius()*(float)Defs.PLANET_TO_ASTEROID_SIZE_RATIO;
+		//float asteroidRadius = planet.getRadius()*(float)Defs.PLANET_TO_ASTEROID_SIZE_RATIO;
 		for (int i = 0; i<asteroids.length; i++) {
 			asteroids[i] = generateOrbitingAsteroid(i*spacing + spacing, planet, 1f);
+			asteroids[i].setParentNode(planet);
+			asteroids[i].setDistanceToParent(distance); 
 		}
 		return asteroids; 
 	}

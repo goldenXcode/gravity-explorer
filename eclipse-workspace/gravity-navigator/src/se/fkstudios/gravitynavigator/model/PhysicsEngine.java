@@ -53,7 +53,7 @@ public class PhysicsEngine {
 	/**
 	 * Computes 
 	 */
-	private static Vector2 computeAcceleration(MapObjectModel mapObject1, MapObjectModel mapObject2)
+	public static Vector2 computeAcceleration(MapObjectModel mapObject1, MapObjectModel mapObject2)
 	{
 		return computeAcceleration(mapObject1.getPosition(), mapObject2.getPosition(), mapObject1.getMass(), mapObject2.getMass()); 
 	}
