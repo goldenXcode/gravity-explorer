@@ -31,6 +31,7 @@ public final class Defs {
 	
 	public static float PLANET_TO_ASTEROID_SIZE_RATIO = 0.1f; 
 	
+	public static float ORBITAL_COMPENSATIONAL_FACTOR = 0.001f; 
 	
 
 	
