@@ -72,9 +72,9 @@ public class RandomMapGenerator {
 	
 	public static TextureMapObjectModel[] generateOrbitingAsteroids(float distance, TextureMapObjectModel planet, float spacing, int numberOfAsteroids) {
 		TextureMapObjectModel[] asteroids = new TextureMapObjectModel[numberOfAsteroids]; 
-		//float asteroidRadius = planet.getRadius()*(float)Defs.PLANET_TO_ASTEROID_SIZE_RATIO;
+		float asteroidRadius = planet.getRadius()*(float)Defs.PLANET_TO_ASTEROID_SIZE_RATIO;
 		for (int i = 0; i<asteroids.length; i++) {
-			asteroids[i] = generateOrbitingAsteroid(i*spacing + spacing, planet, 1f);
+			asteroids[i] = generateOrbitingAsteroid(i*spacing + spacing, planet, asteroidRadius);
 			asteroids[i].setParentNode(planet);
 			asteroids[i].setDistanceToParent(distance); 
 		}

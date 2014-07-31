@@ -98,7 +98,7 @@ public class PeriodicMapModel extends Map {
 //		}
 		
 		// adding the planet 
-		TextureMapObjectModel planet = RandomMapGenerator.generatePlanet(10f);
+		TextureMapObjectModel planet = RandomMapGenerator.generatePlanet(Defs.PLANET_SIZE);
 		PhysicsEngine.add(planet); 
 		gamplayMapObjects.add(planet); 
 		
@@ -107,7 +107,8 @@ public class PeriodicMapModel extends Map {
 		PhysicsEngine.add(playerSpaceship);
 		
 		// adding the orbiting asteroids
-		TextureMapObjectModel[] orbiters = RandomMapGenerator.generateOrbitingAsteroids(10f, planet,7f,7);
+		float spacing = planet.getRadius()*Defs.ASTEROID_SPACING; 
+		TextureMapObjectModel[] orbiters = RandomMapGenerator.generateOrbitingAsteroids(7f, planet,spacing,7);
 		for (int i = 0; i< orbiters.length; i++) {
 			gamplayMapObjects.add(orbiters[i]); 
 		}

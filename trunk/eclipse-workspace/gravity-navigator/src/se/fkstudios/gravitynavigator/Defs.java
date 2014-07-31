@@ -33,6 +33,12 @@ public final class Defs {
 	
 	public static float ORBITAL_COMPENSATIONAL_FACTOR = 0.001f; 
 	
+	public static float ASTEROID_SPACING = 1f; // final spacing is planet-size*spacing
+	
+	public static float PLANET_SIZE = 10f; 
+	
+ 
+	
 
 	
     /* ************************************************************************************
