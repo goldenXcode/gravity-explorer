@@ -17,26 +17,28 @@ public final class Defs {
 	public static Vector2 STARTING_POSITION = new Vector2(2,2);
 	public static Vector2 STARTING_VELOCITY = new Vector2(0,0);
 	
-	public static float GRAVITATIONAL_CONSTANT = 0.001f;
+	public static float GRAVITATIONAL_CONSTANT = 0.01f;
 	
-	public static float MAP_WIDTH = 200;
-	public static float MAP_HEIGHT = 200; 
 	
-	public static int NUMBER_OF_ASTEROIDS = 1; 
+	/* The (hard-coded) solar-system will have a radius of ASTEROID_SPACING*NUMBER_OF_ASTEROIDS*PLANET*SIZE
+	 * MAP_WIDTH and HEIGHT should be set to roughly six times of that*/ 
+	public static float MAP_WIDTH = 1000;
+	public static float MAP_HEIGHT = 1000; 
+	
+	
 	
 	public static float MAX_ROTATIONAL_VELOCITY = 20; 
 	public static float MIN_ROTATIONAL_VELOCITY = 0; 
 	
 	public static int MAX_THRUST = 30; 
 	
+	/* Map-generation-related stuff  */
 	public static float PLANET_TO_ASTEROID_SIZE_RATIO = 0.1f; 
-	
-	public static float ORBITAL_COMPENSATIONAL_FACTOR = 0.001f; 
-	
+	public static float ORBITAL_COMPENSATIONAL_FACTOR = 0.000002f; 
 	public static float ASTEROID_SPACING = 1f; // final spacing is planet-size*spacing
-	
-	public static float PLANET_SIZE = 10f; 
-	
+	public static float PLANET_SIZE = 30f; 
+	public static float TOLERATED_ORBITAL_DEVIATION = 300; 
+	public static int NUMBER_OF_ASTEROIDS = 7; 
  
 	
 

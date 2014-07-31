@@ -76,7 +76,7 @@ public class RandomMapGenerator {
 		for (int i = 0; i<asteroids.length; i++) {
 			asteroids[i] = generateOrbitingAsteroid(i*spacing + spacing, planet, asteroidRadius);
 			asteroids[i].setParentNode(planet);
-			asteroids[i].setDistanceToParent(distance); 
+			asteroids[i].setDistanceToParent(i*spacing + spacing); 
 		}
 		return asteroids; 
 	}

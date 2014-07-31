@@ -108,7 +108,7 @@ public class PeriodicMapModel extends Map {
 		
 		// adding the orbiting asteroids
 		float spacing = planet.getRadius()*Defs.ASTEROID_SPACING; 
-		TextureMapObjectModel[] orbiters = RandomMapGenerator.generateOrbitingAsteroids(7f, planet,spacing,7);
+		TextureMapObjectModel[] orbiters = RandomMapGenerator.generateOrbitingAsteroids(7f, planet,spacing,Defs.NUMBER_OF_ASTEROIDS);
 		for (int i = 0; i< orbiters.length; i++) {
 			gamplayMapObjects.add(orbiters[i]); 
 		}
