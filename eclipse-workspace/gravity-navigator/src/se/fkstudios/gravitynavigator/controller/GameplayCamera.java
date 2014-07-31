@@ -12,6 +12,11 @@ public class GameplayCamera extends OrthographicCamera {
 	
 	private CameraMode cameraMode;
 	
+	/*to get a proper logarithmic zoom we'll use a variable modified by the user (zoomDomain) and 
+	 a (exponential) mapping from zoomDomain to zoomRange which will be the actual zoom seen on screen. 
+	one will be modulated by SCROLLING_SPEED_MODIFIER_1 and the other by SCROLLING_SPEED_MODIFIER_2 */
+	private float zoomDomain; 
+	
 	/**
 	 * WARNING: Only updated after getViewport() was called.
 	 * tempViewport should only be used by getViewport() for optimization.
@@ -21,12 +26,14 @@ public class GameplayCamera extends OrthographicCamera {
 	public GameplayCamera(float viewportWidth, float viewportHeight) {
 		super(viewportWidth, viewportHeight);
 		cameraMode = CameraMode.LOOSE;
+		zoomDomain = zoom; 
 		tempViewport = new Rectangle(0,0, viewportWidth, viewportHeight);
 	}
 	
 	public GameplayCamera(float viewportWidth, float viewportHeight, CameraMode cameraMode) {
 		this(viewportWidth, viewportHeight);
 		this.cameraMode = cameraMode;
+		zoomDomain = zoom; 
 	}
 	
 	public void setCameraMode(CameraMode value) {
@@ -38,15 +45,22 @@ public class GameplayCamera extends OrthographicCamera {
 	}
 	
 	public void zoomIn() {
-	    zoom += -0.1f;
+	    zoomDomain += -0.1f;
+	    zoom = (float) zoomMapping(zoomDomain); 
 	}
 	
 	public void zoomOut() {
-		zoom += 0.1f; 
+		zoomDomain += 0.1f; 
+		zoom = (float) zoomMapping(zoomDomain); 
 	}
 	
 	public void zoom (double d) {
-		zoom += d * Defs.SCROLLING_SPEED_MODIFIER; 	
+		zoomDomain += d * Defs.SCROLLING_SPEED_MODIFIER_1; 	
+		zoom = (float) zoomMapping(zoomDomain); 
+	}
+	
+	private double zoomMapping (double d) {
+		return Math.exp(d*Defs.SCROLLING_SPEED_MODIFIER_2); 
 	}
 	
 	/* 
@@ -54,9 +68,10 @@ public class GameplayCamera extends OrthographicCamera {
 	 *  getZoom is still monotone in both x and y of the viewportwidth
 	 */
 	public float getZoom() {
-		float x = getViewport().x; 
-		float y = getViewport().y; 
-		return (float) (Math.pow(x, 2) + Math.pow(y, 2)); 
+//		float x = getViewport().x; 
+//		float y = getViewport().y; 
+//		return (float) Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2))); // might want to optimize this later. sqrt is costly and somewhat redundant
+		return zoom; 
 	}
 
 	/**

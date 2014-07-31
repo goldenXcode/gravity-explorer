@@ -34,7 +34,7 @@ public final class Defs {
 	
 	/* Map-generation-related stuff  */
 	public static float PLANET_TO_ASTEROID_SIZE_RATIO = 0.1f; 
-	public static float ORBITAL_COMPENSATIONAL_FACTOR = 0.000002f; 
+	public static float ORBITAL_COMPENSATIONAL_FACTOR = 0.000005f; 
 	public static float ASTEROID_SPACING = 1f; // final spacing is planet-size*spacing
 	public static float PLANET_SIZE = 30f; 
 	public static float TOLERATED_ORBITAL_DEVIATION = 300; 
@@ -47,7 +47,10 @@ public final class Defs {
      ************************************* Controller ************************************* 
      ************************************************************************************** */
 	
-	public static float SCROLLING_SPEED_MODIFIER = 0.1f; 
+	// to be used in the Camera-class. Use outside may cause some peculiar effects. 
+	// modifier one is for the base, 2 is for the exponent
+	public static float SCROLLING_SPEED_MODIFIER_1 = 1f; 
+	public static float SCROLLING_SPEED_MODIFIER_2 = 0.1f; 
 
 	
     /* ************************************************************************************
