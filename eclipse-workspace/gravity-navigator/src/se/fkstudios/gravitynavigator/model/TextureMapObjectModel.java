@@ -73,8 +73,13 @@ public class TextureMapObjectModel extends MapObjectModel {
 		float distance = PhysicsEngine.shortestDistanceVector(getPosition(), getParentNode().getPosition()).len();
 		float targetDistance = getDistanceToParent();  
 		float diff = targetDistance - distance; 
-		float compFactor = Defs.ORBITAL_COMPENSATIONAL_FACTOR*diff; 
+		if (Math.abs(diff) > Defs.TOLERATED_ORBITAL_DEVIATION) {
+			System.out.println("asteroids deviating too much from their orbit. Consider adjusting ORBITAL_COMPENSATIONAL_FACTOR"); 
+		}
+		TextureMapObjectModel planet = getParentNode(); 
+		float compFactor = Defs.ORBITAL_COMPENSATIONAL_FACTOR*diff*PhysicsEngine.computeAcceleration(this, planet).len(); 
 		return PhysicsEngine.shortestDistanceVector(getPosition(), getParentNode().getPosition()).nor().scl(compFactor); 
+		
 		}
 		else {
 			return new Vector2(0,0); 
