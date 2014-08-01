@@ -3,11 +3,16 @@ package se.fkstudios.gravitynavigator.controller;
 import java.math.BigDecimal;
 
 import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.model.MapObjectModel;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 import se.fkstudios.gravitynavigator.model.SpaceshipModel;
-import se.fkstudios.gravitynavigator.model.TextureMapObjectModel;
+import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
+import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
+import se.fkstudios.gravitynavigator.model.resources.SolidColorResource;
+import se.fkstudios.gravitynavigator.model.resources.TextureResource;
 import se.fkstudios.gravitynavigator.view.PeriodicMapRenderer;
-import se.fkstudios.gravitynavigator.view.TextureMapObjectRenderer;
+import se.fkstudios.gravitynavigator.view.TextureRenderer;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -40,7 +45,7 @@ public class GameplayScreen implements Screen {
 	//Rendering
 	private SpriteBatch spriteBatch;
 	private PeriodicMapRenderer mapRenderer;
-	private TextureMapObjectRenderer textureMapObjectRenderer;
+	private TextureRenderer textureMapObjectRenderer;
 
 	@Override
 	public void show() throws IllegalStateException {
@@ -94,7 +99,7 @@ public class GameplayScreen implements Screen {
 	    spriteBatch = new SpriteBatch();
 	    
 	    mapRenderer = new PeriodicMapRenderer(spriteBatch);
-	    textureMapObjectRenderer = new TextureMapObjectRenderer(new ShapeRenderer(), spriteBatch,
+	    textureMapObjectRenderer = new TextureRenderer(new ShapeRenderer(), spriteBatch,
 	    		map.getWidth(), map.getHeight());
 	}
 
@@ -132,15 +137,26 @@ public class GameplayScreen implements Screen {
 		
 		mapRenderer.render(map, camera.getViewport());
 		
-		Array<TextureMapObjectModel> textureMapObjects;
+		Array<MapObjectModel> mapObjects;
 		MapObjects allMapObjects;
 		
 		for (MapLayer layer : map.getLayers()) {	
 			allMapObjects = layer.getObjects();
-			textureMapObjects = allMapObjects.getByType(TextureMapObjectModel.class);
+			mapObjects = allMapObjects.getByType(MapObjectModel.class);
 			
-			for (TextureMapObjectModel textureMapObject : textureMapObjects)
-				textureMapObjectRenderer.render(textureMapObject, camera.getViewport());
+			for (MapObjectModel mapObject : mapObjects) {
+				Array<GraphicResource> resources = mapObject.getResources();
+				
+				for (GraphicResource resource : resources) {
+					Class<? extends GraphicResource> type = resource.getClass();
+					if (type == TextureResource.class)
+						textureMapObjectRenderer.render(mapObject, (TextureResource)resource, camera.getViewport());
+					else if (type == AnimationResource.class)
+						throw new NotImplementedException();
+					else if (type == SolidColorResource.class)
+						throw new NotImplementedException();
+				}
+			}
 		}
 	}
 

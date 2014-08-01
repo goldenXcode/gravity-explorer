@@ -1,8 +1,9 @@
 package se.fkstudios.gravitynavigator.view;
 
 import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.model.MapObjectModel;
 import se.fkstudios.gravitynavigator.model.PhysicsEngine;
-import se.fkstudios.gravitynavigator.model.TextureMapObjectModel;
+import se.fkstudios.gravitynavigator.model.resources.TextureResource;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,14 +17,14 @@ import com.badlogic.gdx.math.Vector2;
  * Renders SimpleMapObjects.
  * @author kristofer
  */
-public class TextureMapObjectRenderer {
+public class TextureRenderer {
 
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch spriteBatch;
 	private float mapScreenWidth;
 	private float mapScreenHeight;
 	
-	public TextureMapObjectRenderer(ShapeRenderer shapeRenderer,
+	public TextureRenderer(ShapeRenderer shapeRenderer,
 			SpriteBatch spriteBatch,
 			float mapWidth,
 			float mapHeight) {
@@ -34,7 +35,7 @@ public class TextureMapObjectRenderer {
 		this.mapScreenHeight = mapHeight * Defs.PIXELS_PER_UNIT;
 	}
 	
-	public void render(TextureMapObjectModel mapObject, Rectangle viewport) {
+	public void render(MapObjectModel mapObject, TextureResource textureResource, Rectangle viewport) {
 		
 		if (isObjectInViewport(mapObject, viewport))
 		{
@@ -50,7 +51,11 @@ public class TextureMapObjectRenderer {
 			float mapObjectScreenPositionX = (mapObject.getPosition().x - offsetX) * Defs.PIXELS_PER_UNIT;  
 			float mapObjectScreenPositionY = (mapObject.getPosition().y - offsetY) * Defs.PIXELS_PER_UNIT;
 			
-			TextureRegion textureRegion = TextureLoader.getInstance().getTextureRegion(mapObject.getTextureName());
+//			TODO: REMOVE - OLD CODE
+//			TextureRegion textureRegion = TextureLoader.getInstance().getTextureRegion(mapObject.getTextureName());
+			
+//			TODO: AND THE NEW CODE
+			TextureRegion textureRegion = TextureLoader.getInstance().getTextureRegion(textureResource.textureName);
 			
 			spriteBatch.begin();
 			
@@ -178,7 +183,7 @@ public class TextureMapObjectRenderer {
 		}
 	}
 	
-	private void debugRender(Matrix4 projectionMatrix, TextureMapObjectModel mapObject) {
+	private void debugRender(Matrix4 projectionMatrix, MapObjectModel mapObject) {
 		
 		shapeRenderer.setProjectionMatrix(projectionMatrix);
 
@@ -205,7 +210,7 @@ public class TextureMapObjectRenderer {
 		shapeRenderer.end();
 	}
 	
-	private boolean isObjectInViewport(TextureMapObjectModel mapObject, Rectangle viewport) {
+	private boolean isObjectInViewport(MapObjectModel mapObject, Rectangle viewport) {
 		
 		Rectangle modelViewport = new Rectangle(viewport.x / Defs.PIXELS_PER_UNIT, 
 				viewport.y / Defs.PIXELS_PER_UNIT, 
