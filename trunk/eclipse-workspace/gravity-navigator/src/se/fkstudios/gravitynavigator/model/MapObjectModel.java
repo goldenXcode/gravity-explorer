@@ -1,5 +1,8 @@
 package se.fkstudios.gravitynavigator.model;
 
+import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.view.RenderOptions;
+
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.math.Vector2;
 
@@ -17,6 +20,10 @@ public abstract class MapObjectModel extends MapObject {
 	float rotation;
 	private int mass; // in kg
 	private float rotationalSpeed; // in degrees per second
+	
+	private float distanceToParent; 
+	private TextureMapObjectModel parentNode; 
+	private TextureMapObjectModel[] childrenNodes; 
 	
 	public MapObjectModel(Vector2 position, 
 			float width,
@@ -99,13 +106,59 @@ public abstract class MapObjectModel extends MapObject {
 		return this.rotationalSpeed; 
 	}
 	
+	public void setDistanceToParent (float distance) {
+		distanceToParent = distance; 
+	}
+	
+	public float getDistanceToParent () {
+		return distanceToParent; 
+	}
+	
+	public TextureMapObjectModel getParentNode() {
+		return parentNode;
+	}
+	
+	public void setParentNode(TextureMapObjectModel model) {
+		parentNode = model; 
+	}
+	
+	public TextureMapObjectModel[] getChildrenNodes() {
+		return childrenNodes; 
+	}
+	
+	public void setChildrenNodes(TextureMapObjectModel[] children) {
+		childrenNodes = children; 
+	}
+	
 	/**
 	 * Update the object for next game loop iteration.
 	 * @param delta Time in seconds since last update call.
 	 */
 	public void update(float delta) {
-		setVelocity(velocity.cpy().add(acceleration.cpy().scl(delta)));
+		Vector2 newVelocity = getVelocity().cpy();
+		newVelocity.add(acceleration.cpy().scl(delta));
+		newVelocity.add(calculateOrbitCompensationalVelocity().scl(delta));
+		
+		setVelocity(newVelocity);
 		setPosition(position.cpy().add(velocity.cpy().scl(delta)));
 		setRotation(((getRotation() + getRotationalSpeed()*delta) % 360f)); 
+	}
+		
+	private Vector2 calculateOrbitCompensationalVelocity() {
+		if (getParentNode() != null) {
+			float distance = PhysicsEngine.shortestDistanceVector(getPosition(), getParentNode().getPosition()).len();
+			float targetDistance = getDistanceToParent();  
+			float diff = targetDistance - distance; 
+			
+			if (RenderOptions.getInstance().debugRender && (Math.abs(diff) > Defs.TOLERATED_ORBITAL_DEVIATION))
+				System.out.println("asteroids deviating too much from their orbit. Consider adjusting ORBITAL_COMPENSATIONAL_FACTOR"); 
+			
+			TextureMapObjectModel planet = getParentNode(); 
+			float compFactor = Defs.ORBITAL_COMPENSATIONAL_FACTOR*diff*PhysicsEngine.computeAcceleration(this, planet).len(); 
+			return PhysicsEngine.shortestDistanceVector(getPosition(), getParentNode().getPosition()).nor().scl(compFactor); 
+		}
+		else {
+			return new Vector2(0,0); 
+		}
 	}
 }

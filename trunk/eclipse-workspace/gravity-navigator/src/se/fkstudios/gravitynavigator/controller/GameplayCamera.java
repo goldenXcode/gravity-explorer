@@ -111,7 +111,7 @@ public class GameplayCamera extends OrthographicCamera {
 		else if (jumpDown)
 			cameraPosition.y = cameraPosition.y + mapHeight * Defs.PIXELS_PER_UNIT;
 		
-		cameraPosition.lerp(targetScreenPosition, delta);
+		cameraPosition.lerp(targetScreenPosition, 3 * delta);
 			
 		if (cameraMode == CameraMode.LOOSE)
 			position.set(cameraPosition.x, cameraPosition.y, 0);
