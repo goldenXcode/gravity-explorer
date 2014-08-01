@@ -1,12 +1,15 @@
 package se.fkstudios.gravitynavigator.model;
 
+import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
+
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Spaceship gameplay object, the object the player controls. 
  * @author kristofer
  */
-public class SpaceshipModel extends TextureMapObjectModel {
+public class SpaceshipModel extends MapObjectModel {
 
 	private Vector2 thrust;
 	private int maxThrust; //in Newton
@@ -28,8 +31,8 @@ public class SpaceshipModel extends TextureMapObjectModel {
 		this.maxThrust = maxThrust;
 	}
 
-	public SpaceshipModel(Vector2 position, float width, float height, Vector2 velocity, float rotation, int mass, String textureName, int maxThrust) {
-		super(position, width, height, velocity, rotation, mass, textureName);
+	public SpaceshipModel(Vector2 position, float width, float height, Vector2 velocity, float rotation, int mass, int maxThrust, Array<GraphicResource> resources) {
+		super(position, width, height, velocity, rotation, mass, resources);
 		this.thrust = new Vector2(0, 0);
 		this.maxThrust = maxThrust;
 	}
@@ -42,8 +45,7 @@ public class SpaceshipModel extends TextureMapObjectModel {
 		
 		super.update(delta);
 		
-		if (thrust.len2() > 0)
-			//LibGdx render with rotation 0 from y-axis while Vector2 class calculate angle from x-axis. 
-			setRotation(thrust.angle() - 90);
+		if (thrust.len2() > 0) 
+			setRotation(thrust.angle() - 90); //LibGdx render with rotation 0 from y-axis while Vector2 calculates angle from x-axis, thus -90.
 	} 	
 }

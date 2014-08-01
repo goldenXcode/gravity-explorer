@@ -1,16 +1,18 @@
 package se.fkstudios.gravitynavigator.model;
 
 import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 import se.fkstudios.gravitynavigator.view.RenderOptions;
 
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Modeling the properties of all gameplay map objects in game.
  * @author kristofer
  */
-public abstract class MapObjectModel extends MapObject {
+public class MapObjectModel extends MapObject {
 
 	private float width;
 	private float height;
@@ -21,9 +23,11 @@ public abstract class MapObjectModel extends MapObject {
 	private int mass; // in kg
 	private float rotationalSpeed; // in degrees per second
 	
+	private Array<GraphicResource> resources;
+	
 	private float distanceToParent; 
-	private TextureMapObjectModel parentNode; 
-	private TextureMapObjectModel[] childrenNodes; 
+	private MapObjectModel parentNode; 
+	private MapObjectModel[] childrenNodes; 
 	
 	public MapObjectModel(Vector2 position, 
 			float width,
@@ -31,17 +35,18 @@ public abstract class MapObjectModel extends MapObject {
 			Vector2 velocity,
 			float rotation,
 			int mass,
-			String textureName) {
+			Array<GraphicResource> resources) {
 		this.position = position;
 		this.width = width;
 		this.height = height;
 		this.velocity = velocity;
 		this.rotation = rotation;
 		this.mass = mass;
+		this.resources = resources;
 		this.acceleration = new Vector2(0, 0);
 		this.rotationalSpeed = 0; 
 	}
-	
+
 	public float getWidth() {
 		return width;
 	}
@@ -106,6 +111,15 @@ public abstract class MapObjectModel extends MapObject {
 		return this.rotationalSpeed; 
 	}
 	
+	public float getRadius() {
+		float result = (float) (Math.sqrt(Math.pow(getWidth(), 2) +Math.pow(getHeight(), 2)));
+		return result; 
+	}
+	
+	public Array<GraphicResource> getResources() {
+		return resources;
+	}
+	
 	public void setDistanceToParent (float distance) {
 		distanceToParent = distance; 
 	}
@@ -114,19 +128,19 @@ public abstract class MapObjectModel extends MapObject {
 		return distanceToParent; 
 	}
 	
-	public TextureMapObjectModel getParentNode() {
+	public MapObjectModel getParentNode() {
 		return parentNode;
 	}
 	
-	public void setParentNode(TextureMapObjectModel model) {
+	public void setParentNode(MapObjectModel model) {
 		parentNode = model; 
 	}
 	
-	public TextureMapObjectModel[] getChildrenNodes() {
+	public MapObjectModel[] getChildrenNodes() {
 		return childrenNodes; 
 	}
 	
-	public void setChildrenNodes(TextureMapObjectModel[] children) {
+	public void setChildrenNodes(MapObjectModel[] children) {
 		childrenNodes = children; 
 	}
 	
@@ -153,7 +167,7 @@ public abstract class MapObjectModel extends MapObject {
 			if (RenderOptions.getInstance().debugRender && (Math.abs(diff) > Defs.TOLERATED_ORBITAL_DEVIATION))
 				System.out.println("asteroids deviating too much from their orbit. Consider adjusting ORBITAL_COMPENSATIONAL_FACTOR"); 
 			
-			TextureMapObjectModel planet = getParentNode(); 
+			MapObjectModel planet = getParentNode(); 
 			float compFactor = Defs.ORBITAL_COMPENSATIONAL_FACTOR*diff*PhysicsEngine.computeAcceleration(this, planet).len(); 
 			return PhysicsEngine.shortestDistanceVector(getPosition(), getParentNode().getPosition()).nor().scl(compFactor); 
 		}

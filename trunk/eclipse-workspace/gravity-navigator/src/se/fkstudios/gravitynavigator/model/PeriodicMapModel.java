@@ -1,6 +1,8 @@
 package se.fkstudios.gravitynavigator.model;
 
 import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
+import se.fkstudios.gravitynavigator.model.resources.TextureResource;
 
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapLayer;
@@ -72,14 +74,16 @@ public class PeriodicMapModel extends Map {
 		// Note: I'm thinking ModelDefs could contain the XML-parser. 
 		Vector2 position = Defs.STARTING_POSITION;
 		Vector2 velocity = Defs.STARTING_VELOCITY; 
+		Array<GraphicResource> spaceshipTextures = new Array<GraphicResource>();
+		spaceshipTextures.add(new TextureResource(new Vector2(0, 0), Defs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER));
 		playerSpaceship = new SpaceshipModel(position, 
 				0.33f, 
 				0.57f, 
 				velocity, 
 				0, 
-				1, 
-				Defs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER, 
-				Defs.MAX_THRUST);
+				1,
+				Defs.MAX_THRUST,
+				spaceshipTextures);
 
 
 //		TextureMapObjectModel asterioid2 = new TextureMapObjectModel(new Vector2(2, 1), 0.33f, 0.5f, 
@@ -98,7 +102,7 @@ public class PeriodicMapModel extends Map {
 //		}
 		
 		// adding the planet 
-		TextureMapObjectModel planet = RandomMapGenerator.generatePlanet(Defs.PLANET_SIZE);
+		MapObjectModel planet = RandomMapGenerator.generatePlanet(Defs.PLANET_SIZE);
 		PhysicsEngine.add(planet); 
 		gamplayMapObjects.add(planet); 
 		
@@ -108,7 +112,7 @@ public class PeriodicMapModel extends Map {
 		
 		// adding the orbiting asteroids
 		float spacing = planet.getRadius()*Defs.ASTEROID_SPACING; 
-		TextureMapObjectModel[] orbiters = RandomMapGenerator.generateOrbitingAsteroids(7f, planet,spacing,Defs.NUMBER_OF_ASTEROIDS);
+		MapObjectModel[] orbiters = RandomMapGenerator.generateOrbitingAsteroids(7f, planet,spacing,Defs.NUMBER_OF_ASTEROIDS);
 		for (int i = 0; i< orbiters.length; i++) {
 			gamplayMapObjects.add(orbiters[i]); 
 		}
