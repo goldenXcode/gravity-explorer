@@ -39,18 +39,11 @@ public class SpaceshipModel extends TextureMapObjectModel {
 		int mass = getMass();
 		Vector2 acceleration = thrust.cpy().div(mass);
 		getAcceleration().add(acceleration);
+		
 		super.update(delta);
-	} 	
-	
-	/**
-	 * Sets the velocity and rotates ship in traveling direction.
-	 */
-	@Override
-	public void setVelocity(Vector2 velocity) {
-		super.setVelocity(velocity);
 		
 		if (thrust.len2() > 0)
 			//LibGdx render with rotation 0 from y-axis while Vector2 class calculate angle from x-axis. 
 			setRotation(thrust.angle() - 90);
-	}
+	} 	
 }

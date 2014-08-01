@@ -207,18 +207,18 @@ public class TextureMapObjectRenderer {
 	
 	private boolean isObjectInViewport(TextureMapObjectModel mapObject, Rectangle viewport) {
 		
-		Rectangle modelViewPort = new Rectangle(viewport.x / Defs.PIXELS_PER_UNIT, 
+		Rectangle modelViewport = new Rectangle(viewport.x / Defs.PIXELS_PER_UNIT, 
 				viewport.y / Defs.PIXELS_PER_UNIT, 
 				viewport.width / Defs.PIXELS_PER_UNIT, 
 				viewport.height / Defs.PIXELS_PER_UNIT);
 		
-		float height = modelViewPort.height / 2 + mapObject.getHeight() / 2;
-		float width = modelViewPort.width / 2 + mapObject.getWidth() / 2;
+		float height = modelViewport.height / 2 + mapObject.getHeight() / 2;
+		float width = modelViewport.width / 2 + mapObject.getWidth() / 2;
 		double maxViewportWidthHeight = Math.sqrt(Math.pow(height, 2) + Math.pow(width, 2));
 		
 		float shortestDistance = PhysicsEngine.shortestDistanceVector(
-				new Vector2(modelViewPort.x + modelViewPort.width / 2, 
-						modelViewPort.y + modelViewPort.height / 2),
+				new Vector2(modelViewport.x + modelViewport.width / 2, 
+						modelViewport.y + modelViewport.height / 2),
 				mapObject.getPosition()).len();
 		
 		return shortestDistance < maxViewportWidthHeight;

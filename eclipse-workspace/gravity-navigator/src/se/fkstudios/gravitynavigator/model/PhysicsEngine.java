@@ -95,7 +95,7 @@ public class PhysicsEngine {
 	}
 	
 	/**
-	 * Computes the shortest vector from position1 to position2 considering alternative positions of position2.
+	 * Computes the shortest vector from position1 to position2 considering alternative positions for position2 only.
 	 */
 	private static Vector2 shortestDistanceVectorHelper(Vector2 position1, Vector2 position2) {
 		float x1 = position1.x; 
