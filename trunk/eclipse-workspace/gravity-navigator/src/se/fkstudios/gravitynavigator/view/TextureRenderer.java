@@ -2,7 +2,6 @@ package se.fkstudios.gravitynavigator.view;
 
 import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.MapObjectModel;
-import se.fkstudios.gravitynavigator.model.PhysicsEngine;
 import se.fkstudios.gravitynavigator.model.resources.TextureResource;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,7 +13,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- * Renders SimpleMapObjects.
+ * Object drawing MapObjectModel's TextureResources.
  * @author kristofer
  */
 public class TextureRenderer {
@@ -35,152 +34,74 @@ public class TextureRenderer {
 		this.mapScreenHeight = mapHeight * Defs.PIXELS_PER_UNIT;
 	}
 	
+	/**
+	 * Draws a TextureResource.
+	 * @param mapObject MapObjectModel owning the TextureResource.
+	 * @param textureResource TextureResource to be drawn.
+	 * @param viewport 
+	 */
 	public void render(MapObjectModel mapObject, TextureResource textureResource, Rectangle viewport) {
+
+		float textureOriginX = (mapObject.getWidth() / 2) * Defs.PIXELS_PER_UNIT;
+		float textureOriginY = (mapObject.getHeight() / 2) * Defs.PIXELS_PER_UNIT;
+		float texturePositionX = mapObject.getPosition().x * Defs.PIXELS_PER_UNIT - textureOriginX;  
+		float texturePositionY = mapObject.getPosition().y * Defs.PIXELS_PER_UNIT - textureOriginY;
+		float textureWidth = mapObject.getWidth() * Defs.PIXELS_PER_UNIT;
+		float textureHeight = mapObject.getHeight() * Defs.PIXELS_PER_UNIT;
+		float textureRotation = mapObject.getRotation();
+		Rectangle textureArea = new Rectangle(texturePositionX, texturePositionY, textureWidth, textureHeight);
 		
-		if (isObjectInViewport(mapObject, viewport))
-		{
-			float textureOriginX = (mapObject.getWidth() / 2) * Defs.PIXELS_PER_UNIT;
-			float textureOriginY = (mapObject.getHeight() / 2) * Defs.PIXELS_PER_UNIT;
-			
-			float textureWidth = mapObject.getWidth() * Defs.PIXELS_PER_UNIT;
-			float textureHeight = mapObject.getHeight() * Defs.PIXELS_PER_UNIT;
-
-			//since position is the middle of the object but we render the texture from the bottom left corner. 
-			float offsetX = mapObject.getWidth() * 0.5f;
-			float offsetY = mapObject.getHeight() * 0.5f;
-			float mapObjectScreenPositionX = (mapObject.getPosition().x - offsetX) * Defs.PIXELS_PER_UNIT;  
-			float mapObjectScreenPositionY = (mapObject.getPosition().y - offsetY) * Defs.PIXELS_PER_UNIT;
-			
-//			TODO: REMOVE - OLD CODE
-//			TextureRegion textureRegion = TextureLoader.getInstance().getTextureRegion(mapObject.getTextureName());
-			
-//			TODO: AND THE NEW CODE
-			TextureRegion textureRegion = TextureLoader.getInstance().getTextureRegion(textureResource.textureName);
-			
-			spriteBatch.begin();
-			
-			spriteBatch.draw(textureRegion, 
-					mapObjectScreenPositionX, 
-					mapObjectScreenPositionY, 
-					textureOriginX, 
-					textureOriginY, 
-					textureWidth, 
-					textureHeight, 
-					1.0f,
-					1.0f,
-					mapObject.getRotation());
-
-			boolean overlapBottom = viewport.y < 0;
-			boolean overlapTop = (viewport.y + viewport.height) > mapScreenHeight;
-			boolean overlapLeft = viewport.x < 0;
-			boolean overlapRight = (viewport.x + viewport.width) > mapScreenWidth;
-			boolean overlapRightTop = overlapRight && overlapTop;
-			boolean overlapRightBottom = overlapRight && overlapBottom;
-			boolean overlapLeftTop = overlapLeft && overlapTop;
-			boolean overlapLeftBottom = overlapLeft && overlapBottom;
-			
-			if (overlapRightTop) {
-				spriteBatch.draw(textureRegion, 
-						mapObjectScreenPositionX + mapScreenWidth, 
-						mapObjectScreenPositionY + mapScreenHeight, 
-						textureOriginX, 
-						textureOriginY, 
-						textureWidth, 
-						textureHeight, 
-						1.0f,
-						1.0f,
-						mapObject.getRotation());
-			}
-			if (overlapRightBottom) {
-				spriteBatch.draw(textureRegion, 
-						mapObjectScreenPositionX + mapScreenWidth, 
-						mapObjectScreenPositionY - mapScreenHeight, 
-						textureOriginX, 
-						textureOriginY, 
-						textureWidth, 
-						textureHeight, 
-						1.0f,
-						1.0f,
-						mapObject.getRotation());
-			}
-			if (overlapLeftTop) {
-				spriteBatch.draw(textureRegion, 
-						mapObjectScreenPositionX - mapScreenWidth, 
-						mapObjectScreenPositionY + mapScreenHeight, 
-						textureOriginX, 
-						textureOriginY, 
-						textureWidth, 
-						textureHeight, 
-						1.0f,
-						1.0f,
-						mapObject.getRotation());
-			}
-			if (overlapLeftBottom) {
-				spriteBatch.draw(textureRegion, 
-						mapObjectScreenPositionX - mapScreenWidth, 
-						mapObjectScreenPositionY - mapScreenHeight, 
-						textureOriginX, 
-						textureOriginY, 
-						textureWidth, 
-						textureHeight, 
-						1.0f,
-						1.0f,
-						mapObject.getRotation());
-			}
-			if (overlapBottom) {
-				spriteBatch.draw(textureRegion, 
-						mapObjectScreenPositionX, 
-						mapObjectScreenPositionY - mapScreenHeight, 
-						textureOriginX, 
-						textureOriginY, 
-						textureWidth, 
-						textureHeight, 
-						1.0f,
-						1.0f,
-						mapObject.getRotation());
-			}
-			if (overlapTop) {
-				spriteBatch.draw(textureRegion, 
-						mapObjectScreenPositionX, 
-						mapObjectScreenPositionY + mapScreenHeight, 
-						textureOriginX, 
-						textureOriginY, 
-						textureWidth, 
-						textureHeight, 
-						1.0f,
-						1.0f,
-						mapObject.getRotation());
-			}
-			if (overlapLeft) {
-				spriteBatch.draw(textureRegion, 
-						mapObjectScreenPositionX - mapScreenWidth, 
-						mapObjectScreenPositionY, 
-						textureOriginX, 
-						textureOriginY, 
-						textureWidth, 
-						textureHeight, 
-						1.0f,
-						1.0f,
-						mapObject.getRotation());
-			}
-			if (overlapRight) {
-				spriteBatch.draw(textureRegion, 
-						mapObjectScreenPositionX + mapScreenWidth, 
-						mapObjectScreenPositionY, 
-						textureOriginX, 
-						textureOriginY, 
-						textureWidth, 
-						textureHeight, 
-						1.0f,
-						1.0f,
-						mapObject.getRotation());	
-			}
-			
-			spriteBatch.end();
-			
-			if (RenderOptions.getInstance().debugRender)
-				debugRender(spriteBatch.getProjectionMatrix(), mapObject);
-		}
+		TextureRegion textureRegion = TextureLoader.getInstance().getTextureRegion(textureResource.textureName);
+		
+		spriteBatch.begin();
+		
+		tryDrawTextureRegion(textureRegion, textureArea, textureOriginX, textureOriginY, textureRotation, viewport);
+		
+		//Render periodicity
+		//Top
+		textureArea.x = texturePositionX;
+		textureArea.y = texturePositionY + mapScreenHeight;
+		tryDrawTextureRegion(textureRegion, textureArea, textureOriginX, textureOriginY, textureRotation, viewport);
+		
+		//Left
+		textureArea.x = texturePositionX - mapScreenWidth;
+		textureArea.y = texturePositionY;
+		tryDrawTextureRegion(textureRegion, textureArea, textureOriginX, textureOriginY, textureRotation, viewport);
+		
+		//Buttom
+		textureArea.x = texturePositionX;
+		textureArea.y = texturePositionY - mapScreenHeight;
+		tryDrawTextureRegion(textureRegion, textureArea, textureOriginX, textureOriginY, textureRotation, viewport);
+		
+		//Right
+		textureArea.x = texturePositionX + mapScreenWidth;
+		textureArea.y = texturePositionY;
+		tryDrawTextureRegion(textureRegion, textureArea, textureOriginX, textureOriginY, textureRotation, viewport);
+		
+		//Left top
+		textureArea.x = texturePositionX - mapScreenWidth;
+		textureArea.y = texturePositionY + mapScreenHeight;
+		tryDrawTextureRegion(textureRegion, textureArea, textureOriginX, textureOriginY, textureRotation, viewport);
+		
+		//Left bottom
+		textureArea.x = texturePositionX - mapScreenWidth;
+		textureArea.y = texturePositionY - mapScreenHeight;
+		tryDrawTextureRegion(textureRegion, textureArea, textureOriginX, textureOriginY, textureRotation, viewport);
+		
+		//Right top
+		textureArea.x = texturePositionX + mapScreenWidth;
+		textureArea.y = texturePositionY + mapScreenHeight;
+		tryDrawTextureRegion(textureRegion, textureArea, textureOriginX, textureOriginY, textureRotation, viewport);
+		
+		//Right bottom
+		textureArea.x = texturePositionX + mapScreenWidth;
+		textureArea.y = texturePositionY - mapScreenHeight;
+		tryDrawTextureRegion(textureRegion, textureArea, textureOriginX, textureOriginY, textureRotation, viewport);
+		
+		spriteBatch.end();
+		
+		if (RenderOptions.getInstance().debugRender)
+			debugRender(spriteBatch.getProjectionMatrix(), mapObject);
 	}
 	
 	private void debugRender(Matrix4 projectionMatrix, MapObjectModel mapObject) {
@@ -210,22 +131,36 @@ public class TextureRenderer {
 		shapeRenderer.end();
 	}
 	
-	private boolean isObjectInViewport(MapObjectModel mapObject, Rectangle viewport) {
+	/**
+	 * Draws a TextureRegion stretched in a Rectangle if the Rectangle overlaps given viewport Rectangle.
+	 * @param textureRegion Texture region to be drawn.
+	 * @param textureArea Area to draw the texture region in.
+	 * @param textureOriginX X-wise origin to determine rotation etc.
+	 * @param textureOriginY Y-wise origin to determine rotation etc.
+	 * @param textureRotation texture's rotation.
+	 * @param viewport The viewport to test overlapping against.
+	 * @return True if the TextureRegion was drawn.
+	 */
+	private Boolean tryDrawTextureRegion(TextureRegion textureRegion, 
+			Rectangle textureArea, 
+			float textureOriginX, 
+			float textureOriginY, 
+			float textureRotation, 
+			Rectangle viewport) {
 		
-		Rectangle modelViewport = new Rectangle(viewport.x / Defs.PIXELS_PER_UNIT, 
-				viewport.y / Defs.PIXELS_PER_UNIT, 
-				viewport.width / Defs.PIXELS_PER_UNIT, 
-				viewport.height / Defs.PIXELS_PER_UNIT);
-		
-		float height = modelViewport.height / 2 + mapObject.getHeight() / 2;
-		float width = modelViewport.width / 2 + mapObject.getWidth() / 2;
-		double maxViewportWidthHeight = Math.sqrt(Math.pow(height, 2) + Math.pow(width, 2));
-		
-		float shortestDistance = PhysicsEngine.shortestDistanceVector(
-				new Vector2(modelViewport.x + modelViewport.width / 2, 
-						modelViewport.y + modelViewport.height / 2),
-				mapObject.getPosition()).len();
-		
-		return shortestDistance < maxViewportWidthHeight;
+		Boolean wasDrawn = textureArea.overlaps(viewport);
+		if (wasDrawn) {
+			spriteBatch.draw(textureRegion, 
+				textureArea.x, 
+				textureArea.y, 
+				textureOriginX, 
+				textureOriginY,
+				textureArea.width, 
+				textureArea.height, 
+				1.0f, 
+				1.0f, 
+				textureRotation);
+		}
+		return wasDrawn;
 	}
 }
