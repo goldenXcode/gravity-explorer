@@ -151,7 +151,15 @@ public class MapObjectModel extends MapObject {
 	public void update(float delta) {
 		Vector2 newVelocity = getVelocity().cpy();
 		newVelocity.add(acceleration.cpy().scl(delta));
-		newVelocity.add(calculateOrbitCompensationalVelocity().scl(delta));
+		Vector2 compVel = calculateOrbitCompensationalVelocity().scl(delta);
+		newVelocity.add(compVel);
+		
+		// to uphold newtons laws well need to give the parent-planet a proportional force when correcting for gravity
+		if (getParentNode() != null) {
+			Vector2 force = compVel.scl(getParentNode().getMass());
+			Vector2 compVel2 = force.scl(delta/getParentNode().getMass());
+			getParentNode().setVelocity(getParentNode().getVelocity().add(compVel2));
+		}
 		
 		setVelocity(newVelocity);
 		setPosition(position.cpy().add(velocity.cpy().scl(delta)));
