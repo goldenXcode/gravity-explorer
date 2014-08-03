@@ -55,15 +55,15 @@ public class PhysicsEngine {
 	 */
 	public static Vector2 computeAcceleration(MapObjectModel mapObject1, MapObjectModel mapObject2)
 	{
-		return computeAcceleration(mapObject1.getPosition(), mapObject2.getPosition(), mapObject1.getMass(), mapObject2.getMass()); 
+		return computeAcceleration(mapObject1.getPosition(), mapObject2.getPosition(), mapObject1.getMass(), mapObject2.getMass(),mapObject2.getRadius()); 
 	}
 	
 	
-	private static Vector2 computeAcceleration(Vector2 position1, Vector2 position2,float mass1,float mass2 )
+	private static Vector2 computeAcceleration(Vector2 position1, Vector2 position2,float mass1,float mass2, float cutoff)
 	{
 		Vector2 distance = shortestDistanceVector(position1, position2); 
 
-		float cutoff = 0.3f;
+		//float cutoff = 0.3f;
 
 		float force;
 		if (distance.len() > cutoff) { // cutoff to prevent singularities arising from zero distance between objects
