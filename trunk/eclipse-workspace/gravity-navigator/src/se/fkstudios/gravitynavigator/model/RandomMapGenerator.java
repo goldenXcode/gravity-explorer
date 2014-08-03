@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class RandomMapGenerator {
 	
-	private static float objectDensity = 1273f; // calculated from asteroid1 (just for reference).
+	//private static float objectDensity = 1273f; // calculated from asteroid1 (just for reference).
 	
 	/*
 	 * Inputs  a PeriodicMapModel and generates a random map on it. 
@@ -110,16 +110,17 @@ public class RandomMapGenerator {
 	 * Assumes homogeneous mass distribution and calculates a (circular) objects mass given it's radius.  
 	 */
 	private static float calculateMass(float radius) {
+		float objectDensity = Defs.OBJECT_DENSITY; 
 		return (float) (Math.pow(radius, 2)*Math.PI*objectDensity); 
 	}
 	
 	public static void setObjectDensity(float density) {
-		objectDensity = density; 
+		Defs.OBJECT_DENSITY = density; 
 		
 	}
 	
 	public static float getObjectDensity() {
-		return objectDensity; 
+		return Defs.OBJECT_DENSITY; 
 	}
 	
 	public static int randomInt(int min, int max) {
