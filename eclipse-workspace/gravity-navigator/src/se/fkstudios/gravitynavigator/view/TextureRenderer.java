@@ -137,8 +137,8 @@ public class TextureRenderer {
 	 * @param textureArea Area to draw the texture region in.
 	 * @param textureOriginX X-wise origin to determine rotation etc.
 	 * @param textureOriginY Y-wise origin to determine rotation etc.
-	 * @param textureRotation texture's rotation.
-	 * @param viewport The viewport to test overlapping against.
+	 * @param textureRotation Texture's rotation.
+	 * @param viewport Rectangle to test overlapping against.
 	 * @return True if the TextureRegion was drawn.
 	 */
 	private Boolean tryDrawTextureRegion(TextureRegion textureRegion, 
