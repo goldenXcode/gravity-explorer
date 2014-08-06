@@ -50,7 +50,7 @@ public class GameplayScreen implements Screen {
 	@Override
 	public void show() throws IllegalStateException {
 				
-	    map = new PeriodicMapModel(Defs.TEXTURE_NAMES[0], Defs.MAP_WIDTH, Defs.MAP_HEIGHT);
+	    map = new PeriodicMapModel(Defs.TEXTURE_NAMES[0], Defs.TEXTURE_NAMES[1], Defs.MAP_WIDTH, Defs.MAP_HEIGHT);
 	    
 		playerSpaceship = map.getPlayerSpaceship();
 		Vector2 playerMapObjectPos = playerSpaceship.getPosition();

@@ -17,8 +17,10 @@ import com.badlogic.gdx.utils.Array;
 public class PeriodicMapModel extends Map {
 	
 	private final String GAMEPLAY_LAYER_NAME = "GameplayLayer";
-	
+
 	private String filePathBackgroundImageLayer1;
+	private String filePathBackgroundImageLayer2;
+	
 	private float width;
 	private float height;
 	private MapLayer gameplayLayer;
@@ -30,8 +32,11 @@ public class PeriodicMapModel extends Map {
 	 * @param width Width of map.
 	 * @param height Height of map.
 	 */
-	public PeriodicMapModel(String filePathBackgroundImageLayer1, float width, float height) {
+	public PeriodicMapModel(String filePathBackgroundImageLayer1, 
+			String filePathBackgroundImageLayer2,
+			float width, float height) {
 		this.filePathBackgroundImageLayer1 = filePathBackgroundImageLayer1;
+		this.filePathBackgroundImageLayer2 = filePathBackgroundImageLayer2;
 		this.width = width;
 		this.height = height;
 		gameplayLayer = new MapLayer();
@@ -44,6 +49,10 @@ public class PeriodicMapModel extends Map {
 		return filePathBackgroundImageLayer1;
 	}
 
+	public String getFilePathBackgroundImageLayer2() {
+		return filePathBackgroundImageLayer2;
+	}
+	
 	public float getWidth() {
 		return width;
 	}

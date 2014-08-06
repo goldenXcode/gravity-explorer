@@ -78,10 +78,13 @@ public final class Defs {
 	
 	/** WARNING: Indexes in TEXTURE_FILE_PATHS and TEXTURE_NAMES must match! */
 	public static final String[] TEXTURE_FILE_PATHS = {
-		"images/map_backgrounds/map-01-background-layer1.png"};
+		"images/map_backgrounds/map-01-background-layer1.png",
+		"images/map_backgrounds/map-01-background-layer2.png"};
 	
 	/** WARNING: Indexes in TEXTURE_FILE_PATHS and TEXTURE_NAMES must match! */
-	public static final String[] TEXTURE_NAMES = {"map-01-background-layer1"}; 
+	public static final String[] TEXTURE_NAMES = {
+		"map-01-background-layer1", 
+		"map-01-background-layer2"}; 
 	
 	public static final String TEXTURE_PACK_FILE_PATH = "images/spritesheets/textures/textures.pack";
 	
