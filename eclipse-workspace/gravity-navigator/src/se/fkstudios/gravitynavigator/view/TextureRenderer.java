@@ -45,8 +45,8 @@ public class TextureRenderer {
 
 		float textureOriginX = (mapObject.getWidth() / 2) * Defs.PIXELS_PER_UNIT;
 		float textureOriginY = (mapObject.getHeight() / 2) * Defs.PIXELS_PER_UNIT;
-		float texturePositionX = mapObject.getPosition().x * Defs.PIXELS_PER_UNIT - textureOriginX;  
-		float texturePositionY = mapObject.getPosition().y * Defs.PIXELS_PER_UNIT - textureOriginY;
+		float texturePositionX = mapObject.getPosition().x * Defs.PIXELS_PER_UNIT - textureOriginX + textureResource.positionOffset.x;  
+		float texturePositionY = mapObject.getPosition().y * Defs.PIXELS_PER_UNIT - textureOriginY + textureResource.positionOffset.y;
 		float textureWidth = mapObject.getWidth() * Defs.PIXELS_PER_UNIT;
 		float textureHeight = mapObject.getHeight() * Defs.PIXELS_PER_UNIT;
 		float textureRotation = mapObject.getRotation();
