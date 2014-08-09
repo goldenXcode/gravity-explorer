@@ -86,8 +86,8 @@ public class PeriodicMapModel extends Map {
 		Array<GraphicResource> spaceshipTextures = new Array<GraphicResource>();
 		spaceshipTextures.add(new TextureResource(new Vector2(0, 0), Defs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER));
 		playerSpaceship = new SpaceshipModel(position, 
-				0.33f, 
-				0.57f, 
+				1.32f, 
+				2.28f, 
 				velocity, 
 				0, 
 				1,
