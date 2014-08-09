@@ -56,8 +56,7 @@ public final class Defs {
      ************************************************************************************** */
 
 	public static final float MIN_RENDER_SCALE_SPACESHIP = 0.1f;
-	public static final float MIN_RENDER_SCALE_DEFAULT = 0.01f;
-	
+	public static final float MIN_RENDER_SCALE_DEFAULT = 0.04f;
 	
 	/* debug rendering */
 	public static final Color MAP_BORDER_COLOR = Color.MAGENTA;
@@ -67,9 +66,9 @@ public final class Defs {
 	public static final int UNIT_PER_DEBUG_LINE = 10;
 	
 	/* viewport  */ 
-	public static final int VIEWPORT_WIDTH = 490;
-	public static final int VIEWPORT_HEIGHT = 320;
-	public static final int PIXELS_PER_UNIT = 100;	
+	public static final int VIEWPORT_WIDTH = 980;
+	public static final int VIEWPORT_HEIGHT = 640; 
+	public static final int PIXELS_PER_UNIT = 50;	
 	
 	
     /* ************************************************************************************
