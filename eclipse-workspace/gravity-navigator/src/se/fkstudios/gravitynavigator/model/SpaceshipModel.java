@@ -31,8 +31,16 @@ public class SpaceshipModel extends MapObjectModel {
 		this.maxThrust = maxThrust;
 	}
 
-	public SpaceshipModel(Vector2 position, float width, float height, Vector2 velocity, float rotation, int mass, int maxThrust, Array<GraphicResource> resources) {
-		super(position, width, height, velocity, rotation, mass, resources);
+	public SpaceshipModel(Vector2 position, 
+			float width, 
+			float height, 
+			Vector2 velocity, 
+			float rotation, 
+			int mass, 
+			int maxThrust, 
+			Array<GraphicResource> resources, 
+			float minRenderSizeFactor) {
+		super(position, width, height, velocity, rotation, mass, resources, minRenderSizeFactor);
 		this.thrust = new Vector2(0, 0);
 		this.maxThrust = maxThrust;
 	}

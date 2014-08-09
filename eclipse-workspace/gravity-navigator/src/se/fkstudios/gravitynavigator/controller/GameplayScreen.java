@@ -150,7 +150,7 @@ public class GameplayScreen implements Screen {
 				for (GraphicResource resource : resources) {
 					Class<? extends GraphicResource> type = resource.getClass();
 					if (type == TextureResource.class)
-						textureMapObjectRenderer.render(mapObject, (TextureResource)resource, camera.getViewport());
+						textureMapObjectRenderer.render(mapObject, (TextureResource)resource, camera);
 					else if (type == AnimationResource.class)
 						throw new NotImplementedException();
 					else if (type == SolidColorResource.class)

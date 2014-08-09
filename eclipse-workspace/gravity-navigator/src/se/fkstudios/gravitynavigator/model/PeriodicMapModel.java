@@ -92,7 +92,8 @@ public class PeriodicMapModel extends Map {
 				0, 
 				1,
 				Defs.MAX_THRUST,
-				spaceshipTextures);
+				spaceshipTextures,
+				Defs.MIN_RENDER_SIZE_FACTOR_SPACESHIP);
 
 
 //		TextureMapObjectModel asterioid2 = new TextureMapObjectModel(new Vector2(2, 1), 0.33f, 0.5f, 

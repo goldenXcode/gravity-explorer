@@ -19,7 +19,7 @@ public class MapObjectModel extends MapObject {
 	private Vector2 position;
 	private Vector2 acceleration;
 	private Vector2 velocity;
-	float rotation;
+	private float rotation;
 	private int mass; // in kg
 	private float rotationalSpeed; // in degrees per second
 	
@@ -28,6 +28,8 @@ public class MapObjectModel extends MapObject {
 	private float distanceToParent; 
 	private MapObjectModel parentNode; 
 	private MapObjectModel[] childrenNodes; 
+
+	public final float minRenderScale;
 	
 	public MapObjectModel(Vector2 position, 
 			float width,
@@ -35,7 +37,9 @@ public class MapObjectModel extends MapObject {
 			Vector2 velocity,
 			float rotation,
 			int mass,
-			Array<GraphicResource> resources) {
+			Array<GraphicResource> resources,
+			float minRenderScale) {
+		
 		this.position = position;
 		this.width = width;
 		this.height = height;
@@ -45,6 +49,7 @@ public class MapObjectModel extends MapObject {
 		this.resources = resources;
 		this.acceleration = new Vector2(0, 0);
 		this.rotationalSpeed = 0; 
+		this.minRenderScale = minRenderScale;
 	}
 
 	public float getWidth() {
