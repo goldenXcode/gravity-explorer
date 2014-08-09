@@ -136,7 +136,7 @@ public class RandomMapGenerator {
 		  return (float) (Math.random() * (max-min) + min);
 		}
 	
-	private static float calculateOrbitingVelocity(float distance, float planetMass) {
+	public static float calculateOrbitingVelocity(float distance, float planetMass) {
 		return (float) Math.sqrt(Defs.GRAVITATIONAL_CONSTANT*planetMass/distance);
 	}
 }
