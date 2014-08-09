@@ -13,7 +13,8 @@ import com.badlogic.gdx.utils.Array;
  * @author kristofer
  */
 public class MapObjectModel extends MapObject {
-
+//
+	
 	private float width;
 	private float height;
 	private Vector2 position;
@@ -22,6 +23,7 @@ public class MapObjectModel extends MapObject {
 	private float rotation;
 	private int mass; // in kg
 	private float rotationalSpeed; // in degrees per second
+	public boolean IS_STATIC; 
 	
 	private Array<GraphicResource> resources;
 	
@@ -50,6 +52,7 @@ public class MapObjectModel extends MapObject {
 		this.acceleration = new Vector2(0, 0);
 		this.rotationalSpeed = 0; 
 		this.minRenderScale = minRenderScale;
+		this.IS_STATIC = false; 
 	}
 
 	public float getWidth() {
@@ -156,7 +159,7 @@ public class MapObjectModel extends MapObject {
 	public void update(float delta) {
 		Vector2 newVelocity = getVelocity().cpy();
 		newVelocity.add(acceleration.cpy().scl(delta));
-		Vector2 compVel = calculateOrbitCompensationalVelocity().scl(delta);
+		Vector2 compVel = calculateOrbitCompensationalVelocity2().scl(delta);
 		newVelocity.add(compVel);
 		
 		// to uphold newtons laws well need to give the parent-planet a proportional force when correcting for gravity
@@ -188,4 +191,57 @@ public class MapObjectModel extends MapObject {
 			return new Vector2(0,0); 
 		}
 	}
+	
+	private Vector2 calculateOrbitCompensationalVelocity2 () {
+		if (!IS_STATIC )	{
+			MapObjectModel planet = PhysicsEngine.excertsGreatestForce(this); 
+			// first we'll need a unit vector parallel to it's circular orbit 
+			Vector2 positionDiff = PhysicsEngine.shortestDistanceVector(planet.getPosition().cpy(),this.getPosition().cpy());
+			Vector2 velocityDiff = planet.getVelocity().cpy().sub(this.getVelocity().cpy()); 
+			Vector2 tangentialVector = positionDiff.cpy().rotate(90).nor(); 
+			boolean clockwise; 
+			if (velocityDiff.dot(tangentialVector) > 0) {
+				clockwise = false; 
+			
+			}
+			else {
+				clockwise = true; 
+			
+			}
+			float targetSpeed = RandomMapGenerator.calculateOrbitingVelocity(positionDiff.len(), planet.getMass()); 
+			float currentSpeed = Math.abs(velocityDiff.cpy().dot(tangentialVector)); 
+			
+			
+			boolean accelerating; 
+			if (targetSpeed > currentSpeed) {
+				accelerating = true; 
+			
+			}
+			else {
+				accelerating = false; 
+			
+			}
+			
+			Vector2 resultVector = tangentialVector.scl(Math.abs(targetSpeed-currentSpeed)*Defs.ORBITAL_COMPENSATIONAL_FACTOR2); 
+			if (!accelerating) {
+				resultVector.scl(-1); 
+			}
+			if (!clockwise) {
+				resultVector.scl(-1); 
+			}
+			
+			return resultVector; 
+		}
+		else {
+			return new Vector2(0,0); 
+		}
+	}
+	
 }
+	
+
+	
+		
+
+	
+

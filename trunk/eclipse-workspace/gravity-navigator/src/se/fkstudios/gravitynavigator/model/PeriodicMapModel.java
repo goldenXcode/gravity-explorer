@@ -114,6 +114,7 @@ public class PeriodicMapModel extends Map {
 		// adding the planet 
 		MapObjectModel planet = RandomMapGenerator.generatePlanet(Defs.PLANET_SIZE);
 		PhysicsEngine.add(planet); 
+		planet.IS_STATIC = true; 
 		gamplayMapObjects.add(planet); 
 		
 		// adding the player spaceship 

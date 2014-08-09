@@ -163,4 +163,31 @@ public class PhysicsEngine {
 			add(models[i]);
 		}
 	}	
+	
+	public static MapObjectModel getClosestObject(MapObjectModel model) {
+		int returnIndex = 0; 
+		float currentDistance = 0; 
+		for (int i = 0; i <allMapObjects.length; i++) {
+			Vector2 distanceVector = shortestDistanceVector(model.getPosition(), allMapObjects[i].getPosition()); 
+			if (distanceVector.len() > currentDistance) {
+				currentDistance = distanceVector.len(); 
+				returnIndex = i; 
+			}
+		}
+		return allMapObjects[returnIndex];
+	}
+	
+	public static MapObjectModel excertsGreatestForce(MapObjectModel model) {
+		int returnIndex = 0; 
+		float currentForce = 0; 
+		for (int i = 0; i <allMapObjects.length; i++) {
+			Vector2 forceVector = computeAcceleration(model, allMapObjects[i]); 
+			if (forceVector.len() > currentForce && model.getMass() > allMapObjects[i].getMass()*Defs.COMPENSATIONAL_CUTOFF_FACTOR) {
+				currentForce = forceVector.len(); 
+				returnIndex = i; 
+			}
+		}
+		return allMapObjects[returnIndex];
+	}
+	
 }
