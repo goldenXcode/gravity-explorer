@@ -55,8 +55,8 @@ public final class Defs {
      ************************************* Rendering ************************************** 
      ************************************************************************************** */
 
-	public static final float MIN_RENDER_SIZE_FACTOR_SPACESHIP = 0.1f;
-	public static final float MIN_RENDER_SIZE_FACTOR_DEFAULT = 0.01f;
+	public static final float MIN_RENDER_SCALE_SPACESHIP = 0.1f;
+	public static final float MIN_RENDER_SCALE_DEFAULT = 0.01f;
 	
 	
 	/* debug rendering */

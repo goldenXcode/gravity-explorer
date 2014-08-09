@@ -39,7 +39,7 @@ public class RandomMapGenerator {
 				0, 
 				mass, 
 				planetTextures,
-				Defs.MIN_RENDER_SIZE_FACTOR_DEFAULT);
+				Defs.MIN_RENDER_SCALE_DEFAULT);
 		
 		// density of object = 1273 kg/m² 
 		asteroid.setDistanceToParent(0); 
@@ -58,7 +58,7 @@ public class RandomMapGenerator {
 				0, 
 				mass, 
 				asteriodTextures,
-				Defs.MIN_RENDER_SIZE_FACTOR_DEFAULT);
+				Defs.MIN_RENDER_SCALE_DEFAULT);
 		
 		// density of object = 1273 kg/m² 
 		asteroid.setDistanceToParent(0);
@@ -84,7 +84,7 @@ public class RandomMapGenerator {
 				0, 
 				mass, 
 				asteriodTextures,
-				Defs.MIN_RENDER_SIZE_FACTOR_DEFAULT);
+				Defs.MIN_RENDER_SCALE_DEFAULT);
 		
 		asteroid.setDistanceToParent(distance);
 		// density of object = 1273 kg/m² 
