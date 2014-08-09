@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class RandomMapGenerator {
 	
-	//private static float objectDensity = 1273f; // calculated from asteroid1 (just for reference).
+	private static float objectDensity = 1273f; // calculated from asteroid1 (just for reference).
 	
 	/*
 	 * Inputs  a PeriodicMapModel and generates a random map on it. 
@@ -38,7 +38,8 @@ public class RandomMapGenerator {
 				new Vector2(0.2f, 0.0f), 
 				0, 
 				mass, 
-				planetTextures);
+				planetTextures,
+				Defs.MIN_RENDER_SIZE_FACTOR_DEFAULT);
 		
 		// density of object = 1273 kg/m² 
 		asteroid.setDistanceToParent(0); 
@@ -56,7 +57,8 @@ public class RandomMapGenerator {
 				new Vector2(0.2f, 0.0f), 
 				0, 
 				mass, 
-				asteriodTextures);
+				asteriodTextures,
+				Defs.MIN_RENDER_SIZE_FACTOR_DEFAULT);
 		
 		// density of object = 1273 kg/m² 
 		asteroid.setDistanceToParent(0);
@@ -81,7 +83,8 @@ public class RandomMapGenerator {
 				asteroidVelocity, 
 				0, 
 				mass, 
-				asteriodTextures);
+				asteriodTextures,
+				Defs.MIN_RENDER_SIZE_FACTOR_DEFAULT);
 		
 		asteroid.setDistanceToParent(distance);
 		// density of object = 1273 kg/m² 
@@ -110,17 +113,15 @@ public class RandomMapGenerator {
 	 * Assumes homogeneous mass distribution and calculates a (circular) objects mass given it's radius.  
 	 */
 	private static float calculateMass(float radius) {
-		float objectDensity = Defs.OBJECT_DENSITY; 
 		return (float) (Math.pow(radius, 2)*Math.PI*objectDensity); 
 	}
 	
 	public static void setObjectDensity(float density) {
-		Defs.OBJECT_DENSITY = density; 
-		
+		objectDensity = density; 
 	}
 	
 	public static float getObjectDensity() {
-		return Defs.OBJECT_DENSITY; 
+		return objectDensity; 
 	}
 	
 	public static int randomInt(int min, int max) {

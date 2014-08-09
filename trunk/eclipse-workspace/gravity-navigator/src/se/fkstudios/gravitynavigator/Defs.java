@@ -25,8 +25,6 @@ public final class Defs {
 	public static float MAP_WIDTH = 1000;
 	public static float MAP_HEIGHT = 1000; 
 	
-	
-	
 	public static float MAX_ROTATIONAL_VELOCITY = 20; 
 	public static float MIN_ROTATIONAL_VELOCITY = 0; 
 	
@@ -39,7 +37,7 @@ public final class Defs {
 	public static float PLANET_SIZE = 30f; 
 	public static float TOLERATED_ORBITAL_DEVIATION = 300; 
 	public static int NUMBER_OF_ASTEROIDS = 7; 
- 
+	
 	
 
 	
@@ -57,6 +55,10 @@ public final class Defs {
      ************************************* Rendering ************************************** 
      ************************************************************************************** */
 
+	public static final float MIN_RENDER_SIZE_FACTOR_SPACESHIP = 0.1f;
+	public static final float MIN_RENDER_SIZE_FACTOR_DEFAULT = 0.01f;
+	
+	
 	/* debug rendering */
 	public static final Color MAP_BORDER_COLOR = Color.MAGENTA;
 	public static final Color MAP_OBJECT_BORDER_COLOR = Color.CYAN;
