@@ -1,5 +1,6 @@
 package se.fkstudios.gravitynavigator.model;
 
+import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 
 import com.badlogic.gdx.math.Vector2;
@@ -14,6 +15,15 @@ public class SpaceshipModel extends MapObjectModel {
 	private Vector2 thrust;
 	private int maxThrust; //in Newton
 	private float aliveTime; 
+	private float fuelLeft; 
+	
+	public void setFuelLeft(float f) {
+		fuelLeft = f; 
+	}
+	
+	public float getFuelLeft() {
+		return fuelLeft; 
+	}
 
 	public float getAliveTime() {
 		return aliveTime; 
@@ -49,12 +59,15 @@ public class SpaceshipModel extends MapObjectModel {
 		this.thrust = new Vector2(0, 0);
 		this.maxThrust = maxThrust;
 		this.aliveTime = 0; 
+		this.fuelLeft = Defs.STARTING_FUEL;
 	}
 	
 	@Override
 	public void update(float delta) {
 		int mass = getMass();
 		Vector2 acceleration = thrust.cpy().div(mass);
+		setFuelLeft(getFuelLeft() - thrust.cpy().len()*Defs.FUEL_SCALING_FACTOR ); 
+		System.out.println(getFuelLeft()); 
 		getAcceleration().add(acceleration);
 		aliveTime += delta; 
 		super.update(delta);
