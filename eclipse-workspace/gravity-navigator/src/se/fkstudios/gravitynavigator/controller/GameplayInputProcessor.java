@@ -1,5 +1,6 @@
 package se.fkstudios.gravitynavigator.controller;
 
+import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.SpaceshipModel;
 import se.fkstudios.gravitynavigator.view.RenderOptions;
 
@@ -112,7 +113,10 @@ public class GameplayInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean scrolled(int amount) {
-		camera.zoom(amount); 
+		if (camera.getViewport().width/Defs.PIXELS_PER_UNIT < Defs.MAP_WIDTH*Defs.CAMERA_LIMIT) {
+			System.out.println(camera.getViewport().width); 
+			camera.zoom(amount); 
+		}
 		return false;
 	}
 }

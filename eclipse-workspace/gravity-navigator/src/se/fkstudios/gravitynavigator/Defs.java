@@ -49,6 +49,8 @@ public final class Defs {
 	// modifier one is for the base, 2 is for the exponent
 	public static float SCROLLING_SPEED_MODIFIER_1 = 1f; 
 	public static float SCROLLING_SPEED_MODIFIER_2 = 0.1f; 
+	// "number of universes" you're allowed to see (zoom-wise) 
+	public static float CAMERA_LIMIT = 2; 
 
 	
     /* ************************************************************************************
@@ -56,7 +58,7 @@ public final class Defs {
      ************************************************************************************** */
 
 	public static final float MIN_RENDER_SCALE_SPACESHIP = 0.33f;
-	public static final float MIN_RENDER_SCALE_DEFAULT = 0.10f;
+	public static final float MIN_RENDER_SCALE_DEFAULT = 0f;
 	
 	/* debug rendering */
 	public static final Color MAP_BORDER_COLOR = Color.MAGENTA;
@@ -98,6 +100,8 @@ public final class Defs {
 	public static final String TEXTURE_REGION_NAME_PLANET_01 = "planet-01";
 	public static final String TEXTURE_REGION_NAME_PLANET_02 = "planet-02";
 	public static final String TEXTURE_REGION_NAME_PLANET_03 = "planet-03";
+	public static final float COMPENSATIONAL_CUTOFF_FACTOR = 1.2f;
+	public static final float ORBITAL_COMPENSATIONAL_FACTOR2 = 0.001f;
 	
 	/* Sound */
 	
