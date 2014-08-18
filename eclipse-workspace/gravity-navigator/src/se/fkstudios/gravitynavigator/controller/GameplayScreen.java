@@ -111,7 +111,7 @@ public class GameplayScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		updateModel(delta);
-		mapRenderer.setConsoleText("Running in " + Float.toString(round(1/delta,2)) + " FPS");
+		mapRenderer.setConsoleText("Running in " + Float.toString(round(1/delta,2)) + " FPS , time alive: " + playerSpaceship.getAliveTime());
 		camera.updatePosition(delta, playerSpaceship.getPosition(), map.getWidth(), map.getHeight());
 		camera.update();
 		realRender();
