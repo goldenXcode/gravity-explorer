@@ -102,6 +102,8 @@ public final class Defs {
 	public static final String TEXTURE_REGION_NAME_PLANET_03 = "planet-03";
 	public static final float COMPENSATIONAL_CUTOFF_FACTOR = 1.2f;
 	public static final float ORBITAL_COMPENSATIONAL_FACTOR2 = 0.001f;
+	public static final float STARTING_FUEL = 0;
+	public static final float FUEL_SCALING_FACTOR = 0.001f;
 	
 	/* Sound */
 	

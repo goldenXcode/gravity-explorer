@@ -101,6 +101,8 @@ public class GameplayInputProcessor implements InputProcessor {
 		
 		Vector2 newThrust = new Vector2(dragScreenX * screenToModelRatio, dragScreenY * screenToModelRatio);
 		playerSpaceship.setThrust(newThrust);
+
+		
 		
 		return true;
 	}
