@@ -13,7 +13,12 @@ public class SpaceshipModel extends MapObjectModel {
 
 	private Vector2 thrust;
 	private int maxThrust; //in Newton
+	private float aliveTime; 
 
+	public float getAliveTime() {
+		return aliveTime; 
+	}
+	
 	public Vector2 getThrust() {
 		return thrust;
 	}
@@ -43,6 +48,7 @@ public class SpaceshipModel extends MapObjectModel {
 		super(position, width, height, velocity, rotation, mass, resources, minRenderSizeFactor);
 		this.thrust = new Vector2(0, 0);
 		this.maxThrust = maxThrust;
+		this.aliveTime = 0; 
 	}
 	
 	@Override
@@ -50,7 +56,7 @@ public class SpaceshipModel extends MapObjectModel {
 		int mass = getMass();
 		Vector2 acceleration = thrust.cpy().div(mass);
 		getAcceleration().add(acceleration);
-		
+		aliveTime += delta; 
 		super.update(delta);
 		
 		if (thrust.len2() > 0) 
