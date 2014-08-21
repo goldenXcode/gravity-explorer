@@ -115,7 +115,7 @@ public class GameplayInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean scrolled(int amount) {
-		if (camera.getViewport().width/Defs.PIXELS_PER_UNIT < Defs.MAP_WIDTH*Defs.CAMERA_LIMIT) {
+		if (camera.getViewport().width/Defs.PIXELS_PER_UNIT < Defs.MAP_WIDTH*Defs.CAMERA_LIMIT || amount < 0) {
 			camera.zoom(amount); 
 		}
 		return false;
