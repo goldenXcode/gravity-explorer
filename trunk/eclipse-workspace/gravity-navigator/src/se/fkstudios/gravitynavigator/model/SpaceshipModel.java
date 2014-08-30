@@ -67,7 +67,6 @@ public class SpaceshipModel extends MapObjectModel {
 		int mass = getMass();
 		Vector2 acceleration = thrust.cpy().div(mass);
 		setFuelLeft(getFuelLeft() - thrust.cpy().len()*Defs.FUEL_SCALING_FACTOR ); 
-		System.out.println(getFuelLeft()); 
 		getAcceleration().add(acceleration);
 		aliveTime += delta; 
 		super.update(delta);

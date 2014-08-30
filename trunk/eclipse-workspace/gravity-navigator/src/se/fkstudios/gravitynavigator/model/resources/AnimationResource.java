@@ -9,10 +9,24 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class AnimationResource extends GraphicResource {
 	
+	public final String animationName;
 	public final String[] textureNames;
+	public boolean looping;
+	public float stateTime;
 	
-	public AnimationResource(Vector2 positionOffset, String[] textureNames) {
+	public AnimationResource(Vector2 positionOffset, String animationName, String[] textureNames, boolean looping) {
 		super(positionOffset);
+		this.animationName = animationName;
 		this.textureNames = textureNames;
+		this.looping = looping;
+		stateTime = 0f; 
+	}
+	
+	public AnimationResource(Vector2 positionOffset, float width, float height, String animationName, String[] textureNames, boolean looping) {
+		super(positionOffset, width, height);
+		this.animationName = animationName;
+		this.textureNames = textureNames;
+		this.looping = looping;
+		stateTime = 0f;
 	}
 }

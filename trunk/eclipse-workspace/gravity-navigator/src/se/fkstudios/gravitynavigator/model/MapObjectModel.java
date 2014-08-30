@@ -1,6 +1,7 @@
 package se.fkstudios.gravitynavigator.model;
 
 import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
 import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 import se.fkstudios.gravitynavigator.view.RenderOptions;
 
@@ -171,7 +172,13 @@ public class MapObjectModel extends MapObject {
 		
 		setVelocity(newVelocity);
 		setPosition(position.cpy().add(velocity.cpy().scl(delta)));
-		setRotation(((getRotation() + getRotationalSpeed()*delta) % 360f)); 
+		setRotation(((getRotation() + getRotationalSpeed()*delta) % 360f));
+		
+		for(GraphicResource resource : getResources()) {
+			if (resource.getClass() == AnimationResource.class) {
+				((AnimationResource)resource).stateTime += delta;
+			}
+		}
 	}
 		
 	private Vector2 calculateOrbitCompensationalVelocity() {

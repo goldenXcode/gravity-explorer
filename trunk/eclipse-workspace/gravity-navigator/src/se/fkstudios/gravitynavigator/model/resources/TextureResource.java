@@ -16,4 +16,9 @@ public class TextureResource extends GraphicResource {
 		super(positionOffset);
 		this.textureName = textureName;
 	}
+	
+	public TextureResource(Vector2 positionOffset, float width, float height, String textureName) {
+		super(positionOffset, width, height);
+		this.textureName = textureName;
+	}
 }

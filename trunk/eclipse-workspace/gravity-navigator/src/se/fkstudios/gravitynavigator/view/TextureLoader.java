@@ -6,8 +6,10 @@ import se.fkstudios.gravitynavigator.Defs;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Maps textures and texture regions to strings so that they are not loaded more than once. 
@@ -20,8 +22,9 @@ public class TextureLoader {
 
 	private static final TextureLoader instance = new TextureLoader();
 	
-	private HashMap<String, Texture> textureMapper;
 	private TextureAtlas textureAtlas;
+	private HashMap<String, Texture> textureMapper;
+	private HashMap<String, Animation> animationMapper;
 	
 	private TextureLoader() {
 		
@@ -34,6 +37,24 @@ public class TextureLoader {
 			String path = Defs.TEXTURE_FILE_PATHS[i];
 			Texture texture = new Texture(Gdx.files.internal(path));
 			textureMapper.put(name, texture);
+		}
+	
+		animationMapper = new HashMap<>(Defs.ANIMATION_TEXTURE_REGION_NAMES.length);
+		for (int i = 0; i < Defs.ANIMATION_TEXTURE_REGION_NAMES.length; i++) {
+			String animationName = Defs.ANIMATION_NAMES[i];
+			float frameDuration = Defs.ANIMATION_FRAME_DURATIONS[i];
+			
+			String[] textureRegionNames = Defs.ANIMATION_TEXTURE_REGION_NAMES[i];
+			Array<TextureRegion> textureRegions = new Array<TextureRegion>(textureRegionNames.length);
+			for (int j = 0; j < textureRegionNames.length; j++) {
+				TextureRegion textureRegion = textureAtlas.findRegion(textureRegionNames[j]);
+				if (textureRegion != null)
+					textureRegions.add(textureRegion);
+				else
+					throw new NullPointerException("texture region with name '" + textureRegionNames[j] + "' not found");
+			}
+			
+			animationMapper.put(animationName, new Animation(frameDuration, textureRegions));
 		}
 	}
 	
@@ -58,6 +79,15 @@ public class TextureLoader {
 	 */
 	public TextureRegion getTextureRegion(String textureRegionName) {
 		return textureAtlas.findRegion(textureRegionName);
+	}
+	
+	/**
+	 * TODO: write this shit!
+	 * @param animationName
+	 * @return
+	 */
+	public Animation getAnimation(String animationName) {
+		return animationMapper.get(animationName);
 	}
 	
 	/**

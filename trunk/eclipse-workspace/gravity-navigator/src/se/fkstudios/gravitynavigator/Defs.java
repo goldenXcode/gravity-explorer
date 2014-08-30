@@ -78,28 +78,54 @@ public final class Defs {
        ************************************************************************************ */
 	
 	/* Graphics */
+
+	public static final String TEXTURE_PACK_FILE_PATH = "images/spritesheets/textures/textures.pack";
+	
+	public static final String TEXTURE_REGION_NAME_SPACESHIP_PLAYER = "spaceship1";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID1 = "asteroid1";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID2 = "asteroid2";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID3 = "asteroid3";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID4 = "asteroid4";
+	public static final String TEXTURE_REGION_NAME_ASTERIOID5 = "asteroid5";
+	public static final String TEXTURE_REGION_NAME_PLANET1 = "planet1";
+	public static final String TEXTURE_REGION_NAME_PLANET2 = "planet2";
+	public static final String TEXTURE_REGION_NAME_PLANET3 = "planet3";
+	public static final String TEXTURE_REGION_NAME_THURST_FRAME1 = "thrust-frame1";
+	public static final String TEXTURE_REGION_NAME_THURST_FRAME2 = "thrust-frame2";
+	public static final String TEXTURE_REGION_NAME_EXPLOSION1_FRAME1 = "explosion1-frame1";
+	public static final String TEXTURE_REGION_NAME_EXPLOSION1_FRAME2 = "explosion1-frame2";
+	public static final String TEXTURE_REGION_NAME_EXPLOSION1_FRAME3 = "explosion1-frame3";
+	public static final String TEXTURE_REGION_NAME_EXPLOSION1_FRAME4 = "explosion1-frame4";
+	public static final String TEXTURE_REGION_NAME_EXPLOSION1_FRAME5 = "explosion1-frame5";
+	public static final String TEXTURE_REGION_NAME_EXPLOSION1_FRAME6 = "explosion1-frame6";
+	
+	/** WARNING: Indexes in ANIMATION_TEXTURE_REGION_NAMES, ANIMATION_NAMES and ANIMATION_FRAME_DURATIONS must match! */
+	public static final String[][] ANIMATION_TEXTURE_REGION_NAMES = {
+		{TEXTURE_REGION_NAME_THURST_FRAME1, TEXTURE_REGION_NAME_THURST_FRAME2},
+		{TEXTURE_REGION_NAME_EXPLOSION1_FRAME1, TEXTURE_REGION_NAME_EXPLOSION1_FRAME2, TEXTURE_REGION_NAME_EXPLOSION1_FRAME3, TEXTURE_REGION_NAME_EXPLOSION1_FRAME4, TEXTURE_REGION_NAME_EXPLOSION1_FRAME5, TEXTURE_REGION_NAME_EXPLOSION1_FRAME6}
+	};
+
+	/** WARNING: Indexes in ANIMATION_TEXTURE_REGION_NAMES, ANIMATION_NAMES and ANIMATION_FRAME_DURATIONS must match! */
+	public static final String[] ANIMATION_NAMES = {
+		"thurst",
+		"explosion1",
+	};
+	
+	/** WARNING: Indexes in ANIMATION_TEXTURE_REGION_NAMES, ANIMATION_NAMES and ANIMATION_FRAME_DURATIONS must match! */
+	public static final float[] ANIMATION_FRAME_DURATIONS = {
+		0.1f,
+		0.1f
+	};
 	
 	/** WARNING: Indexes in TEXTURE_FILE_PATHS and TEXTURE_NAMES must match! */
 	public static final String[] TEXTURE_FILE_PATHS = {
-		"images/map_backgrounds/map-01-background-layer1.png",
-		"images/map_backgrounds/map-01-background-layer2.png"};
+		"images/map_backgrounds/map1-background-layer1.png",
+		"images/map_backgrounds/map1-background-layer2.png"};
 	
 	/** WARNING: Indexes in TEXTURE_FILE_PATHS and TEXTURE_NAMES must match! */
 	public static final String[] TEXTURE_NAMES = {
-		"map-01-background-layer1", 
-		"map-01-background-layer2"}; 
-	
-	public static final String TEXTURE_PACK_FILE_PATH = "images/spritesheets/textures/textures.pack";
-	
-	public static final String TEXTURE_REGION_NAME_SPACESHIP_PLAYER = "spaceship-01";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_01 = "asteroid-01";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_02 = "asteroid-02";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_03 = "asteroid-03";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_04 = "asteroid-04";
-	public static final String TEXTURE_REGION_NAME_ASTERIOID_05 = "asteroid-05";
-	public static final String TEXTURE_REGION_NAME_PLANET_01 = "planet-01";
-	public static final String TEXTURE_REGION_NAME_PLANET_02 = "planet-02";
-	public static final String TEXTURE_REGION_NAME_PLANET_03 = "planet-03";
+		"map1-background-layer1", 
+		"map1-background-layer2"}; 
 	public static final float COMPENSATIONAL_CUTOFF_FACTOR = 1.2f;
 	public static final float ORBITAL_COMPENSATIONAL_FACTOR2 = 0.001f;
 	public static final float STARTING_FUEL = 0;

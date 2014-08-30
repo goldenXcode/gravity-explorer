@@ -1,6 +1,7 @@
 package se.fkstudios.gravitynavigator.model;
 
 import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
 import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 import se.fkstudios.gravitynavigator.model.resources.TextureResource;
 
@@ -83,8 +84,13 @@ public class PeriodicMapModel extends Map {
 		// Note: I'm thinking ModelDefs could contain the XML-parser. 
 		Vector2 position = Defs.STARTING_POSITION;
 		Vector2 velocity = Defs.STARTING_VELOCITY; 
-		Array<GraphicResource> spaceshipTextures = new Array<GraphicResource>();
-		spaceshipTextures.add(new TextureResource(new Vector2(0, 0), Defs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER));
+		Array<GraphicResource> spaceshipResources = new Array<GraphicResource>();
+		spaceshipResources.add(new TextureResource(new Vector2(0, 0), Defs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER));
+		spaceshipResources.add(new AnimationResource(new Vector2(0.40f, -1.25f), 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		spaceshipResources.add(new AnimationResource(new Vector2(0.15f, -1.3f), 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		spaceshipResources.add(new AnimationResource(new Vector2(-0.15f, -1.3f), 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		spaceshipResources.add(new AnimationResource(new Vector2(-0.40f, -1.25f), 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		
 		playerSpaceship = new SpaceshipModel(position, 
 				1.32f, 
 				2.28f, 
@@ -92,7 +98,7 @@ public class PeriodicMapModel extends Map {
 				0, 
 				1,
 				Defs.MAX_THRUST,
-				spaceshipTextures,
+				spaceshipResources,
 				Defs.MIN_RENDER_SCALE_SPACESHIP);
 
 
