@@ -47,9 +47,12 @@ public class PeriodicMapRenderer {
 		Texture layer2Texture = TextureLoader.getInstance().getTexture(map.getFilePathBackgroundImageLayer2());
 		
 		spriteBatch.begin();
-		
+
 		renderMapBackgroundWithoutPerspective(map, layer1Texture, viewport, 0.0f);
 		renderMapBackgroundWithoutPerspective(map, layer2Texture, viewport, 0.8f);
+		
+//		renderMapBackgroundWithPerspective(map, layer1Texture, viewport, 1.0f);
+//		renderMapBackgroundWithPerspective(map, layer2Texture, viewport, 0.8f);
 				 
 		spriteBatch.end();
 		
@@ -73,9 +76,8 @@ public class PeriodicMapRenderer {
 			longestViewportSide + viewport.height * ratio);
 	}
 
-
-//	save in case of later use.
 //	private void renderMapBackgroundWithPerspective(PeriodicMapModel map, Texture textureRegion, Rectangle viewport, float ratio) {
+//		
 //		float longestViewportSide = Math.max(viewport.width, viewport.height);
 //		spriteBatch.draw(textureRegion,
 //				viewport.x * ratio,
