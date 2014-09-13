@@ -14,16 +14,16 @@ public class AnimationResource extends GraphicResource {
 	public boolean looping;
 	public float stateTime;
 	
-	public AnimationResource(Vector2 positionOffset, String animationName, String[] textureNames, boolean looping) {
-		super(positionOffset);
+	public AnimationResource(Vector2 positionOffset, boolean visible, String animationName, String[] textureNames, boolean looping) {
+		super(positionOffset, visible);
 		this.animationName = animationName;
 		this.textureNames = textureNames;
 		this.looping = looping;
 		stateTime = 0f; 
 	}
 	
-	public AnimationResource(Vector2 positionOffset, float width, float height, String animationName, String[] textureNames, boolean looping) {
-		super(positionOffset, width, height);
+	public AnimationResource(Vector2 positionOffset, boolean visible, float width, float height, String animationName, String[] textureNames, boolean looping) {
+		super(positionOffset, visible, width, height);
 		this.animationName = animationName;
 		this.textureNames = textureNames;
 		this.looping = looping;

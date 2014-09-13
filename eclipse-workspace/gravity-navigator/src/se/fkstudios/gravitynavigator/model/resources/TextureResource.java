@@ -12,13 +12,13 @@ public class TextureResource extends GraphicResource {
 
 	public final String textureName;
 	
-	public TextureResource(Vector2 positionOffset, String textureName) {
-		super(positionOffset);
+	public TextureResource(Vector2 positionOffset, boolean visible, String textureName) {
+		super(positionOffset, visible);
 		this.textureName = textureName;
 	}
 	
-	public TextureResource(Vector2 positionOffset, float width, float height, String textureName) {
-		super(positionOffset, width, height);
+	public TextureResource(Vector2 positionOffset, boolean visible, float width, float height, String textureName) {
+		super(positionOffset, visible, width, height);
 		this.textureName = textureName;
 	}
 }

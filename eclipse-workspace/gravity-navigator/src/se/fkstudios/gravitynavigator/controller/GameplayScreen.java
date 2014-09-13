@@ -148,20 +148,20 @@ public class GameplayScreen implements Screen {
 		for (MapLayer layer : map.getLayers()) {
 			allMapObjects = layer.getObjects();
 			mapObjects = allMapObjects.getByType(MapObjectModel.class);
-
 			for (MapObjectModel mapObject : mapObjects) {
 				Array<GraphicResource> resources = mapObject.getResources();
-
 				for (GraphicResource resource : resources) {
-					Class<? extends GraphicResource> type = resource.getClass();
-					if (type == TextureResource.class)
-						textureRenderer.render(mapObject,
-								(TextureResource) resource, camera);
-					else if (type == AnimationResource.class)
-						animationRenderer.render(mapObject,
-								(AnimationResource) resource, camera);
-					else if (type == SolidColorResource.class)
-						throw new NotImplementedException();
+					if (resource.visible) {
+						Class<? extends GraphicResource> type = resource.getClass();
+						if (type == TextureResource.class)
+							textureRenderer.render(mapObject,
+									(TextureResource) resource, camera);
+						else if (type == AnimationResource.class)
+							animationRenderer.render(mapObject,
+									(AnimationResource) resource, camera);
+						else if (type == SolidColorResource.class)
+							throw new NotImplementedException();
+					}
 				}
 			}
 		}

@@ -7,8 +7,8 @@ public class SolidColorResource extends GraphicResource {
 	
 	public final Color color;
 	
-	public SolidColorResource(Vector2 positionOffset, Color color) {
-		super(positionOffset);
+	public SolidColorResource(Vector2 positionOffset, boolean visible, Color color) {
+		super(positionOffset, visible);
 		this.color = color;
 	}
 }

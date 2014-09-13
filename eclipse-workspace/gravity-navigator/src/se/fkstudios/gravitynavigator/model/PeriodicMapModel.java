@@ -84,12 +84,14 @@ public class PeriodicMapModel extends Map {
 		// Note: I'm thinking ModelDefs could contain the XML-parser. 
 		Vector2 position = Defs.STARTING_POSITION;
 		Vector2 velocity = Defs.STARTING_VELOCITY; 
-		Array<GraphicResource> spaceshipResources = new Array<GraphicResource>();
-		spaceshipResources.add(new TextureResource(new Vector2(0, 0), Defs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER));
-		spaceshipResources.add(new AnimationResource(new Vector2(0.40f, -1.25f), 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		spaceshipResources.add(new AnimationResource(new Vector2(0.15f, -1.3f), 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		spaceshipResources.add(new AnimationResource(new Vector2(-0.15f, -1.3f), 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		spaceshipResources.add(new AnimationResource(new Vector2(-0.40f, -1.25f), 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		Array<GraphicResource> allResources = new Array<GraphicResource>();
+		allResources.add(new TextureResource(new Vector2(0, 0), true, Defs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER));
+		Array<AnimationResource> thrustAnimations = new Array<AnimationResource>();
+		thrustAnimations.add(new AnimationResource(new Vector2(0.40f, -1.25f), false, 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		thrustAnimations.add(new AnimationResource(new Vector2(0.15f, -1.3f), false, 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		thrustAnimations.add(new AnimationResource(new Vector2(-0.15f, -1.3f), false, 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		thrustAnimations.add(new AnimationResource(new Vector2(-0.40f, -1.25f), false, 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		allResources.addAll(thrustAnimations);
 		
 		playerSpaceship = new SpaceshipModel(position, 
 				1.32f, 
@@ -98,7 +100,8 @@ public class PeriodicMapModel extends Map {
 				0, 
 				1,
 				Defs.MAX_THRUST,
-				spaceshipResources,
+				allResources,
+				thrustAnimations,
 				Defs.MIN_RENDER_SCALE_SPACESHIP);
 
 
@@ -134,7 +137,6 @@ public class PeriodicMapModel extends Map {
 			gamplayMapObjects.add(orbiters[i]); 
 		}
 		PhysicsEngine.add(orbiters);
-		
 	}
 		
 	/**
