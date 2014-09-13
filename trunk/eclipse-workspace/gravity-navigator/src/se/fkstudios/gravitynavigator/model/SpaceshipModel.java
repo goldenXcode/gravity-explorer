@@ -1,6 +1,7 @@
 package se.fkstudios.gravitynavigator.model;
 
 import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
 import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 
 import com.badlogic.gdx.math.Vector2;
@@ -16,6 +17,8 @@ public class SpaceshipModel extends MapObjectModel {
 	private int maxThrust; //in Newton
 	private float aliveTime; 
 	private float fuelLeft; 
+	
+	private Array<AnimationResource> thrustAnimations;
 	
 	public void setFuelLeft(float f) {
 		fuelLeft = f; 
@@ -36,6 +39,8 @@ public class SpaceshipModel extends MapObjectModel {
 	public void setThrust(Vector2 thrust) {
 		this.thrust.x = thrust.x;
 		this.thrust.y = thrust.y;
+		for (AnimationResource thrustAnimation : thrustAnimations)
+			thrustAnimation.visible = thrust.len2() > 0;
 	}
 
 	public int getMaxThrust() {
@@ -53,11 +58,14 @@ public class SpaceshipModel extends MapObjectModel {
 			float rotation, 
 			int mass, 
 			int maxThrust, 
-			Array<GraphicResource> resources, 
+			Array<GraphicResource> allResources, 
+			Array<AnimationResource> thrustAnimations,
 			float minRenderSizeFactor) {
-		super(position, width, height, velocity, rotation, mass, resources, minRenderSizeFactor);
-		this.thrust = new Vector2(0, 0);
+		super(position, width, height, velocity, rotation, mass, allResources, minRenderSizeFactor);
 		this.maxThrust = maxThrust;
+		this.thrustAnimations = thrustAnimations;
+		
+		this.thrust = new Vector2(0, 0);
 		this.aliveTime = 0; 
 		this.fuelLeft = Defs.STARTING_FUEL;
 	}

@@ -36,7 +36,6 @@ public abstract class Renderer {
 	 * @param viewport 
 	 */
 public void render(MapObjectModel mapObject, GraphicResource resource, GameplayCamera camera) {
-		
 		float width;
 		float height;	
 		if (resource.useParentSize) {

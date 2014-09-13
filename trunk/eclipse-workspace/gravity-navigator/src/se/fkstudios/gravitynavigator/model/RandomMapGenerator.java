@@ -30,7 +30,7 @@ public class RandomMapGenerator {
 	public static MapObjectModel generatePlanet (float radius) {
 		int mass = (int) calculateMass(radius);
 		Array<GraphicResource> planetTextures = new Array<GraphicResource>();
-		planetTextures.add(new TextureResource(new Vector2(0,0), Defs.TEXTURE_REGION_NAME_PLANET3));
+		planetTextures.add(new TextureResource(new Vector2(0,0), true, Defs.TEXTURE_REGION_NAME_PLANET3));
 		
 		MapObjectModel asteroid = new MapObjectModel(centreOfUniverse(), 
 				radius, 
@@ -49,7 +49,7 @@ public class RandomMapGenerator {
 	public static MapObjectModel generateAsteroid (float radius) {
 		int mass = (int) calculateMass(radius);
 		Array<GraphicResource> asteriodTextures = new Array<GraphicResource>();
-		asteriodTextures.add(new TextureResource(new Vector2(0,0), Defs.TEXTURE_REGION_NAME_ASTERIOID1));
+		asteriodTextures.add(new TextureResource(new Vector2(0,0), true, Defs.TEXTURE_REGION_NAME_ASTERIOID1));
 		
 		MapObjectModel asteroid = new MapObjectModel(new Vector2((float)randomInt(0,(int) Defs.MAP_WIDTH), (float)randomInt(0,(int) Defs.MAP_HEIGHT)), 
 				radius, 
@@ -75,7 +75,7 @@ public class RandomMapGenerator {
 		Vector2 asteroidVelocity = new Vector2((-1f)*asteroidSpeed, 0.0f).rotate(rotation);
 
 		Array<GraphicResource> asteriodTextures = new Array<GraphicResource>();
-		asteriodTextures.add(new TextureResource(new Vector2(0,0), Defs.TEXTURE_REGION_NAME_ASTERIOID1));
+		asteriodTextures.add(new TextureResource(new Vector2(0,0), true, Defs.TEXTURE_REGION_NAME_ASTERIOID1));
 		
 		MapObjectModel asteroid = new MapObjectModel(asteroidPosition, 
 				radius, 
