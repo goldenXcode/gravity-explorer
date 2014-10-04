@@ -40,6 +40,8 @@ public final class Defs {
 	
 	/* spaceship-fuel-related stuff */ 
 	public static final float ZERO_FUEL = 0; 
+	public static final float STARTING_FUEL = 100; // in percent
+	public static final float FUEL_SCALING_FACTOR = 0.001f;
 	
 	
 
@@ -131,8 +133,7 @@ public final class Defs {
 		"map1-background-layer2"}; 
 	public static final float COMPENSATIONAL_CUTOFF_FACTOR = 1.2f;
 	public static final float ORBITAL_COMPENSATIONAL_FACTOR2 = 0.001f;
-	public static final float STARTING_FUEL = 0;
-	public static final float FUEL_SCALING_FACTOR = 0.001f;
+
 	
 	/* Sound */
 	
