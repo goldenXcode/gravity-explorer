@@ -75,11 +75,22 @@ public class SpaceshipModel extends MapObjectModel {
 		int mass = getMass();
 		Vector2 acceleration = thrust.cpy().div(mass);
 		setFuelLeft(getFuelLeft() - thrust.cpy().len()*Defs.FUEL_SCALING_FACTOR ); 
-		getAcceleration().add(acceleration);
+		getAcceleration().add(acceleration).scl(fuelEfficiencyMapping(fuelLeft));
 		aliveTime += delta; 
 		super.update(delta);
 		
 		if (thrust.len2() > 0) 
 			setRotation(thrust.angle() - 90); //LibGdx render with rotation 0 from y-axis while Vector2 calculates angle from x-axis, thus -90.
 	} 	
+	
+	/* 
+	 * Maps the fuel left to engine efficiency. As a primary requirement it should tend to zero as fuel left tends to zero. also it should map 100 to 1; (perfect 
+	 * efficiency. 
+	 * 
+	 */
+	private float fuelEfficiencyMapping (float fuelLeft) {
+		return fuelLeft/100; 
+		
+	}
+	
 }
