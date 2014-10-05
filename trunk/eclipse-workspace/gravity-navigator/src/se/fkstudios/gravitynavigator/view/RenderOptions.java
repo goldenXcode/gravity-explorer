@@ -8,7 +8,7 @@ package se.fkstudios.gravitynavigator.view;
 public class RenderOptions {
 	
 	/*Rendering options*/
-	public boolean debugRender = false;
+	public boolean debugRender = true;
 	
 	/*Singelton stuff*/
 	private static final RenderOptions instance = new RenderOptions();

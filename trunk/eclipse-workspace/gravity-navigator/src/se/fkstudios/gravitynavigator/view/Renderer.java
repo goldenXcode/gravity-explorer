@@ -1,6 +1,7 @@
 package se.fkstudios.gravitynavigator.view;
 
 import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.Utility;
 import se.fkstudios.gravitynavigator.controller.GameplayCamera;
 import se.fkstudios.gravitynavigator.model.MapObjectModel;
 import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
@@ -25,8 +26,8 @@ public abstract class Renderer {
 			float mapHeight) {
 		this.shapeRenderer = shapeRenderer;
 		this.spriteBatch = spriteBatch;
-		this.mapScreenWidth = getScreenCoordinate(mapWidth);
-		this.mapScreenHeight = getScreenCoordinate(mapHeight);
+		this.mapScreenWidth = Utility.getScreenCoordinate(mapWidth);
+		this.mapScreenHeight = Utility.getScreenCoordinate(mapHeight);
 	}
 
 	/**
@@ -35,26 +36,26 @@ public abstract class Renderer {
 	 * @param textureResource TextureResource to be drawn.
 	 * @param viewport 
 	 */
-public void render(MapObjectModel mapObject, GraphicResource resource, GameplayCamera camera) {
+	public void render(MapObjectModel mapObject, GraphicResource resource, GameplayCamera camera) {
 		float width;
 		float height;	
 		if (resource.useParentSize) {
-			width = getScreenCoordinate(mapObject.getWidth());
-			height = getScreenCoordinate(mapObject.getHeight());
+			width = Utility.getScreenCoordinate(mapObject.getWidth());
+			height = Utility.getScreenCoordinate(mapObject.getHeight());
 		}
 		else {
-			width = getScreenCoordinate(resource.width);
-			height = getScreenCoordinate(resource.height);
+			width = Utility.getScreenCoordinate(resource.width);
+			height = Utility.getScreenCoordinate(resource.height);
 		}
 		
 		float textureOriginX = width / 2;
 		float textureOriginY = height / 2;
 		
-		float positionX = getScreenCoordinate(mapObject.getPosition().x) - textureOriginX + getScreenCoordinate(resource.positionOffset.x);  
-		float positionY = getScreenCoordinate(mapObject.getPosition().y ) - textureOriginY + getScreenCoordinate(resource.positionOffset.y);
+		float positionX = Utility.getScreenCoordinate(mapObject.getPosition().x) - textureOriginX + Utility.getScreenCoordinate(resource.positionOffset.x);  
+		float positionY = Utility.getScreenCoordinate(mapObject.getPosition().y ) - textureOriginY + Utility.getScreenCoordinate(resource.positionOffset.y);
 		
-		float originX = textureOriginX - getScreenCoordinate(resource.positionOffset.x);
-		float originY = textureOriginY - getScreenCoordinate(resource.positionOffset.y);
+		float originX = textureOriginX - Utility.getScreenCoordinate(resource.positionOffset.x);
+		float originY = textureOriginY - Utility.getScreenCoordinate(resource.positionOffset.y);
 				
 		float rotation = mapObject.getRotation();
 		
@@ -152,15 +153,6 @@ public void render(MapObjectModel mapObject, GraphicResource resource, GameplayC
 		shapeRenderer.end();
 	}
 	
-	/**
-	 * TODO: write the javadoc
-	 * @param modelCoordinate
-	 * @return
-	 */
-	protected float getScreenCoordinate(float modelCoordinate) {
-		return modelCoordinate * Defs.PIXELS_PER_UNIT;
-	}
-
 	/**
 	 * Draws a TextureRegion stretched in a Rectangle if the Rectangle overlaps given viewport Rectangle.
 	 * @param textureRegion Texture region to be drawn.
