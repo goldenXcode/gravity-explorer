@@ -20,8 +20,8 @@ public class SpaceshipModel extends MapObjectModel {
 	
 	private Array<AnimationResource> thrustAnimations;
 	
-	public void setFuelLeft(float f) {
-		fuelLeft = f; 
+	public void setFuelLeft(float fuelLeft) {
+		this.fuelLeft = fuelLeft; 
 	}
 	
 	public float getFuelLeft() {
@@ -37,12 +37,16 @@ public class SpaceshipModel extends MapObjectModel {
 	}
 
 	public void setThrust(Vector2 thrust) {
-		this.thrust.x = thrust.x;
-		this.thrust.y = thrust.y;
+		setThrust(thrust.x, thrust.y);
+	}
+
+	public void setThrust(float thrustX, float thrustY) {
+		thrust.x = thrustX;
+		thrust.y = thrustY;
 		for (AnimationResource thrustAnimation : thrustAnimations)
 			thrustAnimation.visible = thrust.len2() > 0;
 	}
-
+	
 	public int getMaxThrust() {
 		return maxThrust;
 	}
@@ -64,7 +68,6 @@ public class SpaceshipModel extends MapObjectModel {
 		super(position, width, height, velocity, rotation, mass, allResources, minRenderSizeFactor);
 		this.maxThrust = maxThrust;
 		this.thrustAnimations = thrustAnimations;
-		
 		this.thrust = new Vector2(0, 0);
 		this.aliveTime = 0; 
 		this.fuelLeft = Defs.STARTING_FUEL;
@@ -74,7 +77,7 @@ public class SpaceshipModel extends MapObjectModel {
 	public void update(float delta) {
 		int mass = getMass();
 		Vector2 acceleration = thrust.cpy().div(mass);
-		setFuelLeft(getFuelLeft() - thrust.cpy().len()*Defs.FUEL_SCALING_FACTOR ); 
+		setFuelLeft(getFuelLeft() - thrust.cpy().len() * Defs.FUEL_SCALING_FACTOR ); 
 		getAcceleration().add(acceleration).scl(fuelEfficiencyMapping(fuelLeft));
 		aliveTime += delta; 
 		super.update(delta);
