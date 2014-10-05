@@ -138,7 +138,8 @@ public class GameplayScreen implements Screen {
 
 		mapRenderer.setConsoleText("Running in " + Float.toString(round(1 / delta, 0)) 
 				+ " FPS , time alive: " + round(playerSpaceship.getAliveTime(), 0) 
-				+ ", fuel left: " + playerSpaceship.getFuelLeft());
+				+ ", fuel left: " + playerSpaceship.getFuelLeft()
+				+ ", zoom: " + camera.zoom);
 		
 		mapRenderer.render(map, camera.getViewport());
 

@@ -24,10 +24,13 @@ public class GameplayInputProcessor implements InputProcessor {
 
 	private HashMap<Integer, Vector2> activePointerPositions;
 	private HashMap<Integer, Vector2> activePointerStartPositions;
-		
-	private int lengthForFullThurst;
 	private SpaceshipModel playerSpaceship;
 	private GameplayCamera camera;
+//	private int screenWidth;
+//	private int screenHeight;
+	private int lengthForFullThurst;
+	private int lengthToDoubleZoom;
+	private float lastLength;
 	
 	/**
 	 * Creates a GameplayInputProcesor for given SpaceshipObject and viewport.
@@ -39,9 +42,13 @@ public class GameplayInputProcessor implements InputProcessor {
 	public GameplayInputProcessor(SpaceshipModel playerMapObject, GameplayCamera camera, int screenWidth, int screenHeight) {
 		activePointerPositions = new HashMap<Integer, Vector2>();
 		activePointerStartPositions = new HashMap<Integer, Vector2>();
-		lengthForFullThurst = Math.round(Math.min(screenWidth, screenHeight) / 2);		
 		this.playerSpaceship = playerMapObject;
 		this.camera = camera;
+//		this.screenWidth = screenWidth;
+//		this.screenHeight = screenHeight;
+		lengthForFullThurst = Math.round(Math.min(screenWidth, screenHeight) / 2);		
+		lengthToDoubleZoom = Math.round(Math.min(screenWidth, screenHeight) / 1.5f);
+		lastLength = 0f;
 	}
 
 	@Override
@@ -91,7 +98,7 @@ public class GameplayInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		registerPointer(pointer, screenX, screenY);
+		updatePointer(pointer, screenX, screenY);
 		int pointerCount = getPointerCount();
 		if (pointerCount == 1) { 
 			//One finger down, do thrust from start drag position.
@@ -106,52 +113,16 @@ public class GameplayInputProcessor implements InputProcessor {
 		}
 		else if (pointerCount == 2) { 
 			//Two fingers down, do rotate and zoom camera.
-			//TODO implement code
+			Vector2 pointer0 = getPointerPosition(0);
+			Vector2 pointer1 = getPointerPosition(1);
+			float length = pointer0.dst(pointer1);
+			float lengthDiff = lastLength - length;
+//			camera.zoom(lengthDiff);
+			float lengthDiffOfScreen = lengthDiff / lengthToDoubleZoom;
+			camera.zoom = camera.zoom + lengthDiffOfScreen * camera.zoom;
+			lastLength = length;
 		}
 		return true;
-		
-//		if (pointerCount == 1) {
-//			int dragScreenX =  screenX - pointer0StartX;
-//			int dragScreenY = -(screenY - pointer0StartY);
-//			float dragLength = (float) Math.sqrt((Math.pow(dragScreenX, 2) + Math.pow(dragScreenY, 2))); 
-//			float amountOfThrust = Math.min(1.0f, dragLength / lengthForFullThurst);
-//			float thrustLength = amountOfThrust * playerSpaceship.getMaxThrust();
-//			float screenToModelRatio = thrustLength / dragLength;
-//			Vector2 newThrust = new Vector2(dragScreenX * screenToModelRatio, dragScreenY * screenToModelRatio);
-//			playerSpaceship.setThrust(newThrust);
-//		}
-//		else if (pointerCount == 2) {
-//			Vector2 oldDistanceDiff = new Vector2();
-//			Vector2 distanceDiff = new Vector2();
-//			oldDistanceDiff.x = Math.abs(pointer0X - pointer1X);
-//			oldDistanceDiff.y = Math.abs(pointer0Y - pointer1Y);
-//			if (pointer == 0) {
-//				distanceDiff.x = Math.abs(screenX - pointer1X); 
-//				distanceDiff.y = Math.abs(screenY - pointer1Y); 
-//			}
-//			else if (pointer == 1) {
-//				distanceDiff.x = Math.abs(screenX - pointer0X); 
-//				distanceDiff.y = Math.abs(screenY - pointer0Y);
-//			}
-//			if (oldDistanceDiff.dst2(distanceDiff) > 10) {
-//				if (oldDistanceDiff.len2() > distanceDiff.len2())
-//					camera.zoom(-0.1f);
-//				else if (oldDistanceDiff.len2() < distanceDiff.len2())
-//					camera.zoom(0.1f);
-//			}
-//		}
-//		
-//		if (pointer == 0) {
-//			pointer0X = screenX;
-//			pointer0Y = screenY;
-//			return true;
-//		}
-//		else if (pointer == 1) {
-//			pointer1X = screenX;
-//			pointer1Y = screenY;
-//			return true;
-//		}
-//		return false;
 	}
 
 	@Override
@@ -162,11 +133,9 @@ public class GameplayInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean scrolled(int amount) {
-		if (camera.getViewport().width / Defs.PIXELS_PER_UNIT < Defs.MAP_WIDTH * Defs.CAMERA_LIMIT || amount < 0) {
+		if (camera.getViewport().width / Defs.PIXELS_PER_UNIT < Defs.MAP_WIDTH * Defs.CAMERA_LIMIT || amount < 0)
 			camera.zoom(amount); 
-			return true;
-		}
-		return false;
+		return true;
 	}
 	
 	private Vector2 getPointerStartPosition(int orderIndex) {
@@ -186,21 +155,18 @@ public class GameplayInputProcessor implements InputProcessor {
 	
 	
 	private void registerPointer(int pointer, int positionX, int positionY) {
-		if (activePointerPositions.containsKey(pointer)) {
-			Vector2 position = activePointerPositions.get(pointer);
-			position.x = positionX;
-			position.y = positionY;
-		}
-		else {
-			activePointerPositions.put(pointer, new Vector2(positionX, positionY));
-		}
+		activePointerPositions.put(pointer, new Vector2(positionX, positionY));
+		activePointerStartPositions.put(pointer, new Vector2(positionX, positionY));
 		
-		if (!activePointerStartPositions.containsKey(pointer)) {
-			activePointerStartPositions.put(pointer, new Vector2(positionX, positionY));
-		}
-		
-		if (getPointerCount() > 1) {
+		int pointerCount = getPointerCount();
+		if (pointerCount > 1) {
 			playerSpaceship.setThrust(0, 0);
+		}
+		if (pointerCount == 2)
+		{
+			Vector2 pointer0 = getPointerPosition(0);
+			Vector2 pointer1 = getPointerPosition(1);
+			lastLength = pointer0.dst(pointer1);
 		}
 	}
 	
@@ -208,8 +174,29 @@ public class GameplayInputProcessor implements InputProcessor {
 		activePointerPositions.remove(pointer);
 		activePointerStartPositions.remove(pointer);
 		
-		if (getPointerCount() == 0) {
+		int pointerCount = getPointerCount();
+		if (pointerCount == 0) {
 			playerSpaceship.setThrust(0, 0);
+		}
+		else if (pointerCount == 1) {
+			Vector2 pointerPos = getPointerPosition(0);
+			Vector2 pointerStartPos = getPointerStartPosition(0);
+			pointerStartPos.x = pointerPos.x;
+			pointerStartPos.y = pointerPos.y;
+		}
+		else if (pointerCount == 2)
+		{
+			Vector2 pointer0 = getPointerPosition(0);
+			Vector2 pointer1 = getPointerPosition(1);
+			lastLength = pointer0.dst(pointer1);
+		}
+	}
+	
+	private void updatePointer(int pointer, int positionX, int positionY) {
+		if (activePointerPositions.containsKey(pointer)) {
+			Vector2 position = activePointerPositions.get(pointer);
+			position.x = positionX;
+			position.y = positionY;
 		}
 	}
 	
