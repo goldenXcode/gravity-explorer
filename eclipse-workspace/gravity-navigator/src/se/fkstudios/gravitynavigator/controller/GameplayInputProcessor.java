@@ -13,6 +13,8 @@ import se.fkstudios.gravitynavigator.view.RenderOptions;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -31,6 +33,8 @@ public class GameplayInputProcessor implements InputProcessor {
 	private int lengthForFullThurst;
 	private int lengthToDoubleZoom;
 	private float lastLength;
+	private Vector2 lastVector;
+	private Vector2 currentVector;
 	
 	/**
 	 * Creates a GameplayInputProcesor for given SpaceshipObject and viewport.
@@ -49,6 +53,8 @@ public class GameplayInputProcessor implements InputProcessor {
 		lengthForFullThurst = Math.round(Math.min(screenWidth, screenHeight) / 2);		
 		lengthToDoubleZoom = Math.round(Math.min(screenWidth, screenHeight) / 1.5f);
 		lastLength = 0f;
+		lastVector = new Vector2(0, 0);
+		currentVector = new Vector2(0, 0);
 	}
 
 	@Override
@@ -109,18 +115,25 @@ public class GameplayInputProcessor implements InputProcessor {
 			float thurstAmount = Math.min(1.0f, dragLength / lengthForFullThurst);
 			float thrustPower = thurstAmount * playerSpaceship.getMaxThrust();
 			float thrustPowerPerDragLength = thrustPower / Math.max(dragLength, Float.MIN_VALUE);
-			playerSpaceship.setThrust(dragX * thrustPowerPerDragLength, dragY * thrustPowerPerDragLength);		
+			playerSpaceship.setThrust(dragX * thrustPowerPerDragLength, dragY * thrustPowerPerDragLength);
 		}
 		else if (pointerCount == 2) { 
 			//Two fingers down, do rotate and zoom camera.
+			//zoom
 			Vector2 pointer0 = getPointerPosition(0);
 			Vector2 pointer1 = getPointerPosition(1);
 			float length = pointer0.dst(pointer1);
 			float lengthDiff = lastLength - length;
-//			camera.zoom(lengthDiff);
 			float lengthDiffOfScreen = lengthDiff / lengthToDoubleZoom;
 			camera.zoom = camera.zoom + lengthDiffOfScreen * camera.zoom;
 			lastLength = length;
+			//rotation
+			currentVector.x = pointer0.x - pointer1.x;
+			currentVector.y = pointer0.y - pointer1.y;
+			float angleDiff = lastVector.angle() - currentVector.angle();			
+			camera.rotate(angleDiff);
+			lastVector.x = currentVector.x;
+			lastVector.y = currentVector.y;
 		}
 		return true;
 	}
@@ -167,6 +180,8 @@ public class GameplayInputProcessor implements InputProcessor {
 			Vector2 pointer0 = getPointerPosition(0);
 			Vector2 pointer1 = getPointerPosition(1);
 			lastLength = pointer0.dst(pointer1);
+			lastVector.x = pointer0.x - pointer1.x;
+			lastVector.y = pointer0.y - pointer1.y;
 		}
 	}
 	
@@ -184,11 +199,12 @@ public class GameplayInputProcessor implements InputProcessor {
 			pointerStartPos.x = pointerPos.x;
 			pointerStartPos.y = pointerPos.y;
 		}
-		else if (pointerCount == 2)
-		{
+		else if (pointerCount == 2) {
 			Vector2 pointer0 = getPointerPosition(0);
 			Vector2 pointer1 = getPointerPosition(1);
 			lastLength = pointer0.dst(pointer1);
+			lastVector.x = pointer0.x - pointer1.x;
+			lastVector.y = pointer0.y - pointer1.y;
 		}
 	}
 	
