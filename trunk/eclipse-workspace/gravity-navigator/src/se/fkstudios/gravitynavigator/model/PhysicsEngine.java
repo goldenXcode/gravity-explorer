@@ -49,16 +49,48 @@ public class PhysicsEngine {
 			}
 		}
 	}
-		
+	
 	/**
-	 * Computes 
+	 * The Euler-Backward version. Needs the delta for some stepping
 	 */
+	public static void applyGravity2(float delta) 	
+	{
+		for (int i = 0; i < allMapObjects.length; i++) {
+			for (int j = 0; j < allMapObjects.length; j++) {
+				MapObjectModel mapObject1 = allMapObjects[i];
+				MapObjectModel mapObject2 = allMapObjects[j];
+				Vector2 acceleration = computeAcceleration2(mapObject1, mapObject2,delta).div(mapObject2.getMass());
+				mapObject2.getAcceleration().add(acceleration);
+				if (RenderOptions.getInstance().debugRender && detectCollision(mapObject1,mapObject2) && mapObject1 != mapObject2)
+					System.out.println("collision detected"); 
+			}
+		}
+	}
+		
+
 	public static Vector2 computeAcceleration(MapObjectModel mapObject1, MapObjectModel mapObject2)
 	{
 		return computeAcceleration(mapObject1.getPosition(), mapObject2.getPosition(), mapObject1.getMass(), mapObject2.getMass(),mapObject2.getRadius()); 
 	}
 	
 	
+	/** 
+	 * The Euler-Backward version 
+	 * 
+	 * @param mapObject1
+	 * @param mapObject2
+	 * @return
+	 */
+	public static Vector2 computeAcceleration2(MapObjectModel mapObject1, MapObjectModel mapObject2, float delta)
+	{
+		Vector2 positionIncrement = mapObject1.getVelocity().cpy().scl(delta); 
+		return computeAcceleration(mapObject1.getPosition().cpy().add(positionIncrement), mapObject2.getPosition(), mapObject1.getMass(), mapObject2.getMass(),mapObject2.getRadius()); 
+	}
+	
+	
+	/**
+	 * Computes the (Euler-forward) acceleration of an object subject to the gravitation of another object
+	 */
 	private static Vector2 computeAcceleration(Vector2 position1, Vector2 position2,float mass1,float mass2, float cutoff)
 	{
 		Vector2 distance = shortestDistanceVector(position1, position2); 
@@ -77,6 +109,35 @@ public class PhysicsEngine {
 		
 		return direction.scl(force);
 	}
+	/**
+	 * Computes the (Euler-backward) acceleration of an object subject to the gravitation of another object
+	 * 
+	 * @param position1
+	 * @param position2
+	 * @param mass1
+	 * @param mass2
+	 * @param cutoff
+	 * @return
+	 */
+//	private static Vector2 computeAcceleration2(Vector2 position1, Vector2 position2,float mass1,float mass2, float cutoff)
+//	{
+//		Vector2 distance = shortestDistanceVector(position1, position2); 
+//
+//		//float cutoff = 0.3f;
+//
+//		float force;
+//		if (distance.len() > cutoff) { // cutoff to prevent singularities arising from zero distance between objects
+//			float dist = distance.len(); // add current velocity here  
+//			force = ( Defs.GRAVITATIONAL_CONSTANT * mass1 * mass2 ) / (dist*dist); // Newtons law of gravity
+//		}
+//		else {
+//			force = 0;
+//		}
+//		
+//		Vector2 direction = distance.nor();
+//		
+//		return direction.scl(force);
+//	}
 	
 
 	/**

@@ -154,7 +154,8 @@ public class PeriodicMapModel extends Map {
 			applyMapObjectPeriodicity(gameplayMapObject);
 		}
 		
-		PhysicsEngine.applyGravity();
+		//PhysicsEngine.applyGravity();
+		PhysicsEngine.applyGravity2(delta); 
 		
 		for (MapObjectModel gameplayMapObject : gameplayMapObjects) {
 			gameplayMapObject.update(delta);
