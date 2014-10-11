@@ -250,5 +250,35 @@ public class PhysicsEngine {
 		}
 		return allMapObjects[returnIndex];
 	}
+
+	
+	/**
+	 * 
+	 * @param v1
+	 * @param v2
+	 * @param v12
+	 * @param v22
+	 * @param mass1
+	 * @param mass2
+	 * @param x1 center of object1 
+	 * @param x2 center of object 2 
+	 */
+	public void elasticCollision(Vector2 v1, Vector2 v2, Vector2 v12, Vector2 v22, float mass1, float mass2, Vector2 x1, Vector2 x2) {
+		
+		// first calculation 
+		float factor1 = (2*mass2/(mass1 + mass2)); 
+		float factor2 = (v1.sub(v2)).dot(x1.sub(x2)); 
+		float factor3 = x1.sub(x2).len2(); 
+		Vector2 term2 = x1.sub(x2).scl(factor1*factor2/factor3); 
+		v12 = v1.sub(term2); 
+
+		// second calculation is just the first calculation with indices permuted (i.e. v12 -> v22)  
+		float factor12 = (2*mass1/(mass2 + mass1)); 
+		float factor22 = (v2.sub(v1)).dot(x2.sub(x1)); 
+		float factor32 = x2.sub(x1).len2(); 
+		Vector2 term22 = x2.sub(x1).scl(factor12*factor22/factor32); 
+		v22 = v2.sub(term22); 
+		
+	}
 	
 }

@@ -32,7 +32,7 @@ public final class Defs {
 	
 	/* Map-generation-related stuff  */
 	public static final float PLANET_TO_ASTEROID_SIZE_RATIO = 0.1f; 
-	public static final float ORBITAL_COMPENSATIONAL_FACTOR = 0.000005f; 
+	public static final float ORBITAL_COMPENSATIONAL_FACTOR = 1; 
 	public static final float ASTEROID_SPACING = 1f; // final spacing is planet-size*spacing
 	public static final float PLANET_SIZE = 30f; 
 	public static final float TOLERATED_ORBITAL_DEVIATION = 300; 
