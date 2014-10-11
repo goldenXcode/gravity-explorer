@@ -95,7 +95,6 @@ public class SpaceshipModel extends MapObjectModel {
 		if (fuelLeft > 0)
 			return fuelLeft/100; 
 		else {
-			System.out.println("fuel depleted"); 
 			return 0;
 		}
 		
