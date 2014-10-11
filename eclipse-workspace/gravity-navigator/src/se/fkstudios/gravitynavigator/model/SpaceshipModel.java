@@ -92,7 +92,11 @@ public class SpaceshipModel extends MapObjectModel {
 	 * 
 	 */
 	private float fuelEfficiencyMapping (float fuelLeft) {
-		return fuelLeft/100; 
+		if (fuelLeft > 0)
+			return fuelLeft/100; 
+		else 
+			return 0; 
+			
 		
 	}
 	
