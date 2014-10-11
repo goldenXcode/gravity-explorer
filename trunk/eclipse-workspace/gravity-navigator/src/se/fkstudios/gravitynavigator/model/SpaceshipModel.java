@@ -77,7 +77,7 @@ public class SpaceshipModel extends MapObjectModel {
 	public void update(float delta) {
 		int mass = getMass();
 		Vector2 acceleration = thrust.cpy().div(mass);
-		setFuelLeft(getFuelLeft() - thrust.cpy().len() * Defs.FUEL_SCALING_FACTOR ); 
+		setFuelLeft(getFuelLeft() - thrust.cpy().len() * Defs.FUEL_SCALING_FACTOR*fuelEfficiencyMapping(getFuelLeft()) ); 
 		getAcceleration().add(acceleration).scl(fuelEfficiencyMapping(fuelLeft));
 		aliveTime += delta; 
 		super.update(delta);
@@ -94,9 +94,10 @@ public class SpaceshipModel extends MapObjectModel {
 	private float fuelEfficiencyMapping (float fuelLeft) {
 		if (fuelLeft > 0)
 			return fuelLeft/100; 
-		else 
-			return 0; 
-			
+		else {
+			System.out.println("fuel depleted"); 
+			return 0;
+		}
 		
 	}
 	
