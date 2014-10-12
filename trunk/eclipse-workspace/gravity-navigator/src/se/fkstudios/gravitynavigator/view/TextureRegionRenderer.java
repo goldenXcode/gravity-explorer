@@ -4,7 +4,7 @@ import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.Utility;
 import se.fkstudios.gravitynavigator.controller.GameplayCamera;
 import se.fkstudios.gravitynavigator.model.MapObjectModel;
-import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
+import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,14 +13,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 
-public abstract class Renderer {
+public class TextureRegionRenderer {
 
 	protected ShapeRenderer shapeRenderer;
 	protected SpriteBatch spriteBatch;
 	protected float mapScreenWidth;
 	protected float mapScreenHeight;
 	
-	public Renderer(ShapeRenderer shapeRenderer,
+	public TextureRegionRenderer(ShapeRenderer shapeRenderer,
 			SpriteBatch spriteBatch,
 			float mapWidth,
 			float mapHeight) {
@@ -36,7 +36,7 @@ public abstract class Renderer {
 	 * @param textureResource TextureResource to be drawn.
 	 * @param viewport 
 	 */
-	public void render(MapObjectModel mapObject, GraphicResource resource, GameplayCamera camera) {
+	public void render(MapObjectModel mapObject, TextureRegionResource resource, GameplayCamera camera) {
 		float width;
 		float height;	
 		if (resource.useParentSize) {
@@ -52,7 +52,7 @@ public abstract class Renderer {
 		float textureOriginY = height / 2;
 		
 		float positionX = Utility.getScreenCoordinate(mapObject.getPosition().x) - textureOriginX + Utility.getScreenCoordinate(resource.positionOffset.x);  
-		float positionY = Utility.getScreenCoordinate(mapObject.getPosition().y ) - textureOriginY + Utility.getScreenCoordinate(resource.positionOffset.y);
+		float positionY = Utility.getScreenCoordinate(mapObject.getPosition().y) - textureOriginY + Utility.getScreenCoordinate(resource.positionOffset.y);
 		
 		float originX = textureOriginX - Utility.getScreenCoordinate(resource.positionOffset.x);
 		float originY = textureOriginY - Utility.getScreenCoordinate(resource.positionOffset.y);
@@ -62,12 +62,14 @@ public abstract class Renderer {
 		Rectangle drawArea = new Rectangle(positionX, positionY, width, height);
 		Rectangle viewport = camera.getViewport();
 		
+
 		float renderScale = 1 / camera.zoom;
 		float compensatedRenderScale = 1f;
-		if (renderScale < mapObject.minRenderScale)
-			compensatedRenderScale = mapObject.minRenderScale / renderScale;
+		if (renderScale < resource.minRenderScale)
+			compensatedRenderScale = resource.minRenderScale / renderScale;
 		
-		TextureRegion textureRegion = getTextureRegion(resource);
+		
+		TextureRegion textureRegion = resource.getTextureRegion();
 		
 		spriteBatch.begin();
 		
@@ -120,13 +122,6 @@ public abstract class Renderer {
 			debugRender(spriteBatch.getProjectionMatrix(), positionX, positionY, width, height, originX, originY, rotation);
 	}
 
-	/**
-	 * TODO: write the javadoc.
-	 * @param resource
-	 * @return
-	 */
-	protected abstract TextureRegion getTextureRegion(GraphicResource resource);
-
 	private void debugRender(Matrix4 projectionMatrix, 
 			float positionX, 
 			float positionY, 
@@ -171,7 +166,8 @@ public abstract class Renderer {
 			float scale,
 			Rectangle viewport) {
 		
-		Boolean wasDrawn = textureArea.overlaps(viewport);
+//		Boolean wasDrawn = textureArea.overlaps(viewport);
+		Boolean wasDrawn = true;
 		if (wasDrawn) {
 			spriteBatch.draw(textureRegion, 
 				textureArea.x, 

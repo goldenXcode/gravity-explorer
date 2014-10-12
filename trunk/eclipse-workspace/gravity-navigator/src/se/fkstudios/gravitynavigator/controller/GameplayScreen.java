@@ -6,14 +6,9 @@ import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.MapObjectModel;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 import se.fkstudios.gravitynavigator.model.SpaceshipModel;
-import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
-import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
-import se.fkstudios.gravitynavigator.model.resources.SolidColorResource;
-import se.fkstudios.gravitynavigator.model.resources.TextureResource;
-import se.fkstudios.gravitynavigator.view.AnimationRenderer;
+import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 import se.fkstudios.gravitynavigator.view.PeriodicMapRenderer;
-import se.fkstudios.gravitynavigator.view.TextureRenderer;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import se.fkstudios.gravitynavigator.view.TextureRegionRenderer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -47,8 +42,7 @@ public class GameplayScreen implements Screen {
 	// Rendering
 	private SpriteBatch spriteBatch;
 	private PeriodicMapRenderer mapRenderer;
-	private TextureRenderer textureRenderer;
-	private AnimationRenderer animationRenderer;
+	private TextureRegionRenderer textureRegionRenderer;
 
 	@Override
 	public void show() throws IllegalStateException {
@@ -94,10 +88,7 @@ public class GameplayScreen implements Screen {
 		spriteBatch = new SpriteBatch();
 
 		mapRenderer = new PeriodicMapRenderer(spriteBatch);
-		textureRenderer = new TextureRenderer(new ShapeRenderer(), spriteBatch,
-				map.getWidth(), map.getHeight());
-		animationRenderer = new AnimationRenderer(new ShapeRenderer(),
-				spriteBatch, map.getWidth(), map.getHeight());
+		textureRegionRenderer = new TextureRegionRenderer(new ShapeRenderer(), spriteBatch, map.getWidth(), map.getHeight());
 	}
 
 	/*
@@ -108,21 +99,18 @@ public class GameplayScreen implements Screen {
 	 */
 	@Override
 	public void render(float delta) {
-		updateModel(delta);
-		camera.updatePosition(delta, playerSpaceship.getPosition(),
-				map.getWidth(), map.getHeight());
+		camera.updatePosition(delta, playerSpaceship.getPosition(), map.getWidth(), map.getHeight());
 		camera.update();
+		updateModel(delta);
 		realRender(delta);
 	}
 
 	/**
 	 * Updates model state.
-	 * 
-	 * @param delta
-	 *            The time in seconds since the last call to updateGameState.
+	 * @param delta The time in seconds since the last call to updateGameState.
 	 */
 	private void updateModel(float delta) {
-		map.update(delta);
+		map.update(delta, camera);
 	}
 
 	/**
@@ -142,7 +130,7 @@ public class GameplayScreen implements Screen {
 				+ ", zoom: " + camera.zoom);
 		
 		mapRenderer.render(map, camera.getViewport());
-
+		
 		Array<MapObjectModel> mapObjects;
 		MapObjects allMapObjects;
 
@@ -150,18 +138,10 @@ public class GameplayScreen implements Screen {
 			allMapObjects = layer.getObjects();
 			mapObjects = allMapObjects.getByType(MapObjectModel.class);
 			for (MapObjectModel mapObject : mapObjects) {
-				Array<GraphicResource> resources = mapObject.getResources();
-				for (GraphicResource resource : resources) {
+				Array<TextureRegionResource> resources = mapObject.getResources();
+				for (TextureRegionResource resource : resources) {
 					if (resource.visible) {
-						Class<? extends GraphicResource> type = resource.getClass();
-						if (type == TextureResource.class)
-							textureRenderer.render(mapObject,
-									(TextureResource) resource, camera);
-						else if (type == AnimationResource.class)
-							animationRenderer.render(mapObject,
-									(AnimationResource) resource, camera);
-						else if (type == SolidColorResource.class)
-							throw new NotImplementedException();
+						textureRegionRenderer.render(mapObject, resource, camera);
 					}
 				}
 			}

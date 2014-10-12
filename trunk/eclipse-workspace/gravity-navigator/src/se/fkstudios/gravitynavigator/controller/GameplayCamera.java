@@ -3,6 +3,7 @@ package se.fkstudios.gravitynavigator.controller;
 import se.fkstudios.gravitynavigator.Defs;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -117,5 +118,10 @@ public class GameplayCamera extends OrthographicCamera {
 			position.set(cameraPosition.x, cameraPosition.y, 0);
 		else
 			position.set(targetScreenPosition.x, targetScreenPosition.y, 0);
+	}
+		
+	public float getRotation()
+	{
+	    return (float)Math.atan2(up.x, up.y) * MathUtils.radiansToDegrees;
 	}
 }
