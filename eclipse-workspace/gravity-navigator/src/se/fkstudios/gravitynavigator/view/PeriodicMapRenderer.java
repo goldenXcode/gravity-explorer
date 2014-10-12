@@ -2,6 +2,8 @@ package se.fkstudios.gravitynavigator.view;
 
 import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
+import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
+import se.fkstudios.gravitynavigator.model.resources.TextureResource;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -43,17 +45,18 @@ public class PeriodicMapRenderer {
 	 */
 	public void render(PeriodicMapModel map, Rectangle viewport) {
 		
-		Texture layer1Texture = TextureLoader.getInstance().getTexture(map.getFilePathBackgroundImageLayer1());
-		Texture layer2Texture = TextureLoader.getInstance().getTexture(map.getFilePathBackgroundImageLayer2());
-		
 		spriteBatch.begin();
 
-		renderMapBackgroundWithoutPerspective(map, layer1Texture, viewport, 0.0f);
-		renderMapBackgroundWithoutPerspective(map, layer2Texture, viewport, 0.8f);
-		
-//		renderMapBackgroundWithPerspective(map, layer1Texture, viewport, 1.0f);
-//		renderMapBackgroundWithPerspective(map, layer2Texture, viewport, 0.8f);
-				 
+		float ratio = 0f;
+		for (TextureRegionResource resource : map.getResources()) {
+			if (resource.getClass() == TextureResource.class) {
+				TextureResource textureResource = (TextureResource)resource;
+				Texture texture = TextureLoader.getInstance().getTexture(textureResource.textureName);
+				renderMapBackgroundWithoutPerspective(map, texture, viewport, ratio);
+				ratio = ratio + 0.4f;
+			}
+		}
+			 
 		spriteBatch.end();
 		
 		if (RenderOptions.getInstance().debugRender) {
@@ -68,7 +71,7 @@ public class PeriodicMapRenderer {
 		float proportionalPositionX = (viewport.x + viewport.width / 2) / mapScreenWidth;
 		float proportionalPositionY = (viewport.y + viewport.height / 2) / mapScreenHeight;
 		float longestViewportSide = Math.max(viewport.width, viewport.height);
-		
+	
 		spriteBatch.draw(textureRegion,
 			viewport.x - proportionalPositionX * viewport.width * ratio,
 			viewport.y - proportionalPositionY * viewport.height * ratio,

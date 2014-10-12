@@ -3,18 +3,13 @@ package se.fkstudios.gravitynavigator.controller;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 
 import se.fkstudios.gravitynavigator.Defs;
-import se.fkstudios.gravitynavigator.Utility;
 import se.fkstudios.gravitynavigator.model.SpaceshipModel;
 import se.fkstudios.gravitynavigator.view.RenderOptions;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -28,8 +23,6 @@ public class GameplayInputProcessor implements InputProcessor {
 	private HashMap<Integer, Vector2> activePointerStartPositions;
 	private SpaceshipModel playerSpaceship;
 	private GameplayCamera camera;
-//	private int screenWidth;
-//	private int screenHeight;
 	private int lengthForFullThurst;
 	private int lengthToDoubleZoom;
 	private float lastLength;
@@ -48,8 +41,6 @@ public class GameplayInputProcessor implements InputProcessor {
 		activePointerStartPositions = new HashMap<Integer, Vector2>();
 		this.playerSpaceship = playerMapObject;
 		this.camera = camera;
-//		this.screenWidth = screenWidth;
-//		this.screenHeight = screenHeight;
 		lengthForFullThurst = Math.round(Math.min(screenWidth, screenHeight) / 2);		
 		lengthToDoubleZoom = Math.round(Math.min(screenWidth, screenHeight) / 1.5f);
 		lastLength = 0f;
@@ -74,6 +65,12 @@ public class GameplayInputProcessor implements InputProcessor {
 					camera.setCameraMode(GameplayCamera.CameraMode.LOOSE);
 			else 
 				camera.setCameraMode(GameplayCamera.CameraMode.TIGHT);
+		}
+		else if (keycode == Input.Keys.R) {
+			camera.rotate(10f);
+		}
+		else if (keycode == Input.Keys.T) {
+			camera.rotate(-10);
 		}
 		return true;	
 	}
@@ -116,6 +113,7 @@ public class GameplayInputProcessor implements InputProcessor {
 			float thrustPower = thurstAmount * playerSpaceship.getMaxThrust();
 			float thrustPowerPerDragLength = thrustPower / Math.max(dragLength, Float.MIN_VALUE);
 			playerSpaceship.setThrust(dragX * thrustPowerPerDragLength, dragY * thrustPowerPerDragLength);
+			playerSpaceship.getThrust().rotate(-camera.getRotation());
 		}
 		else if (pointerCount == 2) { 
 			//Two fingers down, do rotate and zoom camera.
@@ -123,15 +121,15 @@ public class GameplayInputProcessor implements InputProcessor {
 			Vector2 pointer0 = getPointerPosition(0);
 			Vector2 pointer1 = getPointerPosition(1);
 			float length = pointer0.dst(pointer1);
-			float lengthDiff = lastLength - length;
-			float lengthDiffOfScreen = lengthDiff / lengthToDoubleZoom;
-			camera.zoom = camera.zoom + lengthDiffOfScreen * camera.zoom;
+			float lengthDelta = lastLength - length;
+			float lengthDeltaOfScreen = lengthDelta / lengthToDoubleZoom;
+			camera.zoom = camera.zoom + lengthDeltaOfScreen * camera.zoom;
 			lastLength = length;
 			//rotation
 			currentVector.x = pointer0.x - pointer1.x;
 			currentVector.y = pointer0.y - pointer1.y;
-			float angleDiff = lastVector.angle() - currentVector.angle();			
-			camera.rotate(angleDiff);
+			float angleDelta = lastVector.angle() - currentVector.angle();			
+			camera.rotate(angleDelta);
 			lastVector.x = currentVector.x;
 			lastVector.y = currentVector.y;
 		}

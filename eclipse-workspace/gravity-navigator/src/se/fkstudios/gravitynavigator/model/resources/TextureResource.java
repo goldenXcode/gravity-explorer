@@ -1,24 +1,32 @@
 package se.fkstudios.gravitynavigator.model.resources;
 
+import se.fkstudios.gravitynavigator.view.TextureLoader;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-/**
- * Models a dependency to a texture. Either a texture region in a TextureAtlas or a stand alone texture.
- * Use TextureLoader to obtain the texture in view.
- * 
- * @author kristofer
- */
-public class TextureResource extends GraphicResource {
+public class TextureResource extends TextureRegionResource {
 
+	private TextureRegion textureRegion;
 	public final String textureName;
 	
-	public TextureResource(Vector2 positionOffset, boolean visible, String textureName) {
-		super(positionOffset, visible);
+	public TextureResource(Vector2 positionOffset, boolean visible, float minRenderScale, float maxRenderScale, String textureName) {
+		super(positionOffset, visible, minRenderScale, maxRenderScale);
 		this.textureName = textureName;
+		this.textureRegion = new TextureRegion();
 	}
 	
-	public TextureResource(Vector2 positionOffset, boolean visible, float width, float height, String textureName) {
-		super(positionOffset, visible, width, height);
+	public TextureResource(Vector2 positionOffset, boolean visible, float minRenderScale, float maxRenderScale, float width, float height, String textureName) {
+		super(positionOffset, visible, minRenderScale, maxRenderScale, width, height);
 		this.textureName = textureName;
+		this.textureRegion = new TextureRegion();
+	}
+
+	@Override
+	public TextureRegion getTextureRegion() {
+		Texture texture = TextureLoader.getInstance().getTexture(textureName);
+		textureRegion.setRegion(texture);
+		return textureRegion;
 	}
 }

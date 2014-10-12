@@ -2,7 +2,8 @@ package se.fkstudios.gravitynavigator.model;
 
 import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
-import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
+import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
+import se.fkstudios.gravitynavigator.model.resources.ResourceContainer;
 
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.math.Vector2;
@@ -12,8 +13,7 @@ import com.badlogic.gdx.utils.Array;
  * Modeling the properties of all gameplay map objects in game.
  * @author kristofer
  */
-public class MapObjectModel extends MapObject {
-//
+public class MapObjectModel extends MapObject implements ResourceContainer {
 	
 	private float width;
 	private float height;
@@ -25,13 +25,11 @@ public class MapObjectModel extends MapObject {
 	private float rotationalSpeed; // in degrees per second
 	private boolean selfStabilizing; 
 	
-	private Array<GraphicResource> resources;
+	private Array<TextureRegionResource> resources;
 	
 	private float distanceToParent; 
 	private MapObjectModel parentNode; 
 	private MapObjectModel[] childrenNodes; 
-
-	public final float minRenderScale;
 	
 	public MapObjectModel(Vector2 position, 
 			float width,
@@ -39,8 +37,7 @@ public class MapObjectModel extends MapObject {
 			Vector2 velocity,
 			float rotation,
 			int mass,
-			Array<GraphicResource> resources,
-			float minRenderScale) {
+			Array<TextureRegionResource> resources) {
 		
 		this.position = position;
 		this.width = width;
@@ -51,7 +48,6 @@ public class MapObjectModel extends MapObject {
 		this.resources = resources;
 		this.acceleration = new Vector2(0, 0);
 		this.rotationalSpeed = 0; 
-		this.minRenderScale = minRenderScale;
 		this.selfStabilizing = true; 
 	}
 
@@ -77,6 +73,11 @@ public class MapObjectModel extends MapObject {
 	
 	protected void setPosition(Vector2 position) {
 		this.position.set(position);
+	}
+	
+	protected void setPosition(float x, float y) {
+		this.position.x = x;
+		this.position.y = y;
 	}
 
 	public Vector2 getVelocity() {
@@ -124,7 +125,7 @@ public class MapObjectModel extends MapObject {
 		return result; 
 	}
 	
-	public Array<GraphicResource> getResources() {
+	public Array<TextureRegionResource> getResources() {
 		return resources;
 	}
 	
@@ -190,7 +191,7 @@ public class MapObjectModel extends MapObject {
 		setRotation(((getRotation() + getRotationalSpeed()*delta) % 360f));
 		
 		//update stateTime for any animation resources. (kind of breaking design pattern... bad but keep till it is a problem).
-		for(GraphicResource resource : getResources()) {
+		for(TextureRegionResource resource : getResources()) {
 			if (resource.getClass() == AnimationResource.class) {
 				((AnimationResource)resource).stateTime += delta;
 			}

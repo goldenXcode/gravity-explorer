@@ -17,8 +17,9 @@ public final class Defs {
 	public static final Vector2 STARTING_POSITION = new Vector2(2,2);
 	public static final Vector2 STARTING_VELOCITY = new Vector2(0,0);
 	
-	public static final float GRAVITATIONAL_CONSTANT = 0.01f;
-	
+	public static final float GRAVITATIONAL_CONSTANT = 0.01f;	
+	public static final float COMPENSATIONAL_CUTOFF_FACTOR = 1.2f;
+	public static final float ORBITAL_COMPENSATIONAL_FACTOR2 = 0.001f;
 	
 	/* The (hard-coded) solar-system will have a radius of ASTEROID_SPACING*NUMBER_OF_ASTEROIDS*PLANET*SIZE
 	 * MAP_WIDTH and HEIGHT should be set to roughly six times of that*/ 
@@ -42,8 +43,6 @@ public final class Defs {
 	public static final float ZERO_FUEL = 0; 
 	public static final float STARTING_FUEL = 100; // in percent
 	public static final float FUEL_SCALING_FACTOR = 0.01f;
-	
-	
 
 	
     /* ************************************************************************************
@@ -64,6 +63,7 @@ public final class Defs {
 
 	public static final float MIN_RENDER_SCALE_SPACESHIP = 0.33f;
 	public static final float MIN_RENDER_SCALE_DEFAULT = 0f;
+	public static final float MAX_RENDER_SCALE_DEFAULT = Float.MAX_VALUE;
 	
 	/* debug rendering */
 	public static final Color MAP_BORDER_COLOR = Color.MAGENTA;
@@ -131,9 +131,6 @@ public final class Defs {
 	public static final String[] TEXTURE_NAMES = {
 		"map1-background-layer1", 
 		"map1-background-layer2"}; 
-	public static final float COMPENSATIONAL_CUTOFF_FACTOR = 1.2f;
-	public static final float ORBITAL_COMPENSATIONAL_FACTOR2 = 0.001f;
-
 	
 	/* Sound */
 	
