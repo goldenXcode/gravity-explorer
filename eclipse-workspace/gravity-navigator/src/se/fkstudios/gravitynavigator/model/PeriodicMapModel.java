@@ -47,14 +47,18 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		resources.add(
 			new TextureResource(new Vector2(0,0),
 				true, 
-				longestViewportSide, 
-				longestViewportSide, 
+				1f,
+				1f,
+				longestViewportSide,
+				longestViewportSide,
 				backgroundLayer1ImageName));
 		resources.add(
 			new TextureResource(new Vector2(0,0), 
 				true, 
-				longestViewportSide, 
-				longestViewportSide, 
+				1f,
+				1f,
+				longestViewportSide * 2, 
+				longestViewportSide * 2, 
 				backgroundLayer2ImageName));
 		gameplayLayer = new MapLayer();
 		gameplayLayer.setName(GAMEPLAY_LAYER_NAME);

@@ -3,12 +3,13 @@ package se.fkstudios.gravitynavigator.controller;
 import java.math.BigDecimal;
 
 import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.Utility;
 import se.fkstudios.gravitynavigator.model.MapObjectModel;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 import se.fkstudios.gravitynavigator.model.SpaceshipModel;
 import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 import se.fkstudios.gravitynavigator.view.PeriodicMapRenderer;
-import se.fkstudios.gravitynavigator.view.TextureRegionRenderer;
+import se.fkstudios.gravitynavigator.view.MapObjectTextureRegionRenderer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -42,7 +43,7 @@ public class GameplayScreen implements Screen {
 	// Rendering
 	private SpriteBatch spriteBatch;
 	private PeriodicMapRenderer mapRenderer;
-	private TextureRegionRenderer textureRegionRenderer;
+	private MapObjectTextureRegionRenderer textureRegionRenderer;
 
 	@Override
 	public void show() throws IllegalStateException {
@@ -87,8 +88,12 @@ public class GameplayScreen implements Screen {
 
 		spriteBatch = new SpriteBatch();
 
-		mapRenderer = new PeriodicMapRenderer(spriteBatch);
-		textureRegionRenderer = new TextureRegionRenderer(new ShapeRenderer(), spriteBatch, map.getWidth(), map.getHeight());
+		float longestViewportSide = Math.max(Defs.VIEWPORT_WIDTH, Defs.VIEWPORT_HEIGHT);
+		
+		mapRenderer = new PeriodicMapRenderer(spriteBatch, longestViewportSide, longestViewportSide);
+		textureRegionRenderer = new MapObjectTextureRegionRenderer(spriteBatch,
+				Utility.getScreenCoordinate(map.getWidth()), 
+				Utility.getScreenCoordinate(map.getHeight()));
 	}
 
 	/*
@@ -129,7 +134,7 @@ public class GameplayScreen implements Screen {
 				+ ", fuel left: " + playerSpaceship.getFuelLeft()
 				+ ", zoom: " + camera.zoom);
 		
-		mapRenderer.render(map, camera.getViewport());
+		mapRenderer.render(map, camera);
 		
 		Array<MapObjectModel> mapObjects;
 		MapObjects allMapObjects;

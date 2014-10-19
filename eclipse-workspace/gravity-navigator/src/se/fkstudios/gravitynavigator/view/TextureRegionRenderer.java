@@ -3,7 +3,6 @@ package se.fkstudios.gravitynavigator.view;
 import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.Utility;
 import se.fkstudios.gravitynavigator.controller.GameplayCamera;
-import se.fkstudios.gravitynavigator.model.MapObjectModel;
 import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,139 +12,90 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 
-public class TextureRegionRenderer {
-
-	protected ShapeRenderer shapeRenderer;
-	protected SpriteBatch spriteBatch;
-	protected float mapScreenWidth;
-	protected float mapScreenHeight;
+public abstract class TextureRegionRenderer {
 	
-	public TextureRegionRenderer(ShapeRenderer shapeRenderer,
-			SpriteBatch spriteBatch,
-			float mapWidth,
-			float mapHeight) {
-		this.shapeRenderer = shapeRenderer;
+	protected SpriteBatch spriteBatch;
+	protected ShapeRenderer shapeRenderer;
+	protected float periodicityWidth;
+	protected float periodicityHeight;
+	
+	public TextureRegionRenderer(SpriteBatch spriteBatch,
+			float periodicityWidth,
+			float periodicityHeight) {
+		this.shapeRenderer = new ShapeRenderer();
 		this.spriteBatch = spriteBatch;
-		this.mapScreenWidth = Utility.getScreenCoordinate(mapWidth);
-		this.mapScreenHeight = Utility.getScreenCoordinate(mapHeight);
+		this.periodicityWidth = periodicityWidth;
+		this.periodicityHeight = periodicityHeight;
 	}
-
-	/**
-	 * Draws a TextureResource.
-	 * @param mapObject MapObjectModel owning the TextureResource.
-	 * @param textureResource TextureResource to be drawn.
-	 * @param viewport 
-	 */
-	public void render(MapObjectModel mapObject, TextureRegionResource resource, GameplayCamera camera) {
-		float width;
-		float height;	
-		if (resource.useParentSize) {
-			width = Utility.getScreenCoordinate(mapObject.getWidth());
-			height = Utility.getScreenCoordinate(mapObject.getHeight());
-		}
-		else {
-			width = Utility.getScreenCoordinate(resource.width);
-			height = Utility.getScreenCoordinate(resource.height);
-		}
-		
-		float textureOriginX = width / 2;
-		float textureOriginY = height / 2;
-		
-		float positionX = Utility.getScreenCoordinate(mapObject.getPosition().x) - textureOriginX + Utility.getScreenCoordinate(resource.positionOffset.x);  
-		float positionY = Utility.getScreenCoordinate(mapObject.getPosition().y) - textureOriginY + Utility.getScreenCoordinate(resource.positionOffset.y);
-		
-		float originX = textureOriginX - Utility.getScreenCoordinate(resource.positionOffset.x);
-		float originY = textureOriginY - Utility.getScreenCoordinate(resource.positionOffset.y);
-				
-		float rotation = mapObject.getRotation();
-		
-		Rectangle drawArea = new Rectangle(positionX, positionY, width, height);
+	
+	protected void render(TextureRegionResource resource, 
+			float screenPositionX, 
+			float screenPositionY, 
+			float textureWidth, 
+			float textureHeight, 
+			float rotation, 
+			GameplayCamera camera) {
+		Rectangle drawArea = new Rectangle(screenPositionX, screenPositionY, textureWidth, textureHeight);
+		float originX = textureWidth / 2 - Utility.getScreenCoordinate(resource.positionOffset.x);
+		float originY = textureHeight / 2 - Utility.getScreenCoordinate(resource.positionOffset.y);
 		Rectangle viewport = camera.getViewport();
 		
-
-		float renderScale = 1 / camera.zoom;
-		float compensatedRenderScale = 1f;
-		if (renderScale < resource.minRenderScale)
-			compensatedRenderScale = resource.minRenderScale / renderScale;
-		
+		float renderScale = 1f;
+		if ((1 / camera.zoom < resource.minRenderScale) || (1 / camera.zoom > resource.maxRenderScale)) {
+			renderScale = resource.minRenderScale * camera.zoom;
+		}
 		
 		TextureRegion textureRegion = resource.getTextureRegion();
 		
 		spriteBatch.begin();
-		
-		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, compensatedRenderScale, viewport);
-		
+				
+		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, renderScale, viewport);
+	
 		//Render periodicity
 		//Top
-		drawArea.x = positionX;
-		drawArea.y = positionY + mapScreenHeight;
-		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, compensatedRenderScale, viewport);
+		drawArea.x = screenPositionX;
+		drawArea.y = screenPositionY + periodicityHeight;
+		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, renderScale, viewport);
 		
 		//Left
-		drawArea.x = positionX - mapScreenWidth;
-		drawArea.y = positionY;
-		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, compensatedRenderScale, viewport);
+		drawArea.x = screenPositionX - periodicityWidth;
+		drawArea.y = screenPositionY;
+		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, renderScale, viewport);
 		
 		//Buttom
-		drawArea.x = positionX;
-		drawArea.y = positionY - mapScreenHeight;
-		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, compensatedRenderScale, viewport);
+		drawArea.x = screenPositionX;
+		drawArea.y = screenPositionY - periodicityHeight;
+		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, renderScale, viewport);
 		
 		//Right
-		drawArea.x = positionX + mapScreenWidth;
-		drawArea.y = positionY;
-		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, compensatedRenderScale, viewport);
+		drawArea.x = screenPositionX + periodicityWidth;
+		drawArea.y = screenPositionY;
+		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, renderScale, viewport);
 		
 		//Left top
-		drawArea.x = positionX - mapScreenWidth;
-		drawArea.y = positionY + mapScreenHeight;
-		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, compensatedRenderScale, viewport);
+		drawArea.x = screenPositionX - periodicityWidth;
+		drawArea.y = screenPositionY + periodicityHeight;
+		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, renderScale, viewport);
 		
 		//Left bottom
-		drawArea.x = positionX - mapScreenWidth;
-		drawArea.y = positionY - mapScreenHeight;
-		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, compensatedRenderScale, viewport);
+		drawArea.x = screenPositionX - periodicityWidth;
+		drawArea.y = screenPositionY - periodicityHeight;
+		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, renderScale, viewport);
 		
 		//Right top
-		drawArea.x = positionX + mapScreenWidth;
-		drawArea.y = positionY + mapScreenHeight;
-		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, compensatedRenderScale, viewport);
+		drawArea.x = screenPositionX + periodicityWidth;
+		drawArea.y = screenPositionY + periodicityHeight;
+		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, renderScale, viewport);
 		
 		//Right bottom
-		drawArea.x = positionX + mapScreenWidth;
-		drawArea.y = positionY - mapScreenHeight;
-		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, compensatedRenderScale, viewport);
+		drawArea.x = screenPositionX + periodicityWidth;
+		drawArea.y = screenPositionY - periodicityHeight;
+		tryDrawTextureRegion(textureRegion, drawArea, originX, originY, rotation, renderScale, viewport);
 		
 		spriteBatch.end();
 		
 		if (RenderOptions.getInstance().debugRender)
-			debugRender(spriteBatch.getProjectionMatrix(), positionX, positionY, width, height, originX, originY, rotation);
-	}
-
-	private void debugRender(Matrix4 projectionMatrix, 
-			float positionX, 
-			float positionY, 
-			float width, 
-			float height,
-			float originX,
-			float originY,
-			float rotation) {
-		
-		shapeRenderer.setProjectionMatrix(projectionMatrix);
-			
-		shapeRenderer.begin(ShapeType.Line);
-		
-		shapeRenderer.setColor(Defs.MAP_OBJECT_BORDER_COLOR);
-		shapeRenderer.rect(positionX, positionY, width, height, originX, originY, rotation);
-		
-		shapeRenderer.setColor(Defs.MAP_OBJECT_CENTER_MARKER_COLOR);
-		shapeRenderer.rect(
-				positionX + originX - 1, 
-				positionY + originY - 1, 
-				3, 
-				3);	
-		
-		shapeRenderer.end();
+			debugRender(spriteBatch.getProjectionMatrix(), screenPositionX, screenPositionY, textureWidth, textureHeight, originX, originY, rotation);
 	}
 	
 	/**
@@ -181,5 +131,31 @@ public class TextureRegionRenderer {
 				textureRotation);
 		}
 		return wasDrawn;
+	}	
+	
+	protected void debugRender(Matrix4 projectionMatrix, 
+			float positionX, 
+			float positionY, 
+			float width, 
+			float height,
+			float originX,
+			float originY,
+			float rotation) {
+		
+		shapeRenderer.setProjectionMatrix(projectionMatrix);
+			
+		shapeRenderer.begin(ShapeType.Line);
+		
+		shapeRenderer.setColor(Defs.MAP_OBJECT_BORDER_COLOR);
+		shapeRenderer.rect(positionX, positionY, width, height, originX, originY, rotation);
+		
+		shapeRenderer.setColor(Defs.MAP_OBJECT_CENTER_MARKER_COLOR);
+		shapeRenderer.rect(
+				positionX + originX - 1, 
+				positionY + originY - 1, 
+				3, 
+				3);	
+		
+		shapeRenderer.end();
 	}	
 }
