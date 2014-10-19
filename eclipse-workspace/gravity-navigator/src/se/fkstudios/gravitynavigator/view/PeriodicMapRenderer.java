@@ -33,19 +33,20 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 	}
 	
 	public void render(PeriodicMapModel map, GameplayCamera camera) {
-		float ratio = 0f;
-		float ratioInc = 1f / map.getResources().size;
 		for (TextureRegionResource resource : map.getResources()) {
 			if (resource.getClass() == TextureResource.class) {
-				float texScreenWidth = Utility.getScreenCoordinate(resource.width);
-				float texScreenHeight = Utility.getScreenCoordinate(resource.height);
-				periodicityWidth = texScreenWidth * camera.zoom;
-				periodicityHeight = texScreenHeight * camera.zoom; 
 				float proportionalPositionX = camera.position.x / Utility.getScreenCoordinate(map.getWidth());
 				float proportionalPositionY = camera.position.y / Utility.getScreenCoordinate(map.getHeight());
-				
 				float textureOriginX = Utility.getScreenCoordinate(resource.width) / 2;
 				float textureOriginY = Utility.getScreenCoordinate(resource.height) / 2;
+				float texScreenWidth = Utility.getScreenCoordinate(resource.width);
+				float texScreenHeight = Utility.getScreenCoordinate(resource.height);
+				float longestTexSide = Math.max(texScreenWidth, texScreenHeight);
+				float longestViewportSide = Math.max(camera.viewportWidth, camera.viewportHeight);
+				float ratio = 1 - longestViewportSide / longestTexSide;
+				
+				periodicityWidth = texScreenWidth * camera.zoom;
+				periodicityHeight = texScreenHeight * camera.zoom; 
 				
 				render(resource, 
 						camera.position.x - textureOriginX - proportionalPositionX * periodicityWidth * ratio, 
@@ -54,8 +55,6 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 						Utility.getScreenCoordinate(resource.height), 
 						0f, 
 						camera);
-				
-				ratio = ratio + ratioInc;
 			}
 		}
 		

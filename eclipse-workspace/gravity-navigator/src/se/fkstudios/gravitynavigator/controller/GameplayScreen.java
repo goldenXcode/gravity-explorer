@@ -8,15 +8,14 @@ import se.fkstudios.gravitynavigator.model.MapObjectModel;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 import se.fkstudios.gravitynavigator.model.SpaceshipModel;
 import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
-import se.fkstudios.gravitynavigator.view.PeriodicMapRenderer;
 import se.fkstudios.gravitynavigator.view.MapObjectTextureRegionRenderer;
+import se.fkstudios.gravitynavigator.view.PeriodicMapRenderer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.math.Vector2;
