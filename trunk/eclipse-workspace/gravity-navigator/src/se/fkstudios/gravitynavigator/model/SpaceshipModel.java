@@ -39,7 +39,7 @@ public class SpaceshipModel extends MapObjectModel {
 	public void setThrust(Vector2 thrust) {
 		setThrust(thrust.x, thrust.y);
 	}
-
+	
 	public void setThrust(float thrustX, float thrustY) {
 		thrust.x = thrustX;
 		thrust.y = thrustY;
@@ -71,13 +71,12 @@ public class SpaceshipModel extends MapObjectModel {
 		this.aliveTime = 0; 
 		this.fuelLeft = Defs.STARTING_FUEL;
 	}
-	
-	
+		
 	@Override
 	public void update(float delta) {
 		int mass = getMass();
 		Vector2 acceleration = thrust.cpy().div(mass);
-		setFuelLeft(getFuelLeft() - thrust.cpy().len() * Defs.FUEL_SCALING_FACTOR*fuelEfficiencyMapping(getFuelLeft()) ); 
+//		setFuelLeft(getFuelLeft() - thrust.cpy().len() * Defs.FUEL_SCALING_FACTOR*fuelEfficiencyMapping(getFuelLeft()) ); 
 		getAcceleration().add(acceleration).scl(fuelEfficiencyMapping(fuelLeft));
 		aliveTime += delta; 
 		super.update(delta);
@@ -89,6 +88,7 @@ public class SpaceshipModel extends MapObjectModel {
 	/* 
 	 * Maps the fuel left to engine efficiency. As a primary requirement it should tend to zero as fuel left tends to zero. also it should map 100 to 1; (perfect 
 	 * efficiency. 
+	 * 
 	 * 
 	 */
 	private float fuelEfficiencyMapping (float fuelLeft) {
