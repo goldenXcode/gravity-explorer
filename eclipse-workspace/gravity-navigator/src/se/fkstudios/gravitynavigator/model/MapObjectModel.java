@@ -1,9 +1,8 @@
 package se.fkstudios.gravitynavigator.model;
 
-import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
-import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 import se.fkstudios.gravitynavigator.model.resources.ResourceContainer;
+import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.math.Vector2;
@@ -48,7 +47,7 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		this.resources = resources;
 		this.acceleration = new Vector2(0, 0);
 		this.rotationalSpeed = 0; 
-		this.selfStabilizing = true; 
+		this.selfStabilizing = false; 
 	}
 
 	public float getWidth() {
@@ -84,8 +83,13 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		return velocity;
 	}
 	
-	protected void setVelocity(Vector2 velocity) {
+	public void setVelocity(Vector2 velocity) {
 		this.velocity.set(velocity);
+	}
+	
+	public void setVelocity(float x, float y) {
+		velocity.x = x;
+		velocity.y = y;
 	}
 	
 	public float getRotation() {
@@ -109,7 +113,13 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 	}
 	
 	public void setAcceleration(Vector2 acceleration) {
-		this.acceleration = acceleration;
+		this.acceleration.x = acceleration.x;
+		this.acceleration.y	= acceleration.y;
+	}
+	
+	public void setAcceleration(float x, float y) {
+		this.acceleration.x = x;
+		this.acceleration.y = y;
 	}
 	
 	public void setRotationalSpeed (float rotationSpeed) {
@@ -170,18 +180,6 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		Vector2 newVelocity = getVelocity().cpy();
 		newVelocity.add(acceleration.cpy().scl(delta));
 		
-		//adjusting velocity to get into orbit if object is self stabilizing. 
-		if (selfStabilizing) {
-			Vector2 compVel = calculateOrbitCompensationalVelocity().scl(delta);
-			newVelocity.add(compVel);
-			// to uphold newtons laws need to give the parent-planet a proportional force when correcting for gravity
-			if (getParentNode() != null) {
-				Vector2 force = compVel.scl(getParentNode().getMass());
-				Vector2 compVel2 = force.scl(delta/getParentNode().getMass());
-				getParentNode().setVelocity(getParentNode().getVelocity().add(compVel2));
-			}
-		}
-		
 		//setts the new velocity
 		setVelocity(newVelocity);
 		
@@ -190,69 +188,13 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		
 		setRotation(((getRotation() + getRotationalSpeed()*delta) % 360f));
 		
-		//update stateTime for any animation resources. (kind of breaking design pattern... bad but keep till it is a problem).
+		//update stateTime for any animation resources.
 		for(TextureRegionResource resource : getResources()) {
 			if (resource.getClass() == AnimationResource.class) {
 				((AnimationResource)resource).stateTime += delta;
 			}
 		}
 	}
-	
-	private Vector2 calculateOrbitCompensationalVelocity () {
-		MapObjectModel planet = PhysicsEngine.excertsGreatestForce(this); 
-		// first we'll need a unit vector parallel to it's circular orbit 
-		Vector2 positionDiff = PhysicsEngine.shortestDistanceVector(planet.getPosition().cpy(),this.getPosition().cpy());
-		Vector2 velocityDiff = planet.getVelocity().cpy().sub(this.getVelocity().cpy()); 
-		Vector2 tangentialVector = positionDiff.cpy().rotate(90).nor(); 
-		boolean clockwise; 
-		if (velocityDiff.dot(tangentialVector) > 0) {
-			clockwise = false; 
-		}
-		else {
-			clockwise = true; 
-		}
-		
-		float targetSpeed = RandomMapGenerator.calculateOrbitingVelocity(positionDiff.len(), planet.getMass()); 
-		float currentSpeed = Math.abs(velocityDiff.cpy().dot(tangentialVector)); 
-		
-		
-		boolean accelerating; 
-		if (targetSpeed > currentSpeed) {
-			accelerating = true; 
-		}
-		else {
-			accelerating = false; 
-		}
-		
-		Vector2 resultVector = tangentialVector.scl(Math.abs(targetSpeed-currentSpeed)*Defs.ORBITAL_COMPENSATIONAL_FACTOR2); 
-		if (!accelerating) {
-			resultVector.scl(-1); 
-		}
-		if (!clockwise) {
-			resultVector.scl(-1); 
-		}
-		
-		return resultVector; 
-	}
-	
-	//KC: användes inte så tog kommenterade bort, fredrik får avgöra om vi ska slänga den helt!
-//	private Vector2 calculateOrbitCompensationalVelocity() {
-//		if (getParentNode() != null) {
-//			float distance = PhysicsEngine.shortestDistanceVector(getPosition(), getParentNode().getPosition()).len();
-//			float targetDistance = getDistanceToParent();  
-//			float diff = targetDistance - distance; 
-//			
-//			if (RenderOptions.getInstance().debugRender && (Math.abs(diff) > Defs.TOLERATED_ORBITAL_DEVIATION))
-//				System.out.println("asteroids deviating too much from their orbit. Consider adjusting ORBITAL_COMPENSATIONAL_FACTOR"); 
-//			
-//			MapObjectModel planet = getParentNode(); 
-//			float compFactor = Defs.ORBITAL_COMPENSATIONAL_FACTOR*diff*PhysicsEngine.computeAcceleration(this, planet).len(); 
-//			return PhysicsEngine.shortestDistanceVector(getPosition(), getParentNode().getPosition()).nor().scl(compFactor); 
-//		}
-//		else {
-//			return new Vector2(0,0); 
-//		}
-//	}
 }
 	
 
