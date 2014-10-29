@@ -12,11 +12,16 @@ import com.badlogic.gdx.utils.Array;
 public class RandomMapGenerator {
 	
 	private float objectDensity = 1273f; // calculated from asteroid1 (just for reference).
+	private PhysicsEngine physicsEngine;
+	private Random rand;
 	
 	/*Singelton stuff*/
 	private static final RandomMapGenerator instance = new RandomMapGenerator();
 	
-	private RandomMapGenerator() {}
+	private RandomMapGenerator() {
+		rand = new Random();
+		physicsEngine = PhysicsEngine.getInstance();
+	}
 	
 	public static RandomMapGenerator getInstance() {
 		return instance;
@@ -68,7 +73,7 @@ public class RandomMapGenerator {
 		TextureRegionResource texture = new TextureAtlasResource(new Vector2(0,0), true, Defs.MIN_RENDER_SCALE_DEFAULT, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.TEXTURE_REGION_NAME_ASTERIOID1);
 		asteriodTextures.add(texture);
 		
-		MapObjectModel asteroid = new MapObjectModel(new Vector2((float)randomInt(0,(int) Defs.MAP_WIDTH), (float)randomInt(0,(int) Defs.MAP_HEIGHT)), 
+		MapObjectModel asteroid = new MapObjectModel(new Vector2((float)nextIntBetween(0,(int) Defs.MAP_WIDTH), (float)nextIntBetween(0,(int) Defs.MAP_HEIGHT)), 
 				radius, 
 				radius, 
 				new Vector2(0.2f, 0.0f), 
@@ -84,7 +89,7 @@ public class RandomMapGenerator {
 	public MapObjectModel generateOrbitingAsteroid(float distance, MapObjectModel planet, float radius) {
 		int mass = (int) calculateMass(radius);
 		Vector2 planetPosition = planet.getPosition();
-		float asteroidSpeed = calculateOrbitingVelocity(distance, planet.getMass());
+		float asteroidSpeed = physicsEngine.calculateOrbitingSpeed(distance, planet.getMass());
 		float rotation = randomFloat(0,360);
 		Vector2 displacementVector = new Vector2(0,-distance).rotate(rotation);
 		Vector2 asteroidPosition = new Vector2(planetPosition.x, planetPosition.y).add(displacementVector);
@@ -120,21 +125,13 @@ public class RandomMapGenerator {
 		return asteroids; 
 	}
 	
-	public static int randomInt(int min, int max) {
-
-	    Random rand = new Random();
-	    int randomNum = rand.nextInt((max - min) + 1) + min;
-
-	    return randomNum;
+	public int nextIntBetween(int min, int max) {
+	    return rand.nextInt((max - min) + 1) + min;
 	}
 	
-	public static float calculateOrbitingVelocity(float distance, float planetMass) {
-		return (float) Math.sqrt(Defs.GRAVITATIONAL_CONSTANT * planetMass/distance);
-	}
-	
-	private static float  randomFloat(float min, float max) {
+	private float  randomFloat(float min, float max) {
 		  return (float) (Math.random() * (max-min) + min);
-		}
+	}
 	
 	private Vector2 centreOfUniverse()  {
 		return new Vector2(Defs.MAP_WIDTH/2,Defs.MAP_HEIGHT/2); 

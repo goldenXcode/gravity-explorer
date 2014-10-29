@@ -77,7 +77,7 @@ public class PhysicsEngine {
 		Vector2 velocityDiff = dominatingMapObject.getVelocity().cpy().sub(mapObject.getVelocity());
 		Vector2 tangentialVector = positionDiff.cpy().rotate(90).nor(); 
 		
-		float targetSpeed = RandomMapGenerator.calculateOrbitingVelocity(positionDiff.len(), dominatingMapObject.getMass()); 
+		float targetSpeed = calculateOrbitingSpeed(positionDiff.len(), dominatingMapObject.getMass()); 
 		float currentSpeed = Math.abs(velocityDiff.cpy().dot(tangentialVector)); 
 		Vector2 force = tangentialVector.scl(Math.abs(targetSpeed-currentSpeed) * Defs.ORBITAL_COMPENSATIONAL_FACTOR2);
 		
@@ -167,6 +167,10 @@ public class PhysicsEngine {
 		float factor32 = x2.sub(x1).len2(); 
 		Vector2 term22 = x2.sub(x1).scl(factor12*factor22/factor32); 
 		v22 = v2.sub(term22); 
+	}
+	
+	public float calculateOrbitingSpeed(float distance, float planetMass) {
+		return (float) Math.sqrt(Defs.GRAVITATIONAL_CONSTANT * planetMass / distance);
 	}
 	
 	private Vector2 computGravitationalAcceleration(MapObjectModel mapObject,
