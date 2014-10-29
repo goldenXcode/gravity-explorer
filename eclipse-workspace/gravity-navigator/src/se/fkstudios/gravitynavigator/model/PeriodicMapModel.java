@@ -190,8 +190,10 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		
 		MapObjects gamplayMapObjects = gameplayLayer.getObjects();
 		
+		RandomMapGenerator mapGenerator = RandomMapGenerator.getInstance();
+		
 		// adding the planet 
-		MapObjectModel planet = RandomMapGenerator.generatePlanet(Defs.PLANET_SIZE);
+		MapObjectModel planet = mapGenerator.generatePlanet(Defs.PLANET_SIZE);
 		gamplayMapObjects.add(planet); 
 		
 		// adding the player spaceship 
@@ -199,7 +201,7 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		
 		// adding the orbiting asteroids
 		float spacing = planet.getRadius()*Defs.ASTEROID_SPACING; 
-		MapObjectModel[] orbiters = RandomMapGenerator.generateOrbitingAsteroids(7f, planet,spacing,Defs.NUMBER_OF_ASTEROIDS);
+		MapObjectModel[] orbiters = mapGenerator.generateOrbitingAsteroids(7f, planet,spacing,Defs.NUMBER_OF_ASTEROIDS);
 		for (int i = 0; i< orbiters.length; i++) {
 			gamplayMapObjects.add(orbiters[i]); 
 		}

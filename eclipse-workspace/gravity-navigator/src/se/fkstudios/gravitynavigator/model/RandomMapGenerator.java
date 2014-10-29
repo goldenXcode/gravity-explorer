@@ -11,12 +11,29 @@ import com.badlogic.gdx.utils.Array;
 
 public class RandomMapGenerator {
 	
-	private static float objectDensity = 1273f; // calculated from asteroid1 (just for reference).
+	private float objectDensity = 1273f; // calculated from asteroid1 (just for reference).
 	
-	/*
+	/*Singelton stuff*/
+	private static final RandomMapGenerator instance = new RandomMapGenerator();
+	
+	private RandomMapGenerator() {}
+	
+	public static RandomMapGenerator getInstance() {
+		return instance;
+	}
+	
+	public void setObjectDensity(float density) {
+		objectDensity = density; 
+	}
+	
+	public float getObjectDensity() {
+		return objectDensity; 
+	}
+	
+	/**
 	 * Inputs  a PeriodicMapModel and generates a random map on it. 
 	 */
-	public static MapObjectModel[] generateMapObjects(int numberOfObjects) {
+	public MapObjectModel[] generateMapObjects(int numberOfObjects) {
 		// PhysicsEngine.flushAllObjects();
 		MapObjectModel[] models = new MapObjectModel[numberOfObjects];
 		for (int i = 0; i < numberOfObjects; i++) {
@@ -27,7 +44,7 @@ public class RandomMapGenerator {
 		return models;
 	}
 	
-	public static MapObjectModel generatePlanet (float radius) {
+	public MapObjectModel generatePlanet (float radius) {
 		int mass = (int) calculateMass(radius);
 		Array<TextureRegionResource> planetTextures = new Array<TextureRegionResource>();
 		TextureAtlasResource texture = new TextureAtlasResource(new Vector2(0, 0), true, Defs.MIN_RENDER_SCALE_DEFAULT, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.TEXTURE_REGION_NAME_PLANET3);
@@ -45,7 +62,7 @@ public class RandomMapGenerator {
 		return asteroid; 
 	}
 
-	public static MapObjectModel generateAsteroid (float radius) {
+	public MapObjectModel generateAsteroid (float radius) {
 		int mass = (int) calculateMass(radius);
 		Array<TextureRegionResource> asteriodTextures = new Array<TextureRegionResource>();
 		TextureRegionResource texture = new TextureAtlasResource(new Vector2(0,0), true, Defs.MIN_RENDER_SCALE_DEFAULT, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.TEXTURE_REGION_NAME_ASTERIOID1);
@@ -64,7 +81,7 @@ public class RandomMapGenerator {
 		return asteroid; 
 	}
 	
-	public static MapObjectModel generateOrbitingAsteroid(float distance, MapObjectModel planet, float radius) {
+	public MapObjectModel generateOrbitingAsteroid(float distance, MapObjectModel planet, float radius) {
 		int mass = (int) calculateMass(radius);
 		Vector2 planetPosition = planet.getPosition();
 		float asteroidSpeed = calculateOrbitingVelocity(distance, planet.getMass());
@@ -90,10 +107,9 @@ public class RandomMapGenerator {
 		asteroid.setParentNode(planet);
 		asteroid.setDistanceToParent(distance);
 		return asteroid; 
-		
 	}
 	
-	public static MapObjectModel[] generateOrbitingAsteroids(float distance, MapObjectModel planet, float spacing, int numberOfAsteroids) {
+	public MapObjectModel[] generateOrbitingAsteroids(float distance, MapObjectModel planet, float spacing, int numberOfAsteroids) {
 		MapObjectModel[] asteroids = new MapObjectModel[numberOfAsteroids]; 
 		float asteroidRadius = planet.getRadius() * (float)Defs.PLANET_TO_ASTEROID_SIZE_RATIO;
 		for (int i = 0; i<asteroids.length; i++) {
@@ -104,25 +120,6 @@ public class RandomMapGenerator {
 		return asteroids; 
 	}
 	
-	private static Vector2 centreOfUniverse()  {
-		return new Vector2(Defs.MAP_WIDTH/2,Defs.MAP_HEIGHT/2); 
-	}
-	
-	/*
-	 * Assumes homogeneous mass distribution and calculates a (circular) objects mass given it's radius.  
-	 */
-	private static float calculateMass(float radius) {
-		return (float) (Math.pow(radius, 2)*Math.PI*objectDensity); 
-	}
-	
-	public static void setObjectDensity(float density) {
-		objectDensity = density; 
-	}
-	
-	public static float getObjectDensity() {
-		return objectDensity; 
-	}
-	
 	public static int randomInt(int min, int max) {
 
 	    Random rand = new Random();
@@ -131,11 +128,22 @@ public class RandomMapGenerator {
 	    return randomNum;
 	}
 	
+	public static float calculateOrbitingVelocity(float distance, float planetMass) {
+		return (float) Math.sqrt(Defs.GRAVITATIONAL_CONSTANT * planetMass/distance);
+	}
+	
 	private static float  randomFloat(float min, float max) {
 		  return (float) (Math.random() * (max-min) + min);
 		}
 	
-	public static float calculateOrbitingVelocity(float distance, float planetMass) {
-		return (float) Math.sqrt(Defs.GRAVITATIONAL_CONSTANT*planetMass/distance);
+	private Vector2 centreOfUniverse()  {
+		return new Vector2(Defs.MAP_WIDTH/2,Defs.MAP_HEIGHT/2); 
+	}
+	
+	/**
+	 * Assumes homogeneous mass distribution and calculates a (circular) objects mass given it's radius.  
+	 */
+	private float calculateMass(float radius) {
+		return (float) (Math.pow(radius, 2)*Math.PI*objectDensity); 
 	}
 }
