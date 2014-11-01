@@ -128,8 +128,7 @@ public class GameplayScreen implements Screen {
 
 		spriteBatch.setProjectionMatrix(camera.combined);
 
-		mapRenderer.setConsoleText("Running in " + Float.toString(round(1 / delta, 0)) 
-				+ " FPS , time alive: " + round(playerSpaceship.getAliveTime(), 0) 
+		mapRenderer.setConsoleText("Running in " + Float.toString(round(1 / delta, 0)) + " FPS"
 				+ ", fuel left: " + playerSpaceship.getFuelLeft()
 				+ ", zoom: " + camera.zoom);
 		

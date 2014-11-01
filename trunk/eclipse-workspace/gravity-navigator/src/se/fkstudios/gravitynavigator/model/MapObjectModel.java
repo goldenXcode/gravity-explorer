@@ -19,37 +19,52 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 	private Vector2 position;
 	private Vector2 acceleration;
 	private Vector2 velocity;
-	private float rotation;
 	private int mass; // in kg
+	private float rotation;
 	private float rotationalSpeed; // in degrees per second
 	private boolean selfStabilizing; 
+	private boolean stationary;
 	
 	private Array<TextureRegionResource> resources;
 	
-	private float distanceToParent; 
-	private MapObjectModel parentNode; 
-	private MapObjectModel[] childrenNodes; 
-	
-	public MapObjectModel(Vector2 position, 
-			float width,
-			float height, 
+	public MapObjectModel(float width, float height,
+			Vector2 position,
 			Vector2 velocity,
-			float rotation,
 			int mass,
-			Array<TextureRegionResource> resources) {
-		
-		this.position = position;
+			float rotation,
+			float rotationSpeed,
+			boolean selfStabilizing,
+			boolean stationary,
+			Array<TextureRegionResource> resources) 
+	{
 		this.width = width;
 		this.height = height;
-		this.velocity = velocity;
-		this.rotation = rotation;
-		this.mass = mass;
-		this.resources = resources;
+		this.position = position;
 		this.acceleration = new Vector2(0, 0);
-		this.rotationalSpeed = 0; 
-		this.selfStabilizing = false; 
+		this.velocity = velocity;
+		this.mass = mass;
+		this.rotation = rotation;
+		this.rotationalSpeed = rotationSpeed;
+		this.selfStabilizing = selfStabilizing;
+		this.stationary = stationary;
+		this.resources = resources;
 	}
 
+	public MapObjectModel(float width, float height,
+			Vector2 position,
+			Vector2 velocity,
+			int mass,
+			float rotation,
+			float rotationSpeed,
+			boolean selfStabilizing,
+			boolean stationary,
+			TextureRegionResource resource) 
+	{
+		this(width, height, position, velocity, mass, rotation, rotationSpeed, selfStabilizing, stationary, 
+				new Array<TextureRegionResource>(1));
+		this.resources.add(resource);
+	}
+	
 	public float getWidth() {
 		return width;
 	}
@@ -139,30 +154,6 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		return resources;
 	}
 	
-	public void setDistanceToParent (float distance) {
-		distanceToParent = distance; 
-	}
-	
-	public float getDistanceToParent () {
-		return distanceToParent; 
-	}
-	
-	public MapObjectModel getParentNode() {
-		return parentNode;
-	}
-	
-	public void setParentNode(MapObjectModel model) {
-		parentNode = model; 
-	}
-	
-	public MapObjectModel[] getChildrenNodes() {
-		return childrenNodes; 
-	}
-	
-	public void setChildrenNodes(MapObjectModel[] children) {
-		childrenNodes = children; 
-	}
-	
 	public boolean isSelfStabilizing() {
 		return selfStabilizing;
 	}
@@ -171,23 +162,25 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		selfStabilizing = value;
 	}
 	
+	public boolean isStationary() {
+		return stationary;
+	}
+	
 	/**
 	 * Update the object for next game loop iteration.
 	 * @param delta Time in seconds since last update call.
 	 */
 	public void update(float delta) {
-		//add current acceleration
-		Vector2 newVelocity = getVelocity().cpy();
-		newVelocity.add(acceleration.cpy().scl(delta));
-		
-		//setts the new velocity
-		setVelocity(newVelocity);
-		
-		//update position according to velocity and delta.
-		setPosition(position.cpy().add(velocity.cpy().scl(delta)));
-		
+		if (!stationary) {
+			//add current acceleration
+			Vector2 newVelocity = getVelocity().cpy();
+			newVelocity.add(acceleration.cpy().scl(delta));
+			//setts the new velocity
+			setVelocity(newVelocity);
+			//update position according to velocity and delta.
+			setPosition(position.cpy().add(velocity.cpy().scl(delta)));	
+		}
 		setRotation(((getRotation() + getRotationalSpeed()*delta) % 360f));
-		
 		//update stateTime for any animation resources.
 		for(TextureRegionResource resource : getResources()) {
 			if (resource.getClass() == AnimationResource.class) {
