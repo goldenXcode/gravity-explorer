@@ -15,7 +15,6 @@ public class SpaceshipModel extends MapObjectModel {
 
 	private Vector2 thrust;
 	private int maxThrust; //in Newton
-	private float aliveTime; 
 	private float fuelLeft; 
 	
 	private Array<AnimationResource> thrustAnimations;
@@ -26,10 +25,6 @@ public class SpaceshipModel extends MapObjectModel {
 	
 	public float getFuelLeft() {
 		return fuelLeft; 
-	}
-
-	public float getAliveTime() {
-		return aliveTime; 
 	}
 	
 	public Vector2 getThrust() {
@@ -55,48 +50,44 @@ public class SpaceshipModel extends MapObjectModel {
 		this.maxThrust = maxThrust;
 	}
 
-	public SpaceshipModel(Vector2 position, 
-			float width, 
-			float height, 
+	public SpaceshipModel(float width, float height, 
+			Vector2 position,
 			Vector2 velocity, 
-			float rotation, 
 			int mass, 
+			float rotation, 
 			int maxThrust, 
 			Array<TextureRegionResource> allResources, 
 			Array<AnimationResource> thrustAnimations) {
-		super(position, width, height, velocity, rotation, mass, allResources);
-		this.maxThrust = maxThrust;
-		this.thrustAnimations = thrustAnimations;
+		super(width, height, position, velocity, mass, rotation, 0f, false, false, allResources);
 		this.thrust = new Vector2(0, 0);
-		this.aliveTime = 0; 
+		this.maxThrust = maxThrust;
 		this.fuelLeft = Defs.STARTING_FUEL;
+		this.thrustAnimations = thrustAnimations;
 	}
-		
+	
 	@Override
 	public void update(float delta) {
 		int mass = getMass();
 		Vector2 acceleration = thrust.cpy().div(mass);
 //		setFuelLeft(getFuelLeft() - thrust.cpy().len() * Defs.FUEL_SCALING_FACTOR*fuelEfficiencyMapping(getFuelLeft()) ); 
 		getAcceleration().add(acceleration).scl(fuelEfficiencyMapping(fuelLeft));
-		aliveTime += delta; 
 		super.update(delta);
-		
 		if (thrust.len2() > 0) 
 			setRotation(thrust.angle() - 90); //LibGdx render with rotation 0 from y-axis while Vector2 calculates angle from x-axis, thus -90.
 	} 	
 	
 	/* 
 	 * Maps the fuel left to engine efficiency. As a primary requirement it should tend to zero as fuel left tends to zero. also it should map 100 to 1; (perfect 
-	 * efficiency. 
-	 * 
-	 * 
+	 * efficiency.
+	 * kristofer: is this fun gameplay? or realistic?
 	 */
 	private float fuelEfficiencyMapping (float fuelLeft) {
-		if (fuelLeft > 0)
-			return fuelLeft/100; 
-		else {
-			return 0;
-		}
+		return 1f;
+//		if (fuelLeft > 0)
+//			return fuelLeft/100; 
+//		else {
+//			return 0;
+//		}
 	}
 	
 }

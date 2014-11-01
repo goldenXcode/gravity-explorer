@@ -3,9 +3,7 @@ package se.fkstudios.gravitynavigator.model;
 import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.Utility;
 import se.fkstudios.gravitynavigator.controller.GameplayCamera;
-import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
 import se.fkstudios.gravitynavigator.model.resources.ResourceContainer;
-import se.fkstudios.gravitynavigator.model.resources.TextureAtlasResource;
 import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 import se.fkstudios.gravitynavigator.model.resources.TextureResource;
 
@@ -23,13 +21,14 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 	
 	private final String GAMEPLAY_LAYER_NAME = "gameplayLayer";
 
+	private PhysicsEngine physicsEngine;
+	
 	private float width;
 	private float height;
 	private MapLayer gameplayLayer;
 	private Array<TextureRegionResource> resources;
 	private SpaceshipModel playerSpaceship;
 	
-	private PhysicsEngine physicsEngine;
 	
 	/**
 	 * Creates a continuous map. 
@@ -160,50 +159,26 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 	
 	/**
 	 * Loads the map objects to the map. 
-	 * TODO: in future we want a map go be given a file and loading the map from it. 
+	 * TODO: in a distant future we want the map to be loaded from a file.
 	 */
 	private void loadMapObjects() {
-		// TODO: specify a XML format for model map's start conditions.
-		Vector2 position = Defs.STARTING_POSITION;
-		Vector2 velocity = Defs.STARTING_VELOCITY; 
-		Array<TextureRegionResource> allResources = new Array<TextureRegionResource>();
-		allResources.add(new TextureAtlasResource(new Vector2(0, 0), 
-				true, 
-				Defs.MIN_RENDER_SCALE_SPACESHIP, 
-				Defs.MAX_RENDER_SCALE_DEFAULT, 
-				Defs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER));
-		Array<AnimationResource> thrustAnimations = new Array<AnimationResource>();
-		thrustAnimations.add(new AnimationResource(new Vector2(0.40f, -1.25f), false, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		thrustAnimations.add(new AnimationResource(new Vector2(0.15f, -1.3f), false, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		thrustAnimations.add(new AnimationResource(new Vector2(-0.15f, -1.3f), false, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		thrustAnimations.add(new AnimationResource(new Vector2(-0.40f, -1.25f), false, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		allResources.addAll(thrustAnimations);
-		playerSpaceship = new SpaceshipModel(position, 
-				1.32f, 
-				2.28f, 
-				velocity, 
-				0, 
-				1,
-				Defs.MAX_THRUST,
-				allResources,
-				thrustAnimations);
+		MapObjectFactory factory = MapObjectFactory.getInstance();
+		Array<MapObjectModel> neighborhood = new Array<MapObjectModel>();
+		
+		MapObjectModel stationaryPlanet = factory.createStationaryPlanet(neighborhood, 66, 66, new Vector2(width / 2, height / 2), 2f);
+		for (int i = 0; i < 3; i++) {
+			MapObjectModel orbitingPlanet = factory.createOrbitingPlanet(neighborhood, stationaryPlanet, (i+2) * 65, (i * 33) % 360, 0.05f, false, -4f * i);
+			if (i == 2) {
+				factory.createOrbitingAsteroid(neighborhood, orbitingPlanet, 25f, 0f, 0.05f, true, -8f);
+			}
+		}
+		//player spaceship
+		playerSpaceship = factory.createPlayerSpaceship();
+		neighborhood.add(playerSpaceship);
 		
 		MapObjects gamplayMapObjects = gameplayLayer.getObjects();
-		
-		RandomMapGenerator mapGenerator = RandomMapGenerator.getInstance();
-		
-		// adding the planet 
-		MapObjectModel planet = mapGenerator.generatePlanet(Defs.PLANET_SIZE);
-		gamplayMapObjects.add(planet); 
-		
-		// adding the player spaceship 
-		gamplayMapObjects.add(playerSpaceship);
-		
-		// adding the orbiting asteroids
-		float spacing = planet.getRadius()*Defs.ASTEROID_SPACING; 
-		MapObjectModel[] orbiters = mapGenerator.generateOrbitingAsteroids(7f, planet,spacing,Defs.NUMBER_OF_ASTEROIDS);
-		for (int i = 0; i< orbiters.length; i++) {
-			gamplayMapObjects.add(orbiters[i]); 
+		for (MapObjectModel mapObject : neighborhood) {
+			gamplayMapObjects.add(mapObject);
 		}
 	}
 }
