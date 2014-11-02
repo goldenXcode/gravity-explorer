@@ -60,8 +60,8 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 			boolean stationary,
 			TextureRegionResource resource) 
 	{
-		this(width, height, position, velocity, mass, rotation, rotationSpeed, selfStabilizing, stationary, 
-				new Array<TextureRegionResource>(1));
+		this(width, height, position, velocity, mass, rotation, rotationSpeed, selfStabilizing, 
+				stationary, new Array<TextureRegionResource>(1));
 		this.resources.add(resource);
 	}
 	

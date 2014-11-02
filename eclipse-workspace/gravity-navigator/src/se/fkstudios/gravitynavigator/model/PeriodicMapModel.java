@@ -165,13 +165,39 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		MapObjectFactory factory = MapObjectFactory.getInstance();
 		Array<MapObjectModel> neighborhood = new Array<MapObjectModel>();
 		
-		MapObjectModel stationaryPlanet = factory.createStationaryPlanet(neighborhood, 66, 66, new Vector2(width / 2, height / 2), 2f);
-		for (int i = 0; i < 3; i++) {
-			MapObjectModel orbitingPlanet = factory.createOrbitingPlanet(neighborhood, stationaryPlanet, (i+2) * 65, (i * 33) % 360, 0.05f, false, -4f * i);
-			if (i == 2) {
-				factory.createOrbitingAsteroid(neighborhood, orbitingPlanet, 25f, 0f, 0.05f, true, -8f);
+		
+		MapObjectModel stationaryPlanet = factory.createStationaryPlanet(neighborhood, 80, 80, new Vector2(width / 2, height / 2), 2f);
+		for (int i = 1; i < 5; i++) {
+			float pDistance = i * 80;
+			float pDegrees = (i * 90f) % 360f;
+			float pRelativeMass = i * 0.001f;
+			float pRotationSpeed = i - 4f;
+			MapObjectModel orbitingPlanet = factory.createOrbitingPlanet(neighborhood, 
+					stationaryPlanet, 
+					pDistance, 
+					pDegrees, 
+					pRelativeMass, 
+					false, 
+					pRotationSpeed);
+			
+			if ((i > 1) && i < 5) {
+				
+				for (int j = 1; j < i; j++) {	
+					float aDistance = 2f + j * 10f;
+					float aDegrees = (j * 180) % 360f;
+					float aRelativeMass = 0.01f;
+					float aRotationSpeed = j * -2f;
+					factory.createOrbitingAsteroid(neighborhood, 
+							orbitingPlanet, 
+							aDistance, 
+							aDegrees, 
+							aRelativeMass, 
+							true, 
+							aRotationSpeed);
+				}
 			}
 		}
+		
 		//player spaceship
 		playerSpaceship = factory.createPlayerSpaceship();
 		neighborhood.add(playerSpaceship);
