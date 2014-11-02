@@ -14,9 +14,6 @@ public final class Defs {
      **************************************** Model *************************************** 
      ************************************************************************************** */
 	
-	public static final Vector2 STARTING_POSITION = new Vector2(2,2);
-	public static final Vector2 STARTING_VELOCITY = new Vector2(0,0);
-	
 	public static final float GRAVITATIONAL_CONSTANT = 0.01f;	
 	public static final float COMPENSATIONAL_CUTOFF_FACTOR = 1.2f;
 	public static final float ORBITAL_COMPENSATIONAL_FACTOR2 = 0.001f;
@@ -30,6 +27,9 @@ public final class Defs {
 	public static final float MIN_ROTATIONAL_VELOCITY = 0; 
 	
 	public static final int MAX_THRUST = 30; 
+		
+	public static final Vector2 STARTING_POSITION = new Vector2(MAP_WIDTH / 4, MAP_HEIGHT / 4);
+	public static final Vector2 STARTING_VELOCITY = new Vector2(0,0);
 	
 	/* Map-generation-related stuff  */
 	public static final float PLANET_TO_ASTEROID_SIZE_RATIO = 0.1f; 

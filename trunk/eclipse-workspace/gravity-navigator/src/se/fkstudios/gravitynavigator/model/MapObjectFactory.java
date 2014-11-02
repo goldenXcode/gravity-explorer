@@ -103,17 +103,17 @@ public class MapObjectFactory {
 			TextureRegionResource resource) 
 	{
 		int mass = (int) (primaryMapObject.getMass() * relativeMass);
-		float radius = calculateRadius(mass, 1f);
+		float radius = calculateRadius(mass, 0.1f);
 		
 		Vector2 primarysPosition = primaryMapObject.getPosition();
 		Vector2 displacementVector = new Vector2(0, -distance).rotate(degrees);
 		Vector2 position = new Vector2(primarysPosition.x, primarysPosition.y).add(displacementVector);
 		
 		float speed = physicsEngine.calculateOrbitingSpeed(distance, primaryMapObject.getMass());
-		if (clockwise) {
+		if (clockwise)
 			speed = -speed;
-		}
 		Vector2 velocity = new Vector2(speed, 0.0f).rotate(degrees);
+		velocity.add(primaryMapObject.getVelocity());
 		
 		MapObjectModel mapObject = new MapObjectModel(radius * 2, radius * 2, 
 				position, 
