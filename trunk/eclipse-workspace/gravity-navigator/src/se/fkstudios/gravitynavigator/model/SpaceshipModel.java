@@ -2,7 +2,7 @@ package se.fkstudios.gravitynavigator.model;
 
 import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
-import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
+import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -56,9 +56,9 @@ public class SpaceshipModel extends MapObjectModel {
 			int mass, 
 			float rotation, 
 			int maxThrust, 
-			Array<TextureRegionResource> allResources, 
+			Array<GraphicResource> allResources, 
 			Array<AnimationResource> thrustAnimations) {
-		super(width, height, position, velocity, mass, rotation, 0f, false, false, allResources);
+		super(width, height, position, velocity, mass, rotation, 0f, false, false, true, allResources);
 		this.thrust = new Vector2(0, 0);
 		this.maxThrust = maxThrust;
 		this.fuelLeft = Defs.STARTING_FUEL;

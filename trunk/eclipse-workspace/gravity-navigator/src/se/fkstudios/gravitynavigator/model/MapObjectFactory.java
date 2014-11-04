@@ -4,9 +4,12 @@ import java.util.Random;
 
 import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
+import se.fkstudios.gravitynavigator.model.resources.ColorResource;
+import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 import se.fkstudios.gravitynavigator.model.resources.TextureAtlasResource;
 import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -29,7 +32,7 @@ public class MapObjectFactory {
 	}
 	
 	public SpaceshipModel createPlayerSpaceship() {
-		Array<TextureRegionResource> allResources = new Array<TextureRegionResource>();
+		Array<GraphicResource> allResources = new Array<GraphicResource>();
 		allResources.add(new TextureAtlasResource(new Vector2(0, 0), 
 				true, 
 				Defs.MIN_RENDER_SCALE_SPACESHIP, 
@@ -62,6 +65,7 @@ public class MapObjectFactory {
 				rotationSpeed, 
 				false,
 				true, 
+				true,
 				resource);
 		
 		neighborhood.add(planet);
@@ -93,10 +97,29 @@ public class MapObjectFactory {
 		return createOrbitingMapObject(neighborhood, primaryMapObject, distance, degrees, relativeMass, clockwise, rotationSpeed, resource);
 	}
 	
+	public MapObjectModel createParticleObject(Array<MapObjectModel> neighborhood,
+			float width, float height, 
+			Vector2 position, Color color) {
+		GraphicResource resource = new ColorResource(new Vector2(0, 0), true, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.MIN_RENDER_SCALE_DEFAULT, width, height, color);
+		MapObjectModel particle = new MapObjectModel(width, 
+				height, 
+				position, 
+				new Vector2(0, 0), 
+				0, 
+				0f, 
+				0f, 
+				false, 
+				true, 
+				false, 
+				resource);
+		neighborhood.add(particle);
+		return particle;
+	}
+	
 	private MapObjectModel createOrbitingMapObject(Array<MapObjectModel> neighborhood, 
 			MapObjectModel primaryMapObject,
 			float distance,
-			float degrees,
+			float angularOffset,
 			float relativeMass,
 			boolean clockwise,
 			float rotationSpeed,
@@ -106,13 +129,14 @@ public class MapObjectFactory {
 		float radius = calculateRadius(mass, 0.1f);
 		
 		Vector2 primarysPosition = primaryMapObject.getPosition();
-		Vector2 displacementVector = new Vector2(0, -distance).rotate(degrees);
+		Vector2 displacementVector = new Vector2(0, -distance).rotate(angularOffset);
 		Vector2 position = new Vector2(primarysPosition.x, primarysPosition.y).add(displacementVector);
 		
 		float speed = physicsEngine.calculateOrbitingSpeed(distance, primaryMapObject.getMass());
 		if (clockwise)
 			speed = -speed;
-		Vector2 velocity = new Vector2(speed, 0.0f).rotate(degrees);
+		
+		Vector2 velocity = new Vector2(speed, 0.0f).rotate(angularOffset);
 		velocity.add(primaryMapObject.getVelocity());
 		
 		MapObjectModel mapObject = new MapObjectModel(radius * 2, radius * 2, 
@@ -123,6 +147,7 @@ public class MapObjectFactory {
 				rotationSpeed, 
 				true,
 				false, 
+				true, 
 				resource);
 		
 		neighborhood.add(mapObject);

@@ -4,7 +4,7 @@ import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.Utility;
 import se.fkstudios.gravitynavigator.controller.GameplayCamera;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
-import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
+import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 import se.fkstudios.gravitynavigator.model.resources.TextureResource;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -33,8 +33,10 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 	}
 	
 	public void render(PeriodicMapModel map, GameplayCamera camera) {
-		for (TextureRegionResource resource : map.getResources()) {
+		for (GraphicResource resource : map.getResources()) {
 			if (resource.getClass() == TextureResource.class) {
+				TextureResource textureResource = (TextureResource) resource;
+				
 				float proportionalPositionX = camera.position.x / Utility.getScreenCoordinate(map.getWidth());
 				float proportionalPositionY = camera.position.y / Utility.getScreenCoordinate(map.getHeight());
 				float textureOriginX = Utility.getScreenCoordinate(resource.width) / 2;
@@ -48,7 +50,7 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 				periodicityWidth = texScreenWidth * camera.zoom;
 				periodicityHeight = texScreenHeight * camera.zoom; 
 				
-				render(resource, 
+				render(textureResource, 
 						camera.position.x - textureOriginX - proportionalPositionX * periodicityWidth * ratio, 
 						camera.position.y - textureOriginY - proportionalPositionY * periodicityHeight * ratio, 
 						Utility.getScreenCoordinate(resource.width),
