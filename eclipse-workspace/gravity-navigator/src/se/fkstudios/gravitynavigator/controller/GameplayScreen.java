@@ -7,7 +7,10 @@ import se.fkstudios.gravitynavigator.Utility;
 import se.fkstudios.gravitynavigator.model.MapObjectModel;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 import se.fkstudios.gravitynavigator.model.SpaceshipModel;
+import se.fkstudios.gravitynavigator.model.resources.ColorResource;
+import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
+import se.fkstudios.gravitynavigator.view.ColorRenderer;
 import se.fkstudios.gravitynavigator.view.MapObjectTextureRegionRenderer;
 import se.fkstudios.gravitynavigator.view.PeriodicMapRenderer;
 
@@ -43,6 +46,7 @@ public class GameplayScreen implements Screen {
 	private SpriteBatch spriteBatch;
 	private PeriodicMapRenderer mapRenderer;
 	private MapObjectTextureRegionRenderer textureRegionRenderer;
+	private ColorRenderer colorRenderer;
 
 	@Override
 	public void show() throws IllegalStateException {
@@ -93,6 +97,8 @@ public class GameplayScreen implements Screen {
 		textureRegionRenderer = new MapObjectTextureRegionRenderer(spriteBatch,
 				Utility.getScreenCoordinate(map.getWidth()), 
 				Utility.getScreenCoordinate(map.getHeight()));
+		
+		colorRenderer = new ColorRenderer(map.getWidth(), map.getHeight());
 	}
 
 	/*
@@ -141,10 +147,15 @@ public class GameplayScreen implements Screen {
 			allMapObjects = layer.getObjects();
 			mapObjects = allMapObjects.getByType(MapObjectModel.class);
 			for (MapObjectModel mapObject : mapObjects) {
-				Array<TextureRegionResource> resources = mapObject.getResources();
-				for (TextureRegionResource resource : resources) {
+				Array<GraphicResource> resources = mapObject.getResources();
+				for (GraphicResource resource : resources) {
 					if (resource.visible) {
-						textureRegionRenderer.render(mapObject, resource, camera);
+						if (resource.getClass() == ColorResource.class) {
+							colorRenderer.render(camera, mapObject, (ColorResource)resource);
+						}
+						else {
+							textureRegionRenderer.render(mapObject, (TextureRegionResource)resource, camera);	
+						}			
 					}
 				}
 			}

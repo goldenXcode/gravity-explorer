@@ -3,10 +3,11 @@ package se.fkstudios.gravitynavigator.model;
 import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.Utility;
 import se.fkstudios.gravitynavigator.controller.GameplayCamera;
+import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 import se.fkstudios.gravitynavigator.model.resources.ResourceContainer;
-import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 import se.fkstudios.gravitynavigator.model.resources.TextureResource;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObjects;
@@ -20,15 +21,18 @@ import com.badlogic.gdx.utils.Array;
 public class PeriodicMapModel extends Map implements ResourceContainer {
 	
 	private final String GAMEPLAY_LAYER_NAME = "gameplayLayer";
+	private final String PARTICLE_LAYER_NAME = "particleLayer";
 
 	private PhysicsEngine physicsEngine;
 	
 	private float width;
 	private float height;
 	private MapLayer gameplayLayer;
-	private Array<TextureRegionResource> resources;
+	private MapLayer particleLayer;
+	private Array<GraphicResource> resources;
 	private SpaceshipModel playerSpaceship;
 	
+	private float spawnParticleCounter;
 	
 	/**
 	 * Creates a continuous map. 
@@ -44,7 +48,7 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		this.height = height;
 		
 		float longestViewportSide = Utility.getModelCoordinate(Math.max(Defs.VIEWPORT_WIDTH, Defs.VIEWPORT_HEIGHT));
-		resources = new Array<TextureRegionResource>();
+		resources = new Array<GraphicResource>();
 		resources.add(
 			new TextureResource(new Vector2(0,0),
 				true, 
@@ -67,6 +71,11 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		gameplayLayer.setName(GAMEPLAY_LAYER_NAME);
 		this.getLayers().add(gameplayLayer);
 		
+		particleLayer = new MapLayer();
+		particleLayer.setName(PARTICLE_LAYER_NAME);
+		this.getLayers().add(particleLayer);
+		
+		spawnParticleCounter = 0f;
 
 		physicsEngine = PhysicsEngine.getInstance();
 		
@@ -93,7 +102,7 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		return playerSpaceship;
 	}
 	
-	public Array<TextureRegionResource> getResources() {
+	public Array<GraphicResource> getResources() {
 		return resources;
 	}
 	
@@ -106,8 +115,10 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 	 * @param delta Time in seconds since last update call.
 	 */
 	public void update(float delta, GameplayCamera camera) {
+		spawnParticleCounter += delta;
 		
 		Array<MapObjectModel> gameplayMapObjects = getGameplayObjects();
+		Array<MapObjectModel> createdParticles = new Array<MapObjectModel>();
 		
 		for (MapObjectModel mapObject : gameplayMapObjects) {
 			mapObject.setAcceleration(new Vector2(0,0));
@@ -117,6 +128,18 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 			}
 			mapObject.update(delta);
 			applyMapObjectPeriodicity(mapObject);
+			
+			if ((spawnParticleCounter > 0.1f) && (mapObject.isGeneratingParticles())) {
+				MapObjectFactory.getInstance().createParticleObject(createdParticles, 5f, 5f, mapObject.getPosition().cpy(), Color.GREEN);
+			}
+		}
+		
+		for (MapObjectModel particle : createdParticles) {
+			particleLayer.getObjects().add(particle);
+		}
+		
+		if (spawnParticleCounter > 0.1f) {
+			spawnParticleCounter = 0f;
 		}
 	}
 	

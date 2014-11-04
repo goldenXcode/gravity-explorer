@@ -1,8 +1,8 @@
 package se.fkstudios.gravitynavigator.model;
 
 import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
+import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 import se.fkstudios.gravitynavigator.model.resources.ResourceContainer;
-import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.math.Vector2;
@@ -24,8 +24,9 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 	private float rotationalSpeed; // in degrees per second
 	private boolean selfStabilizing; 
 	private boolean stationary;
+	private boolean generatesParticles;
 	
-	private Array<TextureRegionResource> resources;
+	private Array<GraphicResource> resources;
 	
 	public MapObjectModel(float width, float height,
 			Vector2 position,
@@ -35,7 +36,8 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 			float rotationSpeed,
 			boolean selfStabilizing,
 			boolean stationary,
-			Array<TextureRegionResource> resources) 
+			boolean ganeratesParticles,
+			Array<GraphicResource> resources) 
 	{
 		this.width = width;
 		this.height = height;
@@ -48,6 +50,7 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		this.selfStabilizing = selfStabilizing;
 		this.stationary = stationary;
 		this.resources = resources;
+		this.generatesParticles = ganeratesParticles;
 	}
 
 	public MapObjectModel(float width, float height,
@@ -58,10 +61,11 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 			float rotationSpeed,
 			boolean selfStabilizing,
 			boolean stationary,
-			TextureRegionResource resource) 
+			boolean generatesParticles,
+			GraphicResource resource) 
 	{
 		this(width, height, position, velocity, mass, rotation, rotationSpeed, selfStabilizing, 
-				stationary, new Array<TextureRegionResource>(1));
+				stationary, generatesParticles, new Array<GraphicResource>(1));
 		this.resources.add(resource);
 	}
 	
@@ -142,15 +146,14 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 	}
 	
 	public float getRotationalSpeed () {
-		return this.rotationalSpeed; 
+		return rotationalSpeed; 
 	}
 	
 	public float getRadius() {
-		float result = (float) (Math.sqrt(Math.pow(getWidth(), 2) +Math.pow(getHeight(), 2)));
-		return result; 
+		return (float) (Math.sqrt(Math.pow(getWidth(), 2) +Math.pow(getHeight(), 2)));
 	}
 	
-	public Array<TextureRegionResource> getResources() {
+	public Array<GraphicResource> getResources() {
 		return resources;
 	}
 	
@@ -164,6 +167,10 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 	
 	public boolean isStationary() {
 		return stationary;
+	}
+	
+	public boolean isGeneratingParticles() {
+		return generatesParticles;
 	}
 	
 	/**
@@ -182,7 +189,7 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		}
 		setRotation(((getRotation() + getRotationalSpeed()*delta) % 360f));
 		//update stateTime for any animation resources.
-		for(TextureRegionResource resource : getResources()) {
+		for(GraphicResource resource : getResources()) {
 			if (resource.getClass() == AnimationResource.class) {
 				((AnimationResource)resource).stateTime += delta;
 			}
