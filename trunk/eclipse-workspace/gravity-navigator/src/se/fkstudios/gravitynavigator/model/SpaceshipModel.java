@@ -39,7 +39,7 @@ public class SpaceshipModel extends MapObjectModel {
 		thrust.x = thrustX;
 		thrust.y = thrustY;
 		for (AnimationResource thrustAnimation : thrustAnimations)
-			thrustAnimation.visible = thrust.len2() > 0;
+			thrustAnimation.setVisible(thrust.len2() > 0);
 	}
 	
 	public int getMaxThrust() {

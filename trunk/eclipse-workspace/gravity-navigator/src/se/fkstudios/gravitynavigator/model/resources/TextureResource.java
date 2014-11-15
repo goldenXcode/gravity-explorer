@@ -9,17 +9,16 @@ public class TextureResource extends GraphicResource implements TextureRegionRes
 	private TextureRegion textureRegion;
 	public final String textureName;
 	
-	public TextureResource(Vector2 positionOffset, boolean visible, float minRenderScale, float maxRenderScale, String textureName) {
-		super(positionOffset, visible, minRenderScale, maxRenderScale);
+	public TextureResource(boolean usingOwnerPosition, Vector2 position,
+			Vector2 positionOffset, boolean usingOwnerSize, float width,
+			float height, boolean visible, float minRenderScale,
+			float maxRenderScale, String textureName) 
+	{
+		super(usingOwnerPosition, position, positionOffset, usingOwnerSize, width,
+				height, visible, minRenderScale, maxRenderScale);
 		this.textureName = textureName;
-		this.textureRegion = new TextureRegion();
-	}
-	
-	public TextureResource(Vector2 positionOffset, boolean visible, float minRenderScale, float maxRenderScale, float width, float height, String textureName) {
-		super(positionOffset, visible, minRenderScale, maxRenderScale, width, height);
-		this.textureName = textureName;
-		this.textureRegion = new TextureRegion();
-	}
+		textureRegion = new TextureRegion();
+	}	
 
 	@Override
 	public TextureRegion getTextureRegion() {

@@ -191,7 +191,7 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		//update stateTime for any animation resources.
 		for(GraphicResource resource : getResources()) {
 			if (resource.getClass() == AnimationResource.class) {
-				((AnimationResource)resource).stateTime += delta;
+				((AnimationResource)resource).incStateTime(delta);
 			}
 		}
 	}
