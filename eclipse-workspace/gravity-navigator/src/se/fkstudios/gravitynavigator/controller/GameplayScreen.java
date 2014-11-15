@@ -143,7 +143,7 @@ public class GameplayScreen implements Screen {
 			for (MapObjectModel mapObject : mapObjects) {
 				Array<GraphicResource> resources = mapObject.getResources();
 				for (GraphicResource resource : resources) {
-					if (resource.visible) {
+					if (resource.isVisible()) {
 						if (resource instanceof ColorResource) {
 							colorRenderer.renderObjectPeriodically(mapObject, resource, camera);
 						}

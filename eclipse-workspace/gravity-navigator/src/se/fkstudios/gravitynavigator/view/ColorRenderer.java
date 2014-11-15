@@ -34,7 +34,7 @@ public class ColorRenderer extends PeriodicResourceRenderer {
 			return;
 		}
 		ColorResource colorResource = (ColorResource)resource;
-		shapeRenderer.setColor(colorResource.color);
+		shapeRenderer.setColor(colorResource.getColor());
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.rect(drawArea.x, drawArea.y, drawArea.width * scale, drawArea.height * scale, originX, originY, rotation);
 		shapeRenderer.end();

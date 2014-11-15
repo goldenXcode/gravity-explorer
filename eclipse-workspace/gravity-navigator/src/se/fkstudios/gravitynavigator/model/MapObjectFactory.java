@@ -8,7 +8,6 @@ import se.fkstudios.gravitynavigator.model.resources.ColorResource;
 import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 import se.fkstudios.gravitynavigator.model.resources.ResourceContainer;
 import se.fkstudios.gravitynavigator.model.resources.TextureAtlasResource;
-import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -34,16 +33,22 @@ public class MapObjectFactory {
 	
 	public SpaceshipModel createPlayerSpaceship() {
 		Array<GraphicResource> allResources = new Array<GraphicResource>();
-		allResources.add(new TextureAtlasResource(new Vector2(0, 0), 
+		allResources.add(new TextureAtlasResource(true, 
+				new Vector2(0, 0), 
+				new Vector2(0, 0), 
+				true, 	
+				0f, 0f, 
 				true, 
-				Defs.MIN_RENDER_SCALE_SPACESHIP, 
-				Defs.MAX_RENDER_SCALE_DEFAULT, 
+				Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, 
 				Defs.TEXTURE_REGION_NAME_SPACESHIP_PLAYER));
+				
 		Array<AnimationResource> thrustAnimations = new Array<AnimationResource>();
-		thrustAnimations.add(new AnimationResource(new Vector2(0.40f, -1.25f), false, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		thrustAnimations.add(new AnimationResource(new Vector2(0.15f, -1.3f), false, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		thrustAnimations.add(new AnimationResource(new Vector2(-0.15f, -1.3f), false, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		thrustAnimations.add(new AnimationResource(new Vector2(-0.40f, -1.25f), false, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, 0.25f, 0.3f, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+	
+		thrustAnimations.add(new AnimationResource(true, new Vector2(0,0), new Vector2(0.40f, -1.25f), false, 0.25f, 0.3f, true, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		thrustAnimations.add(new AnimationResource(true, new Vector2(0,0), new Vector2(0.15f, -1.3f), false, 0.25f, 0.3f, true, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		thrustAnimations.add(new AnimationResource(true, new Vector2(0,0), new Vector2(-0.15f, -1.3f), false, 0.25f, 0.3f, true, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		thrustAnimations.add(new AnimationResource(true, new Vector2(0,0), new Vector2(-0.40f, -1.25f), false, 0.25f, 0.3f, true, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+
 		allResources.addAll(thrustAnimations);
 		
 		return new SpaceshipModel(1.32f, 2.28f, Defs.STARTING_POSITION, Defs.STARTING_VELOCITY, 1, 0f, Defs.MAX_THRUST, allResources, thrustAnimations);
@@ -98,60 +103,20 @@ public class MapObjectFactory {
 		return createOrbitingMapObject(neighborhood, primaryMapObject, distance, degrees, relativeMass, clockwise, rotationSpeed, resource);
 	}
 	
-	public MapObjectModel createParticleObject(Array<MapObjectModel> neighborhood,
+	public ColorResource createParticleResource(ResourceContainer owner,
 			float width, float height, 
-			Vector2 position, Color color) {
-		
-		GraphicResource resource = new ColorResource(new Vector2(0, 0), 
-				true, 
-				Defs.MIN_RENDER_SCALE_DEFAULT,
-				Defs.MAX_RENDER_SCALE_DEFAULT,
-				width, height, 
-				color);
-		
-		MapObjectModel particle = new MapObjectModel(width, 
-				height, 
-				position, 
-				new Vector2(0, 0), 
-				0, 
-				0f, 
-				0f, 
-				false, 
-				true, 
-				false, 
-				resource);
-		
-		neighborhood.add(particle);
-		return particle;
+			Vector2 position) 
+	{
+		Color color = new Color(randomFloat(0, 1f), randomFloat(0, 1f), randomFloat(0, 1f), 1f);
+		return createParticleResource(owner, width, height, position, color);
 	}
 	
 	public ColorResource createParticleResource(ResourceContainer owner,
 			float width, float height, 
-			Vector2 position) {
-		ColorResource resource = new ColorResource(new Vector2(0, 0), 
-				true, 
-				Defs.MIN_RENDER_SCALE_DEFAULT,
-				Defs.MAX_RENDER_SCALE_DEFAULT,
-				width, height, 
-				new Color(randomFloat(0, 1f), randomFloat(0, 1f), randomFloat(0, 1f), 1f));
-		
+			Vector2 position, Color color) 
+	{
+		ColorResource resource = new ColorResource(false, position, new Vector2(0, 0), false, width, height, true, 0.1f, Defs.MAX_RENDER_SCALE_DEFAULT, color);
 		owner.getResources().add(resource);
-		
-		return resource;
-	}
-	
-	public ColorResource createParticleResource(ResourceContainer owner,
-			float width, float height, 
-			Vector2 position, Color color) {
-		
-		ColorResource resource = new ColorResource(new Vector2(0, 0), 
-				true, 
-				Defs.MIN_RENDER_SCALE_DEFAULT,
-				Defs.MAX_RENDER_SCALE_DEFAULT,
-				width, height, 
-				color);
-		owner.getResources().add(resource);
-		
 		return resource;
 	}
 	
@@ -196,10 +161,13 @@ public class MapObjectFactory {
 	private TextureAtlasResource createRandomTextureRegion(String[] textureRegionNames) {
 		int textureIndex = randomInt(0, textureRegionNames.length - 1);
 		String textureName = textureRegionNames[textureIndex];
-		return new TextureAtlasResource(new Vector2(0,0), 
+		return new TextureAtlasResource(true, 
+				new Vector2(0,0), 
+				new Vector2(0,0), 
 				true, 
-				Defs.MIN_RENDER_SCALE_DEFAULT, 
-				Defs.MAX_RENDER_SCALE_DEFAULT, 
+				0f, 0f, 
+				true, 
+				Defs.MIN_RENDER_SCALE_DEFAULT, Defs.MAX_RENDER_SCALE_DEFAULT, 
 				textureName);	
 	}
 	

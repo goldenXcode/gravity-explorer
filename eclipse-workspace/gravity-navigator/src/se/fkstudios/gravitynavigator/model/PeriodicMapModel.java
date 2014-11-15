@@ -49,22 +49,24 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		float longestViewportSide = Utility.getModelCoordinate(Math.max(Defs.VIEWPORT_WIDTH, Defs.VIEWPORT_HEIGHT));
 		resources = new Array<GraphicResource>();
 		resources.add(
-			new TextureResource(new Vector2(0,0),
-				true, 
-				1f,
-				1f,
-				longestViewportSide,
-				longestViewportSide,
-				backgroundLayer1ImageName));
-
+			new TextureResource(false, 
+					new Vector2(0,0), 
+					new Vector2(0,0), 
+					false, 
+					longestViewportSide, longestViewportSide, 
+					true, 
+					1f, 1f, 
+					backgroundLayer1ImageName));
+		
 		resources.add(
-			new TextureResource(new Vector2(0,0), 
-				true, 
-				1f,
-				1f,
-				longestViewportSide * 2f, 
-				longestViewportSide * 2f, 
-				backgroundLayer2ImageName));
+				new TextureResource(false, 
+						new Vector2(0,0), 
+						new Vector2(0,0), 
+						false, 
+						longestViewportSide, longestViewportSide, 
+						true, 
+						1f, 1f, 
+						backgroundLayer2ImageName));
 		
 		gameplayLayer = new MapLayer();
 		gameplayLayer.setName(GAMEPLAY_LAYER_NAME);

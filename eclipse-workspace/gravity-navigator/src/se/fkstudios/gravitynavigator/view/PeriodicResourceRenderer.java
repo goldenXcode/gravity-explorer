@@ -36,8 +36,8 @@ public abstract class PeriodicResourceRenderer {
 	}
 
 	public void renderObjectPeriodically(MapObjectModel mapObject, GraphicResource resource, GameplayCamera camera) {
-		float positionX = resource.getPositionX(mapObject.getPosition().x);
-		float positionY = resource.getPositionY(mapObject.getPosition().y);
+		float positionX = resource.getPosition(mapObject.getPosition()).x;
+		float positionY = resource.getPosition(mapObject.getPosition()).y;
 		float width = resource.getWidth(mapObject.getWidth());
 		float height = resource.getHeight(mapObject.getHeight());
 		
@@ -51,12 +51,12 @@ public abstract class PeriodicResourceRenderer {
 	
 	public void renderResourcePeriodically(GraphicResource resource, Rectangle drawArea, float rotation, GameplayCamera camera) {
 		
-		float originX = drawArea.width / 2 - Utility.getScreenCoordinate(resource.positionOffset.x);
-		float originY = drawArea.height / 2 - Utility.getScreenCoordinate(resource.positionOffset.y);
+		float originX = drawArea.width / 2 - Utility.getScreenCoordinate(resource.getPositionOffset().x);
+		float originY = drawArea.height / 2 - Utility.getScreenCoordinate(resource.getPositionOffset().y);
 		
 		float scale = 1f;
-		if ((1 / camera.zoom < resource.minRenderScale) || (1 / camera.zoom > resource.maxRenderScale)) {
-			scale = resource.minRenderScale * camera.zoom;
+		if ((1 / camera.zoom < resource.getMinRenderScale()) || (1 / camera.zoom > resource.getMaxRenderScale())) {
+			scale = resource.getMinRenderScale() * camera.zoom;
 		}
 		
 		renderResourceIfInViewport(resource, drawArea, originX, originY, scale, rotation, camera);

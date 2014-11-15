@@ -13,25 +13,43 @@ public class AnimationResource extends GraphicResource implements TextureRegionR
 	
 	public final String animationName;
 	public final String[] textureNames;
-	public boolean looping;
-	public float stateTime;
+	private boolean looping;
+	private float stateTime;
 	
-	public AnimationResource(Vector2 positionOffset, boolean visible, float minRenderScale, float maxRenderScale, String animationName, String[] textureNames, boolean looping) {
-		super(positionOffset, visible, minRenderScale, maxRenderScale);
+	public AnimationResource(boolean usingOwnerPosition, Vector2 position,
+			Vector2 positionOffset, boolean usingOwnerSize, float width,
+			float height, boolean visible, float minRenderScale,
+			float maxRenderScale, String animationName, String[] textureNames, boolean looping) 
+	{
+		super(usingOwnerPosition, position, positionOffset, usingOwnerSize, width,
+				height, visible, minRenderScale, maxRenderScale);
+
 		this.animationName = animationName;
 		this.textureNames = textureNames;
 		this.looping = looping;
-		stateTime = 0f; 
-	}
+		this.stateTime = 0;
+	}	
 	
-	public AnimationResource(Vector2 positionOffset, boolean visible, float minRenderScale, float maxRenderScale, float width, float height, String animationName, String[] textureNames, boolean looping) {
-		super(positionOffset, visible, minRenderScale, maxRenderScale, width, height);
-		this.animationName = animationName;
-		this.textureNames = textureNames;
-		this.looping = looping;
-		stateTime = 0f;
+	public boolean isLooping() {
+		return looping;
 	}
 
+	public void setLooping(boolean looping) {
+		this.looping = looping;
+	}
+
+	public float getStateTime() {
+		return stateTime;
+	}
+
+	public void setStateTime(float stateTime) {
+		this.stateTime = stateTime;
+	}
+
+	public void incStateTime(float delta) {
+		stateTime = stateTime + delta;
+	}
+	
 	@Override
 	public TextureRegion getTextureRegion() {
 		Animation animation = TextureLoader.getInstance().getAnimation(animationName);
