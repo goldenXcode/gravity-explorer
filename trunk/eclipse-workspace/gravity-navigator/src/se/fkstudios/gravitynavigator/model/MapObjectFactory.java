@@ -72,7 +72,7 @@ public class MapObjectFactory {
 				rotationSpeed, 
 				false,
 				GravitationalMode.STATIONARY, 
-				true,
+				false,
 				resource);
 		
 		neighborhood.add(planet);
@@ -152,7 +152,7 @@ public class MapObjectFactory {
 				rotationSpeed, 
 				true,
 				GravitationalMode.DOMINATING,
-				true, 
+				false, 
 				resource);
 		
 		neighborhood.add(mapObject);
