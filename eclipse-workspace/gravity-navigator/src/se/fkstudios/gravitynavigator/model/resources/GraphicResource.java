@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class GraphicResource {
 	
+	
 	public boolean useParentSize;
 	public Vector2 positionOffset;
 	public float width;
@@ -30,5 +31,27 @@ public abstract class GraphicResource {
 		this.width = width;
 		this.height = height;
 		useParentSize = false;
+	}
+	
+	public float getWidth(float parentWidth) {
+		if (useParentSize)
+			return parentWidth;
+		else
+			return width;
+	}
+
+	public float getHeight(float parentHeight) {
+		if (useParentSize)
+			return parentHeight;
+		else
+			return height;
+	}
+	
+	public float getPositionX(float parentPositionX) {
+		return parentPositionX + positionOffset.x;
+	}
+	
+	public float getPositionY(float parentPositionY) {
+		return parentPositionY + positionOffset.y;
 	}
 }

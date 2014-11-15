@@ -1,51 +1,42 @@
 package se.fkstudios.gravitynavigator.view;
 
-import se.fkstudios.gravitynavigator.Utility;
-import se.fkstudios.gravitynavigator.controller.GameplayCamera;
-import se.fkstudios.gravitynavigator.model.MapObjectModel;
 import se.fkstudios.gravitynavigator.model.resources.ColorResource;
+import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Rectangle;
 
-public class ColorRenderer {
+public class ColorRenderer extends PeriodicResourceRenderer {
 	
-	protected ShapeRenderer shapeRenderer;
-	protected float periodicityWidth;
-	protected float periodicityHeight;
+	private ShapeRenderer shapeRenderer;
 	
 	public ColorRenderer(float periodicityWidth, float periodicityHeight) {
+		super(periodicityWidth, periodicityHeight);
 		shapeRenderer = new ShapeRenderer();
-		this.periodicityWidth = periodicityWidth;
-		this.periodicityHeight = periodicityHeight;
+	}
+
+	public void setProjectionMatrix(Matrix4 projectionMatrix) {
+		shapeRenderer.setProjectionMatrix(projectionMatrix);
 	}
 	
-	public void render(GameplayCamera camera,
-			MapObjectModel mapObject,
-			ColorResource resource) {
-		
-		float width;
-		float height;
-		if (resource.useParentSize) {
-			width = mapObject.getWidth();
-			height = mapObject.getHeight();
+	@Override
+	protected void renderResource(GraphicResource resource, 
+			Rectangle drawArea,
+			float originX, 
+			float originY, 
+			float scale, 
+			float rotation) 
+	{
+		if (!(resource instanceof ColorResource)) {
+			System.out.println("Warning: could not draw resource of given type");
+			return;
 		}
-		else {
-			width = resource.width;
-			height = resource.height;
-		}
-		
-		float screenPositionX = Utility.getScreenCoordinate(mapObject.getPosition().x - width / 2 + resource.positionOffset.x);
-		float screenPositionY = Utility.getScreenCoordinate(mapObject.getPosition().y - height / 2 + resource.positionOffset.y);
-		
-		shapeRenderer.setProjectionMatrix(camera.combined);
-		
+		ColorResource colorResource = (ColorResource)resource;
+		shapeRenderer.setColor(colorResource.color);
 		shapeRenderer.begin(ShapeType.Filled);
-//		shapeRenderer.rect(drawArea.x, drawArea.y, drawArea.width, drawArea.height);
-		
-		shapeRenderer.rect(screenPositionX, screenPositionY, width, height);
+		shapeRenderer.rect(drawArea.x, drawArea.y, drawArea.width * scale, drawArea.height * scale, originX, originY, rotation);
 		shapeRenderer.end();
-		
-	
 	}
 }

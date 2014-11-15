@@ -6,6 +6,7 @@ import se.fkstudios.gravitynavigator.Defs;
 import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
 import se.fkstudios.gravitynavigator.model.resources.ColorResource;
 import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
+import se.fkstudios.gravitynavigator.model.resources.ResourceContainer;
 import se.fkstudios.gravitynavigator.model.resources.TextureAtlasResource;
 import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 
@@ -55,7 +56,7 @@ public class MapObjectFactory {
 	{
 		float radius = (width + height) / 4;
 		int mass = (int)calculateMass(radius, 1f);
-		TextureRegionResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_PLANETS);
+		GraphicResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_PLANETS);
 		
 		MapObjectModel planet = new MapObjectModel(width, height, 
 				position, 
@@ -80,7 +81,7 @@ public class MapObjectFactory {
 			boolean clockwise,
 			float rotationSpeed) 
 	{
-		TextureRegionResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_PLANETS);
+		GraphicResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_PLANETS);
 		return createOrbitingMapObject(neighborhood, primaryMapObject, distance, degrees, relativeMass, clockwise, rotationSpeed, resource);
 				
 	}
@@ -93,14 +94,21 @@ public class MapObjectFactory {
 			boolean clockwise,
 			float rotationSpeed) 
 	{
-		TextureRegionResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_ASTERIOIDS);
+		GraphicResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_ASTERIOIDS);
 		return createOrbitingMapObject(neighborhood, primaryMapObject, distance, degrees, relativeMass, clockwise, rotationSpeed, resource);
 	}
 	
 	public MapObjectModel createParticleObject(Array<MapObjectModel> neighborhood,
 			float width, float height, 
 			Vector2 position, Color color) {
-		GraphicResource resource = new ColorResource(new Vector2(0, 0), true, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.MIN_RENDER_SCALE_DEFAULT, width, height, color);
+		
+		GraphicResource resource = new ColorResource(new Vector2(0, 0), 
+				true, 
+				Defs.MIN_RENDER_SCALE_DEFAULT,
+				Defs.MAX_RENDER_SCALE_DEFAULT,
+				width, height, 
+				color);
+		
 		MapObjectModel particle = new MapObjectModel(width, 
 				height, 
 				position, 
@@ -112,8 +120,39 @@ public class MapObjectFactory {
 				true, 
 				false, 
 				resource);
+		
 		neighborhood.add(particle);
 		return particle;
+	}
+	
+	public ColorResource createParticleResource(ResourceContainer owner,
+			float width, float height, 
+			Vector2 position) {
+		ColorResource resource = new ColorResource(new Vector2(0, 0), 
+				true, 
+				Defs.MIN_RENDER_SCALE_DEFAULT,
+				Defs.MAX_RENDER_SCALE_DEFAULT,
+				width, height, 
+				new Color(randomFloat(0, 1f), randomFloat(0, 1f), randomFloat(0, 1f), 1f));
+		
+		owner.getResources().add(resource);
+		
+		return resource;
+	}
+	
+	public ColorResource createParticleResource(ResourceContainer owner,
+			float width, float height, 
+			Vector2 position, Color color) {
+		
+		ColorResource resource = new ColorResource(new Vector2(0, 0), 
+				true, 
+				Defs.MIN_RENDER_SCALE_DEFAULT,
+				Defs.MAX_RENDER_SCALE_DEFAULT,
+				width, height, 
+				color);
+		owner.getResources().add(resource);
+		
+		return resource;
 	}
 	
 	private MapObjectModel createOrbitingMapObject(Array<MapObjectModel> neighborhood, 
@@ -123,7 +162,7 @@ public class MapObjectFactory {
 			float relativeMass,
 			boolean clockwise,
 			float rotationSpeed,
-			TextureRegionResource resource) 
+			GraphicResource resource) 
 	{
 		int mass = (int) (primaryMapObject.getMass() * relativeMass);
 		float radius = calculateRadius(mass, 0.1f);
@@ -154,7 +193,7 @@ public class MapObjectFactory {
 		return mapObject;
 	}
 	
-	private TextureRegionResource createRandomTextureRegion(String[] textureRegionNames) {
+	private TextureAtlasResource createRandomTextureRegion(String[] textureRegionNames) {
 		int textureIndex = randomInt(0, textureRegionNames.length - 1);
 		String textureName = textureRegionNames[textureIndex];
 		return new TextureAtlasResource(new Vector2(0,0), 
@@ -165,11 +204,11 @@ public class MapObjectFactory {
 	}
 	
 	private int randomInt(int min, int max) {
-	    return rand.nextInt((max - min) + 1) + min;
+		return rand.nextInt(max + 1 - min) + min;
 	}
 	
-	private float  randomFloat(float min, float max) {
-		return (float) (Math.random() * (max-min) + min);
+	private float randomFloat(float min, float max) {
+		return rand.nextFloat() * (max - min) + min;
 	}
 	
 	private float calculateMass(float radius, float densityOffset) {

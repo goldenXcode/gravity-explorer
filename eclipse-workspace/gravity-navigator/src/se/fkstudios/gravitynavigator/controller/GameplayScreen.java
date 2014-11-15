@@ -11,14 +11,13 @@ import se.fkstudios.gravitynavigator.model.resources.ColorResource;
 import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 import se.fkstudios.gravitynavigator.view.ColorRenderer;
-import se.fkstudios.gravitynavigator.view.MapObjectTextureRegionRenderer;
 import se.fkstudios.gravitynavigator.view.PeriodicMapRenderer;
+import se.fkstudios.gravitynavigator.view.TextureRegionRenderer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.math.Vector2;
@@ -43,11 +42,10 @@ public class GameplayScreen implements Screen {
 	private GameplayCamera camera;
 
 	// Rendering
-	private SpriteBatch spriteBatch;
 	private PeriodicMapRenderer mapRenderer;
-	private MapObjectTextureRegionRenderer textureRegionRenderer;
+	private TextureRegionRenderer textureRegionRenderer;
 	private ColorRenderer colorRenderer;
-
+	
 	@Override
 	public void show() throws IllegalStateException {
 
@@ -89,16 +87,13 @@ public class GameplayScreen implements Screen {
 
 		Gdx.input.setInputProcessor(inputProccessor);
 
-		spriteBatch = new SpriteBatch();
-
 		float longestViewportSide = Math.max(Defs.VIEWPORT_WIDTH, Defs.VIEWPORT_HEIGHT);
 		
-		mapRenderer = new PeriodicMapRenderer(spriteBatch, longestViewportSide, longestViewportSide);
-		textureRegionRenderer = new MapObjectTextureRegionRenderer(spriteBatch,
-				Utility.getScreenCoordinate(map.getWidth()), 
+		mapRenderer = new PeriodicMapRenderer(longestViewportSide, longestViewportSide);
+		textureRegionRenderer = new TextureRegionRenderer(Utility.getScreenCoordinate(map.getWidth()), 
 				Utility.getScreenCoordinate(map.getHeight()));
-		
-		colorRenderer = new ColorRenderer(map.getWidth(), map.getHeight());
+		colorRenderer = new ColorRenderer(Utility.getScreenCoordinate(map.getWidth()), 
+				Utility.getScreenCoordinate(map.getHeight()));
 	}
 
 	/*
@@ -132,50 +127,46 @@ public class GameplayScreen implements Screen {
 		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-		spriteBatch.setProjectionMatrix(camera.combined);
-
+		mapRenderer.setProjectionMatrix(camera.combined);
 		mapRenderer.setConsoleText("Running in " + Float.toString(round(1 / delta, 0)) + " FPS"
 				+ ", fuel left: " + playerSpaceship.getFuelLeft()
 				+ ", zoom: " + camera.zoom);
-		
 		mapRenderer.render(map, camera);
 		
-		Array<MapObjectModel> mapObjects;
-		MapObjects allMapObjects;
 
+		textureRegionRenderer.setProjectionMatrix(camera.combined);
+		colorRenderer.setProjectionMatrix(camera.combined);
+		
 		for (MapLayer layer : map.getLayers()) {
-			allMapObjects = layer.getObjects();
-			mapObjects = allMapObjects.getByType(MapObjectModel.class);
+			MapObjects allMapObjects = layer.getObjects();
+			Array<MapObjectModel> mapObjects = allMapObjects.getByType(MapObjectModel.class);
 			for (MapObjectModel mapObject : mapObjects) {
 				Array<GraphicResource> resources = mapObject.getResources();
 				for (GraphicResource resource : resources) {
 					if (resource.visible) {
-						if (resource.getClass() == ColorResource.class) {
-							colorRenderer.render(camera, mapObject, (ColorResource)resource);
+						if (resource instanceof ColorResource) {
+							colorRenderer.renderObjectPeriodically(mapObject, resource, camera);
+						}
+						else if (resource instanceof TextureRegionResource) {
+							textureRegionRenderer.renderObjectPeriodically(mapObject, resource, camera);
 						}
 						else {
-							textureRegionRenderer.render(mapObject, (TextureRegionResource)resource, camera);	
-						}			
+							throw new IllegalStateException("Could not find renderer for given resource class.");
+						}
 					}
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void resize(int width, int height) {
-		Vector2 size = Scaling.fit.apply(camera.viewportWidth,
-				camera.viewportHeight, width, height);
-
+		Vector2 size = Scaling.fit.apply(camera.viewportWidth, camera.viewportHeight, width, height);
 		int viewportX = (int) (width - size.x) / 2;
 		int viewportY = (int) (height - size.y) / 2;
 		int viewportWidth = (int) size.x;
 		int viewportHeight = (int) size.y;
-
 		Gdx.gl.glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
-
-		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, viewportWidth,
-				viewportHeight);
 	}
 
 	@Override

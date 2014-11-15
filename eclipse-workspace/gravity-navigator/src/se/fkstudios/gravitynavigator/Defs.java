@@ -73,8 +73,8 @@ public final class Defs {
 	public static final int UNIT_PER_DEBUG_LINE = 10;
 	
 	/* viewport  */ 
-	public static final int VIEWPORT_WIDTH = 980;
-	public static final int VIEWPORT_HEIGHT = 640; 
+	public static final int VIEWPORT_WIDTH = 1280;
+	public static final int VIEWPORT_HEIGHT = 720; 
 	public static final int PIXELS_PER_UNIT = 20;	
 	
 	

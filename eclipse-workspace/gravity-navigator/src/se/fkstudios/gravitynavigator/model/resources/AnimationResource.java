@@ -1,7 +1,5 @@
 package se.fkstudios.gravitynavigator.model.resources;
 
-import se.fkstudios.gravitynavigator.view.TextureLoader;
-
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -11,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
  * 
  * @author kristofer
  */
-public class AnimationResource extends TextureRegionResource {
+public class AnimationResource extends GraphicResource implements TextureRegionResource {
 	
 	public final String animationName;
 	public final String[] textureNames;
