@@ -3,6 +3,7 @@ package se.fkstudios.gravitynavigator.model;
 import java.util.Random;
 
 import se.fkstudios.gravitynavigator.Defs;
+import se.fkstudios.gravitynavigator.model.MapObjectModel.GravitationalMode;
 import se.fkstudios.gravitynavigator.model.resources.AnimationResource;
 import se.fkstudios.gravitynavigator.model.resources.ColorResource;
 import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
@@ -70,7 +71,7 @@ public class MapObjectFactory {
 				0f, 
 				rotationSpeed, 
 				false,
-				true, 
+				GravitationalMode.STATIONARY, 
 				true,
 				resource);
 		
@@ -150,7 +151,7 @@ public class MapObjectFactory {
 				0f, 
 				rotationSpeed, 
 				true,
-				false, 
+				GravitationalMode.DOMINATING,
 				true, 
 				resource);
 		

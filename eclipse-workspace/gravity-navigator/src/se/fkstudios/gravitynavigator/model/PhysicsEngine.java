@@ -47,11 +47,27 @@ public class PhysicsEngine {
 	 * @param delta time delta since last update.
 	 */
 	public void applyGravity(MapObjectModel mapObject, 
-			Array<MapObjectModel> mapObjects,
+			PlanetaryNeighbourhood neighbourhood,
 			float mapWidth, float mapHeight,
 			float delta) 
 	{
-		Vector2 accelerationDelta = computGravitationalAcceleration(mapObject, mapObjects, mapWidth, mapHeight, delta);
+		Vector2 accelerationDelta = new Vector2(0, 0);
+		switch (mapObject.getGravitationalMode()) {
+			case ALL: 
+				Array<MapObjectModel> mapObjects = neighbourhood.getObjects().getByType(MapObjectModel.class);
+				accelerationDelta = computGravitationalAcceleration(mapObject, mapObjects, mapWidth, mapHeight, delta);
+				break;
+			case DOMINATING: 
+				accelerationDelta = computeGravitationalAcceleration(mapObject, 
+						neighbourhood.getDominatingMapObject(), 
+						mapWidth, mapHeight, 
+						delta);
+				break;
+			case STATIONARY: 
+				//do nothing
+				break;
+		}
+		
 		mapObject.setAcceleration(mapObject.getAcceleration().x + accelerationDelta.x, 
 				mapObject.getAcceleration().y + accelerationDelta.y);
 	}
@@ -196,13 +212,28 @@ public class PhysicsEngine {
 		Vector2 acceleration = new Vector2(0, 0);
 		for (int i = 0; i < mapObjects.size; i++) {
 			MapObjectModel mapObject2 = mapObjects.get(i);
-			Vector2 gravitationalForce = computeGravitationalForce(mapObject2, mapObject,  
-					mapWidth, mapHeight,
-					delta);
-			Vector2 accelerationDelta = gravitationalForce.div(mapObject.getMass());
+			
+			
+			Vector2 accelerationDelta = computeGravitationalAcceleration(mapObject, mapObject2, mapWidth, mapHeight, delta);
+			
+//			Vector2 gravitationalForce = computeGravitationalForce(mapObject2, mapObject,  
+//					mapWidth, mapHeight,
+//					delta);
+//			Vector2 accelerationDelta = gravitationalForce.div(mapObject.getMass());
 			acceleration.add(accelerationDelta);
 		}
 		return acceleration;
+	}
+	
+	private Vector2 computeGravitationalAcceleration(MapObjectModel mapObject1,
+			MapObjectModel mapObject2,
+			float mapWidth, float mapHeight,
+			float delta)
+	{
+		Vector2 gravitationalForce = computeGravitationalForce(mapObject2, mapObject1,  
+				mapWidth, mapHeight,
+				delta);
+		return gravitationalForce.div(mapObject1.getMass());
 	}
 	
 	private Vector2 computeGravitationalForce(MapObjectModel mapObject1, MapObjectModel mapObject2, 

@@ -14,6 +14,8 @@ import com.badlogic.gdx.utils.Array;
  */
 public class MapObjectModel extends MapObject implements ResourceContainer {
 	
+	public enum GravitationalMode { ALL, DOMINATING, STATIONARY } 
+	
 	private float width;
 	private float height;
 	private Vector2 position;
@@ -22,8 +24,8 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 	private int mass; // in kg
 	private float rotation;
 	private float rotationalSpeed; // in degrees per second
-	private boolean selfStabilizing; 
-	private boolean stationary;
+	private boolean selfStabilizing;
+	private GravitationalMode gravitationalMode;
 	private boolean generatesParticles;
 	
 	private Array<GraphicResource> resources;
@@ -35,7 +37,7 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 			float rotation,
 			float rotationSpeed,
 			boolean selfStabilizing,
-			boolean stationary,
+			GravitationalMode gravitationalMode,
 			boolean ganeratesParticles,
 			Array<GraphicResource> resources) 
 	{
@@ -48,7 +50,7 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		this.rotation = rotation;
 		this.rotationalSpeed = rotationSpeed;
 		this.selfStabilizing = selfStabilizing;
-		this.stationary = stationary;
+		this.gravitationalMode = gravitationalMode;
 		this.resources = resources;
 		this.generatesParticles = ganeratesParticles;
 	}
@@ -60,12 +62,12 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 			float rotation,
 			float rotationSpeed,
 			boolean selfStabilizing,
-			boolean stationary,
+			GravitationalMode gravitationalMode,
 			boolean generatesParticles,
 			GraphicResource resource) 
 	{
 		this(width, height, position, velocity, mass, rotation, rotationSpeed, selfStabilizing, 
-				stationary, generatesParticles, new Array<GraphicResource>(1));
+				gravitationalMode, generatesParticles, new Array<GraphicResource>(1));
 		this.resources.add(resource);
 	}
 	
@@ -165,8 +167,8 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		selfStabilizing = value;
 	}
 	
-	public boolean isStationary() {
-		return stationary;
+	public GravitationalMode getGravitationalMode() {
+		return gravitationalMode;
 	}
 	
 	public boolean isGeneratingParticles() {
@@ -178,7 +180,7 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 	 * @param delta Time in seconds since last update call.
 	 */
 	public void update(float delta) {
-		if (!stationary) {
+		if (gravitationalMode != GravitationalMode.STATIONARY) {
 			//add current acceleration
 			Vector2 newVelocity = getVelocity().cpy();
 			newVelocity.add(acceleration.cpy().scl(delta));
