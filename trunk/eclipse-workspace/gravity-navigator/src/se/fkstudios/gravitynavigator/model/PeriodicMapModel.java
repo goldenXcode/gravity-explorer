@@ -20,14 +20,13 @@ import com.badlogic.gdx.utils.Array;
 public class PeriodicMapModel extends Map implements ResourceContainer {
 	
 	private final String GAMEPLAY_LAYER_NAME = "gameplayLayer";
-	private final String PARTICLE_LAYER_NAME = "particleLayer";
+//	private final String PARTICLE_LAYER_NAME = "particleLayer";
 
 	private PhysicsEngine physicsEngine;
 	
 	private float width;
 	private float height;
-	private MapLayer gameplayLayer;
-	private MapLayer particleLayer;
+	private PlanetaryNeighbourhood gameplayLayer;
 	private Array<GraphicResource> resources;
 	private SpaceshipModel playerSpaceship;
 	
@@ -68,13 +67,9 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 						1f, 1f, 
 						backgroundLayer2ImageName));
 		
-		gameplayLayer = new MapLayer();
+		gameplayLayer = new PlanetaryNeighbourhood();
 		gameplayLayer.setName(GAMEPLAY_LAYER_NAME);
 		this.getLayers().add(gameplayLayer);
-		
-		particleLayer = new MapLayer();
-		particleLayer.setName(PARTICLE_LAYER_NAME);
-		this.getLayers().add(particleLayer);
 		
 		spawnParticleCounter = 0f;
 
@@ -119,27 +114,23 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		spawnParticleCounter += delta;
 		
 		Array<MapObjectModel> gameplayMapObjects = getGameplayObjects();
-		Array<MapObjectModel> createdParticles = new Array<MapObjectModel>();
 		
 		for (MapObjectModel mapObject : gameplayMapObjects) {
 			mapObject.setAcceleration(new Vector2(0,0));
-			physicsEngine.applyGravity(mapObject, gameplayMapObjects, getWidth(), getHeight(), delta);
+			
+			physicsEngine.applyGravity(mapObject, gameplayLayer, getWidth(), getHeight(), delta);
 			
 			if (mapObject.isSelfStabilizing()) {
 				applyStabilizingAcceleration(mapObject, delta);
 			}
+			
 			mapObject.update(delta);
+			
 			applyMapObjectPeriodicity(mapObject);
 			
 			if ((spawnParticleCounter > 0.1f) && (mapObject.isGeneratingParticles())) {
-				
-//				MapObjectFactory.getInstance().createParticleObject(createdParticles, 0.5f, 0.5f, mapObject.getPosition().cpy(), Color.RED);
 				MapObjectFactory.getInstance().createParticleResource(mapObject, 0.5f, 0.5f, mapObject.getPosition().cpy());
 			}
-		}
-		
-		for (MapObjectModel particle : createdParticles) {
-			particleLayer.getObjects().add(particle);
 		}
 		
 		if (spawnParticleCounter > 0.1f) {
@@ -192,8 +183,9 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		MapObjectFactory factory = MapObjectFactory.getInstance();
 		Array<MapObjectModel> neighborhood = new Array<MapObjectModel>();
 		
-		
 		MapObjectModel stationaryPlanet = factory.createStationaryPlanet(neighborhood, 80, 80, new Vector2(width / 2, height / 2), 2f);
+		gameplayLayer.setDominatingMapObject(stationaryPlanet);
+		
 		for (int i = 1; i < 5; i++) {
 			float pDistance = i * 80;
 			float pDegrees = (i * 90f) % 360f;
