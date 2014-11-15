@@ -5,26 +5,31 @@ import se.fkstudios.gravitynavigator.Utility;
 import se.fkstudios.gravitynavigator.controller.GameplayCamera;
 import se.fkstudios.gravitynavigator.model.PeriodicMapModel;
 import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
-import se.fkstudios.gravitynavigator.model.resources.TextureResource;
+import se.fkstudios.gravitynavigator.model.resources.TextureRegionResource;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Rectangle;
 
 public class PeriodicMapRenderer extends TextureRegionRenderer {
 	
-	/* console rendering */
+	private Rectangle drawArea;
+	
+	private ShapeRenderer shapeRenderer;
+
 	private SpriteBatch consoleSpriteBatch;
 	private BitmapFont consolFont;
 	private String consoleText; 
 	
-	public PeriodicMapRenderer(SpriteBatch spriteBatch,
-			float periodicityWidth,
-			float periodicityHeight) {
-		super(spriteBatch, periodicityWidth, periodicityHeight);
-		this.consoleSpriteBatch = new SpriteBatch();
-		this.consolFont = new BitmapFont();
+	public PeriodicMapRenderer(float periodicityWidth, float periodicityHeight) {
+		super(periodicityWidth, periodicityHeight);
+		drawArea = new Rectangle();
+		consoleSpriteBatch = new SpriteBatch();
+		shapeRenderer = new ShapeRenderer();
+		consolFont = new BitmapFont();
 		setConsoleText("Welcome!");
 	}
 
@@ -34,9 +39,7 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 	
 	public void render(PeriodicMapModel map, GameplayCamera camera) {
 		for (GraphicResource resource : map.getResources()) {
-			if (resource.getClass() == TextureResource.class) {
-				TextureResource textureResource = (TextureResource) resource;
-				
+			if (resource instanceof TextureRegionResource) {				
 				float proportionalPositionX = camera.position.x / Utility.getScreenCoordinate(map.getWidth());
 				float proportionalPositionY = camera.position.y / Utility.getScreenCoordinate(map.getHeight());
 				float textureOriginX = Utility.getScreenCoordinate(resource.width) / 2;
@@ -47,30 +50,27 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 				float longestViewportSide = Math.max(camera.viewportWidth, camera.viewportHeight);
 				float ratio = 1 - longestViewportSide / longestTexSide;
 				
-				periodicityWidth = texScreenWidth * camera.zoom;
-				periodicityHeight = texScreenHeight * camera.zoom; 
+				setPeriodicityWidth(texScreenWidth * camera.zoom);
+				setPeriodicityHeight(texScreenHeight * camera.zoom);
 				
-				render(textureResource, 
-						camera.position.x - textureOriginX - proportionalPositionX * periodicityWidth * ratio, 
-						camera.position.y - textureOriginY - proportionalPositionY * periodicityHeight * ratio, 
-						Utility.getScreenCoordinate(resource.width),
-						Utility.getScreenCoordinate(resource.height), 
-						0f, 
-						camera);
+				drawArea.x = camera.position.x - textureOriginX - proportionalPositionX * getPeriodicityWidth() * ratio;
+				drawArea.y = camera.position.y - textureOriginY - proportionalPositionY * getPeriodicityHeight() * ratio;
+				drawArea.width = Utility.getScreenCoordinate(resource.width);
+				drawArea.height = Utility.getScreenCoordinate(resource.height);
+				
+				renderResourcePeriodically(resource, drawArea, 0f, camera);			
 			}
 		}
 		
 		if (RenderOptions.getInstance().debugRender) {
 			drawConsole();
-			debugRender(spriteBatch.getProjectionMatrix(), map);
+			debugRender(map);
 		}
 	}
 	
-	private void debugRender(Matrix4 projectionMatrix, PeriodicMapModel map) {
-		shapeRenderer.setProjectionMatrix(projectionMatrix);
+	private void debugRender(PeriodicMapModel map) {
 		shapeRenderer.begin(ShapeType.Line);
 		shapeRenderer.setColor(Defs.MAP_BORDER_COLOR);
-
 		shapeRenderer.rect(0, 0, map.getWidth() * Defs.PIXELS_PER_UNIT,
 				map.getHeight() * Defs.PIXELS_PER_UNIT);
 
@@ -86,14 +86,18 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 					i * Defs.PIXELS_PER_UNIT,
 					(int) map.getWidth() * Defs.PIXELS_PER_UNIT, 
 					i * Defs.PIXELS_PER_UNIT);
-		}
-
+		}		
 		shapeRenderer.end();
 	}
 	
+	public void setProjectionMatrix(Matrix4 projectionMatrix) {
+		super.setProjectionMatrix(projectionMatrix);
+		shapeRenderer.setProjectionMatrix(projectionMatrix);
+	}
+
 	private void drawConsole() {
-        consoleSpriteBatch.begin();
-        consolFont.draw(consoleSpriteBatch, consoleText, 20, 20);
-        consoleSpriteBatch.end();
+		consoleSpriteBatch.begin();
+		consolFont.draw(consoleSpriteBatch, consoleText, 20, 20);
+		consoleSpriteBatch.end();
 	}
 }

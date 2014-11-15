@@ -7,7 +7,6 @@ import se.fkstudios.gravitynavigator.model.resources.GraphicResource;
 import se.fkstudios.gravitynavigator.model.resources.ResourceContainer;
 import se.fkstudios.gravitynavigator.model.resources.TextureResource;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObjects;
@@ -123,6 +122,7 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		for (MapObjectModel mapObject : gameplayMapObjects) {
 			mapObject.setAcceleration(new Vector2(0,0));
 			physicsEngine.applyGravity(mapObject, gameplayMapObjects, getWidth(), getHeight(), delta);
+			
 			if (mapObject.isSelfStabilizing()) {
 				applyStabilizingAcceleration(mapObject, delta);
 			}
@@ -130,7 +130,9 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 			applyMapObjectPeriodicity(mapObject);
 			
 			if ((spawnParticleCounter > 0.1f) && (mapObject.isGeneratingParticles())) {
-				MapObjectFactory.getInstance().createParticleObject(createdParticles, 5f, 5f, mapObject.getPosition().cpy(), Color.GREEN);
+				
+//				MapObjectFactory.getInstance().createParticleObject(createdParticles, 0.5f, 0.5f, mapObject.getPosition().cpy(), Color.RED);
+				MapObjectFactory.getInstance().createParticleResource(mapObject, 0.5f, 0.5f, mapObject.getPosition().cpy());
 			}
 		}
 		

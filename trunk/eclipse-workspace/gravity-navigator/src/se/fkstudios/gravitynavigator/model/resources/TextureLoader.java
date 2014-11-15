@@ -1,4 +1,4 @@
-package se.fkstudios.gravitynavigator.view;
+package se.fkstudios.gravitynavigator.model.resources;
 
 import java.util.HashMap;
 

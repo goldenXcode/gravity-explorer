@@ -1,12 +1,10 @@
 package se.fkstudios.gravitynavigator.model.resources;
 
-import se.fkstudios.gravitynavigator.view.TextureLoader;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-public class TextureResource extends TextureRegionResource {
+public class TextureResource extends GraphicResource implements TextureRegionResource {
 
 	private TextureRegion textureRegion;
 	public final String textureName;
