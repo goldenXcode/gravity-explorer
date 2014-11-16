@@ -1,0 +1,138 @@
+
+textures.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+asteroid1
+  rotate: false
+  xy: 260, 535
+  size: 55, 53
+  orig: 55, 53
+  offset: 0, 0
+  index: -1
+asteroid2
+  rotate: false
+  xy: 2, 30
+  size: 48, 42
+  orig: 48, 42
+  offset: 0, 0
+  index: -1
+asteroid3
+  rotate: false
+  xy: 573, 815
+  size: 30, 31
+  orig: 30, 31
+  offset: 0, 0
+  index: -1
+asteroid4
+  rotate: false
+  xy: 2, 2
+  size: 18, 26
+  orig: 18, 26
+  offset: 0, 0
+  index: -1
+asteroid5
+  rotate: false
+  xy: 364, 576
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
+asteroid6
+  rotate: false
+  xy: 52, 51
+  size: 21, 21
+  orig: 21, 21
+  offset: 0, 0
+  index: -1
+explosion1-frame1
+  rotate: false
+  xy: 317, 538
+  size: 7, 7
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
+explosion1-frame2
+  rotate: false
+  xy: 295, 518
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: -1
+explosion1-frame3
+  rotate: false
+  xy: 260, 453
+  size: 21, 21
+  orig: 21, 21
+  offset: 0, 0
+  index: -1
+explosion1-frame4
+  rotate: false
+  xy: 518, 760
+  size: 39, 35
+  orig: 39, 35
+  offset: 0, 0
+  index: -1
+explosion1-frame5
+  rotate: false
+  xy: 317, 547
+  size: 45, 41
+  orig: 45, 41
+  offset: 0, 0
+  index: -1
+explosion1-frame6
+  rotate: false
+  xy: 518, 797
+  size: 53, 49
+  orig: 53, 49
+  offset: 0, 0
+  index: -1
+planet1
+  rotate: false
+  xy: 2, 590
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+planet2
+  rotate: false
+  xy: 2, 332
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+planet3
+  rotate: false
+  xy: 260, 590
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+planet4
+  rotate: false
+  xy: 2, 74
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+spaceship1
+  rotate: false
+  xy: 260, 476
+  size: 33, 57
+  orig: 33, 57
+  offset: 0, 0
+  index: -1
+thrust-frame1
+  rotate: false
+  xy: 518, 747
+  size: 10, 11
+  orig: 10, 11
+  offset: 0, 0
+  index: -1
+thrust-frame2
+  rotate: false
+  xy: 559, 784
+  size: 10, 11
+  orig: 10, 11
+  offset: 0, 0
+  index: -1
