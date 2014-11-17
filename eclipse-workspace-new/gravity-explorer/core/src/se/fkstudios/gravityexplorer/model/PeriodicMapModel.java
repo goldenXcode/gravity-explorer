@@ -8,6 +8,7 @@ import se.fkstudios.gravityexplorer.model.resources.ResourceContainer;
 import se.fkstudios.gravityexplorer.model.resources.TextureResource;
 
 import com.badlogic.gdx.maps.Map;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -174,6 +175,17 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 			position.y = Math.abs(position.y + getHeight());
 	}
 	
+	
+	private void loadMapObjectsDemoMap() {
+		MapObjectFactory factory = MapObjectFactory.getInstance();
+		
+		//Create start neighborhood. spaceship and one planet.
+		MapLayer startNeighbourhood = new PlanetaryNeighbourhood();
+		
+//		MapObjectModel startPlanet = factory.createStationaryPlanet
+		
+	}
+	
 	/**
 	 * Loads the map objects to the map. 
 	 * TODO: in a distant future we want the map to be loaded from a file.
@@ -182,13 +194,17 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		MapObjectFactory factory = MapObjectFactory.getInstance();
 		Array<MapObjectModel> neighborhood = new Array<MapObjectModel>();
 		
-		MapObjectModel stationaryPlanet = factory.createStationaryPlanet(neighborhood, 120, 120, new Vector2(width / 2, height / 2), 2f);
+		MapObjectModel stationaryPlanet = factory.createStationaryPlanet(neighborhood, 
+				120, 120,
+				new Vector2(width / 2, height / 2), 
+				2f);
+		
 		gameplayLayer.setDominatingMapObject(stationaryPlanet);
 		
 		for (int i = 1; i < 5; i++) {
 			float pDistance = i * 80;
 			float pDegrees = (i * 90f) % 360f;
-			float pRelativeMass = i * 0.05f;
+			float pRelativeMass = i * 0.005f;
 			float pRotationSpeed = i - 4f;
 			MapObjectModel orbitingPlanet = factory.createOrbitingPlanet(neighborhood, 
 					stationaryPlanet, 

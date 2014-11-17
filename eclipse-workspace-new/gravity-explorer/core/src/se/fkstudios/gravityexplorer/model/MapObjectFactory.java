@@ -138,7 +138,14 @@ public class MapObjectFactory {
 			float rotationSpeed) 
 	{
 		GraphicResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_PLANETS);
-		return createOrbitingMapObject(neighborhood, primaryMapObject, distance, degrees, relativeMass, clockwise, rotationSpeed, resource);
+		return createOrbitingMapObject(neighborhood, 
+				primaryMapObject, 
+				distance, 
+				degrees, 
+				relativeMass, 
+				clockwise, 
+				rotationSpeed, 
+				resource);
 				
 	}
 	
@@ -151,7 +158,14 @@ public class MapObjectFactory {
 			float rotationSpeed) 
 	{
 		GraphicResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_ASTERIOIDS);
-		return createOrbitingMapObject(neighborhood, primaryMapObject, distance, degrees, relativeMass, clockwise, rotationSpeed, resource);
+		return createOrbitingMapObject(neighborhood, 
+				primaryMapObject, 
+				distance, 
+				degrees, 
+				relativeMass, 
+				clockwise, 
+				rotationSpeed, 
+				resource);
 	}
 	
 	public ColorResource createParticleResource(ResourceContainer owner,
@@ -164,11 +178,41 @@ public class MapObjectFactory {
 	
 	public ColorResource createParticleResource(ResourceContainer owner,
 			float width, float height, 
-			Vector2 position, Color color) 
+			Vector2 position, 
+			Color color) 
 	{
-		ColorResource resource = new ColorResource(false, position, new Vector2(0, 0), false, width, height, true, 0.1f, Defs.MAX_RENDER_SCALE_DEFAULT, color);
+		ColorResource resource = new ColorResource(false, 
+				position, 
+				new Vector2(0, 0), 
+				false, 
+				width, 
+				height, 
+				true, 
+				0.1f, 
+				Defs.MAX_RENDER_SCALE_DEFAULT, 
+				color);
+		
 		owner.getResources().add(resource);
 		return resource;
+	}
+	
+	public void placeMapObjectInOrbit(MapObjectModel mapObject,
+			MapObjectModel primaryMapObject, 
+			float distance,
+			float angularOffset,
+			boolean clockwise)
+	{
+		Vector2 primarysPosition = primaryMapObject.getPosition();
+		Vector2 displacementVector = new Vector2(0, -distance).rotate(angularOffset);
+		Vector2 position = new Vector2(primarysPosition.x, primarysPosition.y).add(displacementVector);
+		mapObject.setPosition(position);
+		
+		float speed = physicsEngine.calculateOrbitingSpeed(distance, primaryMapObject.getMass());
+		if (clockwise)
+			speed = -speed;
+		Vector2 velocity = new Vector2(speed, 0.0f).rotate(angularOffset);
+		velocity.add(primaryMapObject.getVelocity());
+		mapObject.setVelocity(velocity.x, velocity.y);
 	}
 	
 	private MapObjectModel createOrbitingMapObject(Array<MapObjectModel> neighborhood, 
@@ -183,20 +227,9 @@ public class MapObjectFactory {
 		int mass = (int) (primaryMapObject.getMass() * relativeMass);
 		float radius = calculateRadius(mass, 1f);
 		
-		Vector2 primarysPosition = primaryMapObject.getPosition();
-		Vector2 displacementVector = new Vector2(0, -distance).rotate(angularOffset);
-		Vector2 position = new Vector2(primarysPosition.x, primarysPosition.y).add(displacementVector);
-		
-		float speed = physicsEngine.calculateOrbitingSpeed(distance, primaryMapObject.getMass());
-		if (clockwise)
-			speed = -speed;
-		
-		Vector2 velocity = new Vector2(speed, 0.0f).rotate(angularOffset);
-		velocity.add(primaryMapObject.getVelocity());
-		
 		MapObjectModel mapObject = new MapObjectModel(radius * 2, radius * 2, 
-				position, 
-				velocity, 
+				new Vector2(0,0), 
+				new Vector2(0,0), 
 				mass, 
 				0f, 
 				rotationSpeed, 
@@ -204,9 +237,10 @@ public class MapObjectFactory {
 				GravitationalMode.DOMINATING,
 				false, 
 				resource);
-		
 		mapObject.setDominating(primaryMapObject);
 		
+		placeMapObjectInOrbit(mapObject, primaryMapObject, distance, angularOffset, clockwise);
+
 		neighborhood.add(mapObject);
 		return mapObject;
 	}
