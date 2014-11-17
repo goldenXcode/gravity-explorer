@@ -66,24 +66,35 @@ public class PhysicsEngine {
 		Vector2 accelerationDelta = new Vector2(0, 0);
 		switch (mapObject.getGravitationalMode()) {
 		case ALL:
-			Array<MapObjectModel> mapObjects = neighbourhood.getObjects()
-					.getByType(MapObjectModel.class);
+			Array<MapObjectModel> mapObjects = neighbourhood.getObjects().getByType(MapObjectModel.class);
 			accelerationDelta = computGravitationalAcceleration(mapObject,
-					mapObjects, mapWidth, mapHeight, delta);
+					mapObjects, 
+					mapWidth, 
+					mapHeight, 
+					delta);
 			break;
 		case DOMINATING:
+			MapObjectModel dominating = mapObject.getDominating();
 			accelerationDelta = computeGravitationalAcceleration(mapObject,
-					neighbourhood.getDominatingMapObject(), mapWidth,
-					mapHeight, delta);
+					dominating, 
+					mapWidth,
+					mapHeight, 
+					delta);
+			
+			Vector2 dominatingAcceleration = new Vector2(0, 0);
+			while (dominating != null) {
+				dominatingAcceleration.add(dominating.getAcceleration());
+				dominating = dominating.getDominating();
+			}
+			accelerationDelta.add(dominatingAcceleration);
 			break;
 		case STATIONARY:
 			// do nothing
 			break;
 		}
 
-		mapObject.setAcceleration(mapObject.getAcceleration().x
-				+ accelerationDelta.x, mapObject.getAcceleration().y
-				+ accelerationDelta.y);
+		mapObject.setAcceleration(mapObject.getAcceleration().x + accelerationDelta.x, 
+				mapObject.getAcceleration().y + accelerationDelta.y);
 	}
 
 	public Vector2 calculateOrbitCompensationAcceleration(

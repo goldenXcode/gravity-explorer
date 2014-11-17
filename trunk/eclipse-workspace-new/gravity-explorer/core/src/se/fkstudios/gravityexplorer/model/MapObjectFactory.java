@@ -45,14 +45,64 @@ public class MapObjectFactory {
 				
 		Array<AnimationResource> thrustAnimations = new Array<AnimationResource>();
 	
-		thrustAnimations.add(new AnimationResource(true, new Vector2(0,0), new Vector2(0.40f, -1.25f), false, 0.25f, 0.3f, true, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		thrustAnimations.add(new AnimationResource(true, new Vector2(0,0), new Vector2(0.15f, -1.3f), false, 0.25f, 0.3f, true, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		thrustAnimations.add(new AnimationResource(true, new Vector2(0,0), new Vector2(-0.15f, -1.3f), false, 0.25f, 0.3f, true, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
-		thrustAnimations.add(new AnimationResource(true, new Vector2(0,0), new Vector2(-0.40f, -1.25f), false, 0.25f, 0.3f, true, Defs.MIN_RENDER_SCALE_SPACESHIP, Defs.MAX_RENDER_SCALE_DEFAULT, Defs.ANIMATION_NAMES[0], Defs.ANIMATION_TEXTURE_REGION_NAMES[0], true));
+		thrustAnimations.add(new AnimationResource(true, new Vector2(0,0), 
+				new Vector2(0.40f, -1.25f), 
+				false, 
+				0.25f, 
+				0.3f, 
+				true, 
+				Defs.MIN_RENDER_SCALE_SPACESHIP, 
+				Defs.MAX_RENDER_SCALE_DEFAULT,
+				Defs.ANIMATION_NAMES[0], 
+				Defs.ANIMATION_TEXTURE_REGION_NAMES[0], 
+				true));
+		
+		thrustAnimations.add(new AnimationResource(true, 
+				new Vector2(0,0), 
+				new Vector2(0.15f, -1.3f), 
+				false, 
+				0.25f, 
+				0.3f, 
+				true, Defs.MIN_RENDER_SCALE_SPACESHIP, 
+				Defs.MAX_RENDER_SCALE_DEFAULT, 
+				Defs.ANIMATION_NAMES[0], 
+				Defs.ANIMATION_TEXTURE_REGION_NAMES[0], 
+				true));
+		
+		thrustAnimations.add(new AnimationResource(true, 
+				new Vector2(0,0), 
+				new Vector2(-0.15f, -1.3f), 
+				false, 0.25f, 0.3f, 
+				true,
+				Defs.MIN_RENDER_SCALE_SPACESHIP,
+				Defs.MAX_RENDER_SCALE_DEFAULT, 
+				Defs.ANIMATION_NAMES[0], 
+				Defs.ANIMATION_TEXTURE_REGION_NAMES[0], 
+				true));
+		
+		thrustAnimations.add(new AnimationResource(true, new Vector2(0,0), 
+				new Vector2(-0.40f, -1.25f), 
+				false, 
+				0.25f, 
+				0.3f, 
+				true, 
+				Defs.MIN_RENDER_SCALE_SPACESHIP, 
+				Defs.MAX_RENDER_SCALE_DEFAULT, 
+				Defs.ANIMATION_NAMES[0], 
+				Defs.ANIMATION_TEXTURE_REGION_NAMES[0],
+				true));
 
 		allResources.addAll(thrustAnimations);
 		
-		return new SpaceshipModel(1.32f, 2.28f, Defs.STARTING_POSITION, Defs.STARTING_VELOCITY, 1, 0f, Defs.MAX_THRUST, allResources, thrustAnimations);
+		return new SpaceshipModel(1.32f,
+				2.28f, 
+				Defs.STARTING_POSITION, 
+				Defs.STARTING_VELOCITY, 
+				1, 
+				0f,
+				Defs.MAX_THRUST, 
+				allResources, 
+				thrustAnimations);
 	}
 	
 	public MapObjectModel createStationaryPlanet(Array<MapObjectModel> neighborhood, 
@@ -131,7 +181,7 @@ public class MapObjectFactory {
 			GraphicResource resource) 
 	{
 		int mass = (int) (primaryMapObject.getMass() * relativeMass);
-		float radius = calculateRadius(mass, 0.1f);
+		float radius = calculateRadius(mass, 1f);
 		
 		Vector2 primarysPosition = primaryMapObject.getPosition();
 		Vector2 displacementVector = new Vector2(0, -distance).rotate(angularOffset);
@@ -151,9 +201,11 @@ public class MapObjectFactory {
 				0f, 
 				rotationSpeed, 
 				true,
-				GravitationalMode.ALL,
+				GravitationalMode.DOMINATING,
 				false, 
 				resource);
+		
+		mapObject.setDominating(primaryMapObject);
 		
 		neighborhood.add(mapObject);
 		return mapObject;
@@ -180,11 +232,11 @@ public class MapObjectFactory {
 		return rand.nextFloat() * (max - min) + min;
 	}
 	
-	private float calculateMass(float radius, float densityOffset) {
-		return (float) (Math.pow(radius, 2) * Math.PI * objectDensity * densityOffset); 
+	private float calculateMass(float radius, float densityFactor) {
+		return (float) (Math.pow(radius, 2) * Math.PI * objectDensity * densityFactor); 
 	}
 	
-	private float calculateRadius(float mass, float densityOffset) {
-		return (float) (Math.sqrt(mass / (Math.PI * objectDensity * densityOffset)));
+	private float calculateRadius(float mass, float densityFactor) {
+		return (float) (Math.sqrt(mass / (Math.PI * objectDensity * densityFactor)));
 	}
 }

@@ -182,13 +182,13 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		MapObjectFactory factory = MapObjectFactory.getInstance();
 		Array<MapObjectModel> neighborhood = new Array<MapObjectModel>();
 		
-		MapObjectModel stationaryPlanet = factory.createStationaryPlanet(neighborhood, 80, 80, new Vector2(width / 2, height / 2), 2f);
+		MapObjectModel stationaryPlanet = factory.createStationaryPlanet(neighborhood, 120, 120, new Vector2(width / 2, height / 2), 2f);
 		gameplayLayer.setDominatingMapObject(stationaryPlanet);
 		
 		for (int i = 1; i < 5; i++) {
 			float pDistance = i * 80;
 			float pDegrees = (i * 90f) % 360f;
-			float pRelativeMass = i * 0.001f;
+			float pRelativeMass = i * 0.05f;
 			float pRotationSpeed = i - 4f;
 			MapObjectModel orbitingPlanet = factory.createOrbitingPlanet(neighborhood, 
 					stationaryPlanet, 
@@ -203,7 +203,7 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 				for (int j = 1; j < i; j++) {	
 					float aDistance = 2f + j * 10f;
 					float aDegrees = (j * 180) % 360f;
-					float aRelativeMass = 0.01f;
+					float aRelativeMass = 0.05f;
 					float aRotationSpeed = j * -2f;
 					factory.createOrbitingAsteroid(neighborhood, 
 							orbitingPlanet, 
