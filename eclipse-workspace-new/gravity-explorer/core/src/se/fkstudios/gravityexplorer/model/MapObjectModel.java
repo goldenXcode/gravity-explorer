@@ -16,6 +16,7 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 	
 	public enum GravitationalMode { ALL, DOMINATING, STATIONARY } 
 	
+	private MapObjectModel dominating;
 	private float width;
 	private float height;
 	private Vector2 position;
@@ -71,6 +72,14 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		this.resources.add(resource);
 	}
 	
+	public MapObjectModel getDominating() {
+		return dominating;
+	}
+
+	public void setDominating(MapObjectModel dominating) {
+		this.dominating = dominating;
+	}
+
 	public float getWidth() {
 		return width;
 	}
