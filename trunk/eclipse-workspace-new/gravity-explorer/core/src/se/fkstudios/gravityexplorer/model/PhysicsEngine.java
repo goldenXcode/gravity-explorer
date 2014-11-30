@@ -49,38 +49,29 @@ public class PhysicsEngine {
 	 * Updates a given MapObjectModel's acceleration imposed by gravity with
 	 * respect to given MapObjectModels. Using the Euler backward method.
 	 * 
-	 * @param mapObject
-	 *            the MapObjectModel to update acceleration for.
-	 * @param mapObjects
-	 *            the objects with gravitational influence over mapObject.
-	 * @param mapWidth
-	 *            the maps width.
-	 * @param mapHeight
-	 *            the maps height.
-	 * @param delta
-	 *            time delta since last update.
+	 * @param mapObject the MapObjectModel to update acceleration for.
+	 * @param neighbourhood the objects with gravitational influence over mapObject if GravitationalMode is set to NEIGHBOURHOOD.
+	 * @param allMapObjects the objects with gravitational influence over mapObject if GravitationalMode is set to ALL.
+	 * @param mapWidth the maps width.
+	 * @param mapHeight the maps height.
+	 * @param delta time delta since last update in seconds.
 	 */
-	public void applyGravity(MapObjectModel mapObject,
-			PlanetaryNeighbourhood neighbourhood, float mapWidth,
-			float mapHeight, float delta) {
+	public void applyGravity(MapObjectModel mapObject, Array<MapObjectModel>  neighbourhood, 
+			Array<MapObjectModel> allMapObjects, 
+			float mapWidth, float mapHeight, float delta) 
+	{
 		Vector2 accelerationDelta = new Vector2(0, 0);
 		switch (mapObject.getGravitationalMode()) {
 		case ALL:
-			Array<MapObjectModel> mapObjects = neighbourhood.getObjects().getByType(MapObjectModel.class);
-			accelerationDelta = computGravitationalAcceleration(mapObject,
-					mapObjects, 
-					mapWidth, 
-					mapHeight, 
-					delta);
+			accelerationDelta = computGravitationalAcceleration(mapObject, allMapObjects, 
+					mapWidth, mapHeight, delta);
+			break;
+		case NEIGHBOURHOOD:
+			accelerationDelta = computGravitationalAcceleration(mapObject, neighbourhood,mapWidth, mapHeight, delta);
 			break;
 		case DOMINATING:
 			MapObjectModel dominating = mapObject.getDominating();
-			accelerationDelta = computeGravitationalAcceleration(mapObject,
-					dominating, 
-					mapWidth,
-					mapHeight, 
-					delta);
-			
+			accelerationDelta = computeGravitationalAcceleration(mapObject, dominating, mapWidth, mapHeight, delta);
 			Vector2 dominatingAcceleration = new Vector2(0, 0);
 			while (dominating != null) {
 				dominatingAcceleration.add(dominating.getAcceleration());
@@ -91,12 +82,48 @@ public class PhysicsEngine {
 		case STATIONARY:
 			// do nothing
 			break;
+		default:
+			break;
 		}
 
 		mapObject.setAcceleration(mapObject.getAcceleration().x + accelerationDelta.x, 
 				mapObject.getAcceleration().y + accelerationDelta.y);
 	}
 
+	public void applyStabilizingAcceleration(MapObjectModel mapObject, Array<MapObjectModel> neighbourhood, 
+			Array<MapObjectModel> allMapObjects, 
+			float mapWidth, float mapHeight, float delta) {
+		
+		MapObjectModel dominationgObject = null;
+		switch (mapObject.getGravitationalMode()) {
+		case ALL:
+			dominationgObject = findGravitationallyStrongestObject(mapObject, allMapObjects, mapWidth, mapHeight);	
+			break;
+		case NEIGHBOURHOOD:
+			dominationgObject = findGravitationallyStrongestObject(mapObject, neighbourhood, mapWidth, mapHeight);
+			break;
+		case DOMINATING:
+			dominationgObject = mapObject.getDominating();
+			break;
+		case STATIONARY:
+			//do nothing.
+			break;
+		default:
+			break;
+		}
+		
+		if (dominationgObject != null) {
+			Vector2 compAcceleration = calculateOrbitCompensationAcceleration(mapObject, dominationgObject, 
+					mapWidth, mapHeight, delta);		
+			Vector2 currentAcceleration = mapObject.getAcceleration();
+			mapObject.setAcceleration(compAcceleration.x + currentAcceleration.x, 
+					compAcceleration.y + currentAcceleration.y);
+			
+			//TODO: compensate dominating object or parent object with force? 
+		}
+	}
+	
+	
 	public Vector2 calculateOrbitCompensationAcceleration(
 			MapObjectModel mapObject, Array<MapObjectModel> mapObjects,
 			float mapWidth, float mapHeight, float delta) {
@@ -180,11 +207,9 @@ public class PhysicsEngine {
 		float currentForce = 0;
 		for (MapObjectModel otherMapObject : mapObjects) {
 			if (mapObject != otherMapObject) {
-				float force = computeGravitationalForce(mapObject,
-						otherMapObject, mapWidth, mapHeight).len();
-				if (force > currentForce
-						&& mapObject.getMass() > otherMapObject.getMass()
-								* Defs.COMPENSATIONAL_CUTOFF_FACTOR) {
+				float force = computeGravitationalForce(mapObject, otherMapObject, mapWidth, mapHeight).len();
+				if (force > currentForce 
+					/*	&& mapObject.getMass() > otherMapObject.getMass() * Defs.COMPENSATIONAL_CUTOFF_FACTOR */) {
 					currentForce = force;
 					resultObjectModel = otherMapObject;
 				}
@@ -212,8 +237,7 @@ public class PhysicsEngine {
 	}
 
 	public float calculateOrbitingSpeed(float distance, float planetMass) {
-		return (float) Math.sqrt(Defs.GRAVITATIONAL_CONSTANT * planetMass
-				/ distance);
+		return (float) Math.sqrt(Defs.GRAVITATIONAL_CONSTANT * planetMass / distance);
 	}
 
 	private Vector2 computGravitationalAcceleration(MapObjectModel mapObject,
@@ -290,9 +314,8 @@ public class PhysicsEngine {
 		float distance = distanceVector.len();
 		float force = 0;
 		if (distance > cutoff) { // cutoff to prevent singularities arising from
-									// zero distance between objects
-			force = (Defs.GRAVITATIONAL_CONSTANT * mass1 * mass2)
-					/ (distance * distance); // Newtons law of gravity
+								 // zero distance between objects
+			force = (Defs.GRAVITATIONAL_CONSTANT * mass1 * mass2) / (distance * distance); // Newtons law of gravity
 		}
 		Vector2 direction = distanceVector.nor();
 		return direction.scl(force);
@@ -300,8 +323,7 @@ public class PhysicsEngine {
 
 	private float shortestDistance(Vector2 position1, Vector2 position2,
 			float mapWidth, float mapHeight) {
-		return shortestDistanceVector(position1, position2, mapWidth, mapHeight)
-				.len();
+		return shortestDistanceVector(position1, position2, mapWidth, mapHeight).len();
 	}
 
 	/**

@@ -58,7 +58,7 @@ public class SpaceshipModel extends MapObjectModel {
 			int maxThrust, 
 			Array<GraphicResource> allResources, 
 			Array<AnimationResource> thrustAnimations) {
-		super(width, height, position, velocity, mass, rotation, 0f, false, GravitationalMode.ALL, false, allResources);
+		super(width, height, position, velocity, mass, rotation, 0f, false, GravitationalMode.NEIGHBOURHOOD, false, allResources);
 		this.thrust = new Vector2(0, 0);
 		this.maxThrust = maxThrust;
 		this.fuelLeft = Defs.STARTING_FUEL;
@@ -76,10 +76,10 @@ public class SpaceshipModel extends MapObjectModel {
 			setRotation(thrust.angle() - 90); //LibGdx render with rotation 0 from y-axis while Vector2 calculates angle from x-axis, thus -90.
 	} 	
 	
-	/* 
-	 * Maps the fuel left to engine efficiency. As a primary requirement it should tend to zero as fuel left tends to zero. also it should map 100 to 1; (perfect 
-	 * efficiency.
-	 * kristofer: is this fun gameplay? or realistic?
+	/** 
+	 * Maps the fuel left to engine efficiency. As a primary requirement it should tend to zero as fuel left tends to zero. 
+	 * also it should map 100 to 1; (perfect efficiency.
+	 * TODO: kristofer: is this fun gameplay? or realistic?
 	 */
 	private float fuelEfficiencyMapping (float fuelLeft) {
 		return 1f;

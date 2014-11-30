@@ -37,7 +37,7 @@ public class GameplayScreen implements Screen {
 
 	// Controller
 	private InputProcessor inputProccessor;
-
+	
 	// Camera
 	private GameplayCamera camera;
 
@@ -45,6 +45,8 @@ public class GameplayScreen implements Screen {
 	private PeriodicMapRenderer mapRenderer;
 	private TextureRegionRenderer textureRegionRenderer;
 	private ColorRenderer colorRenderer;
+	
+	
 	
 	@Override
 	public void show() throws IllegalStateException {
