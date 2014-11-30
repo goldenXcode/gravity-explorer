@@ -105,13 +105,15 @@ public class MapObjectFactory {
 				thrustAnimations);
 	}
 	
-	public MapObjectModel createStationaryPlanet(Array<MapObjectModel> neighborhood, 
-			float width, float height,
-			Vector2 position,
-			float rotationSpeed) 
+	public MapObjectModel createStationaryPlanet(float width, float height, Vector2 position, float rotationSpeed) {	
+		return createStationaryPlanet(width, height, 1f, position, rotationSpeed);
+	}
+	
+	public MapObjectModel createStationaryPlanet(float width, float height, float dencityFactor,
+			Vector2 position, float rotationSpeed) 
 	{
 		float radius = (width + height) / 4;
-		int mass = (int)calculateMass(radius, 1f);
+		int mass = (int)calculateMass(radius, dencityFactor);
 		GraphicResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_PLANETS);
 		
 		MapObjectModel planet = new MapObjectModel(width, height, 
@@ -125,12 +127,10 @@ public class MapObjectFactory {
 				false,
 				resource);
 		
-		neighborhood.add(planet);
 		return planet;
 	}
 	
-	public MapObjectModel createOrbitingPlanet(Array<MapObjectModel> neighborhood, 
-			MapObjectModel primaryMapObject,
+	public MapObjectModel createOrbitingPlanet(MapObjectModel primaryMapObject,
 			float distance,
 			float degrees,
 			float relativeMass,
@@ -138,8 +138,7 @@ public class MapObjectFactory {
 			float rotationSpeed) 
 	{
 		GraphicResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_PLANETS);
-		return createOrbitingMapObject(neighborhood, 
-				primaryMapObject, 
+		return createOrbitingMapObject(primaryMapObject, 
 				distance, 
 				degrees, 
 				relativeMass, 
@@ -149,8 +148,7 @@ public class MapObjectFactory {
 				
 	}
 	
-	public MapObjectModel createOrbitingAsteroid(Array<MapObjectModel> neighborhood, 
-			MapObjectModel primaryMapObject,
+	public MapObjectModel createOrbitingAsteroid(MapObjectModel primaryMapObject,
 			float distance,
 			float degrees,
 			float relativeMass,
@@ -158,8 +156,7 @@ public class MapObjectFactory {
 			float rotationSpeed) 
 	{
 		GraphicResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_ASTERIOIDS);
-		return createOrbitingMapObject(neighborhood, 
-				primaryMapObject, 
+		return createOrbitingMapObject(primaryMapObject, 
 				distance, 
 				degrees, 
 				relativeMass, 
@@ -215,8 +212,7 @@ public class MapObjectFactory {
 		mapObject.setVelocity(velocity.x, velocity.y);
 	}
 	
-	private MapObjectModel createOrbitingMapObject(Array<MapObjectModel> neighborhood, 
-			MapObjectModel primaryMapObject,
+	private MapObjectModel createOrbitingMapObject(MapObjectModel primaryMapObject,
 			float distance,
 			float angularOffset,
 			float relativeMass,
@@ -241,7 +237,6 @@ public class MapObjectFactory {
 		
 		placeMapObjectInOrbit(mapObject, primaryMapObject, distance, angularOffset, clockwise);
 
-		neighborhood.add(mapObject);
 		return mapObject;
 	}
 	

@@ -53,8 +53,10 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 				setPeriodicityWidth(texScreenWidth * camera.zoom);
 				setPeriodicityHeight(texScreenHeight * camera.zoom);
 				
-				drawArea.x = camera.position.x - textureOriginX - proportionalPositionX * getPeriodicityWidth() * ratio;
-				drawArea.y = camera.position.y - textureOriginY - proportionalPositionY * getPeriodicityHeight() * ratio;
+				float periodicityWidth = getPeriodicityWidth();
+				float periodicityHeight = getPeriodicityHeight();
+				drawArea.x = camera.position.x - textureOriginX - proportionalPositionX * periodicityWidth * ratio;
+				drawArea.y = camera.position.y - textureOriginY - proportionalPositionY * periodicityHeight * ratio;
 				drawArea.width = Utility.getScreenCoordinate(resource.getWidth());
 				drawArea.height = Utility.getScreenCoordinate(resource.getHeight());
 				
@@ -62,8 +64,9 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 			}
 		}
 		
+		drawConsole();
+		
 		if (RenderOptions.getInstance().debugRender) {
-			drawConsole();
 			debugRender(map);
 		}
 	}

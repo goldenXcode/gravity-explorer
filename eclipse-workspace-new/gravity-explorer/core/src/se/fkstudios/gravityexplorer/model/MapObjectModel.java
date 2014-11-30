@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.Array;
  */
 public class MapObjectModel extends MapObject implements ResourceContainer {
 	
-	public enum GravitationalMode { ALL, DOMINATING, STATIONARY } 
+	public enum GravitationalMode { ALL, NEIGHBOURHOOD, DOMINATING, STATIONARY } 
 	
 	private MapObjectModel dominating;
 	private float width;
@@ -161,7 +161,9 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 	}
 	
 	public float getRadius() {
-		return (float) (Math.sqrt(Math.pow(getWidth(), 2) +Math.pow(getHeight(), 2)));
+//		return (float) (Math.sqrt(Math.pow(getWidth(), 2) + Math.pow(getHeight(), 2))); 
+//		kristofer 2014-11-30. say what? radius = segment line or what?
+		return (getWidth() + getHeight()) / 4;
 	}
 	
 	public Array<GraphicResource> getResources() {
