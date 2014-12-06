@@ -105,18 +105,16 @@ public class MapObjectFactory {
 				thrustAnimations);
 	}
 	
-	public MapObjectModel createStationaryPlanet(float width, float height, Vector2 position, float rotationSpeed) {	
-		return createStationaryPlanet(width, height, 1f, position, rotationSpeed);
+	public MapObjectModel createStationaryPlanet(float diameter, Vector2 position, float rotationSpeed) {	
+		return createStationaryPlanet(diameter, position, rotationSpeed, 1f);
 	}
 	
-	public MapObjectModel createStationaryPlanet(float width, float height, float dencityFactor,
-			Vector2 position, float rotationSpeed) 
+	public MapObjectModel createStationaryPlanet(float diameter, Vector2 position, float rotationSpeed, float dencityFactor) 
 	{
-		float radius = (width + height) / 4;
-		int mass = (int)calculateMass(radius, dencityFactor);
+		int mass = (int)calculateMass(diameter / 2, dencityFactor);
 		GraphicResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_PLANETS);
 		
-		MapObjectModel planet = new MapObjectModel(width, height, 
+		MapObjectModel planet = new MapObjectModel(diameter, diameter, 
 				position, 
 				new Vector2(0, 0), 
 				mass, 
@@ -144,8 +142,7 @@ public class MapObjectFactory {
 				relativeMass, 
 				clockwise, 
 				rotationSpeed, 
-				resource);
-				
+				resource);		
 	}
 	
 	public MapObjectModel createOrbitingAsteroid(MapObjectModel primaryMapObject,
@@ -211,6 +208,14 @@ public class MapObjectFactory {
 		velocity.add(primaryMapObject.getVelocity());
 		mapObject.setVelocity(velocity.x, velocity.y);
 	}
+
+	public int randomInt(int min, int max) {
+		return rand.nextInt(max + 1 - min) + min;
+	}
+	
+	public float randomFloat(float min, float max) {
+		return rand.nextFloat() * (max - min) + min;
+	}
 	
 	private MapObjectModel createOrbitingMapObject(MapObjectModel primaryMapObject,
 			float distance,
@@ -233,6 +238,7 @@ public class MapObjectFactory {
 				GravitationalMode.DOMINATING,
 				false, 
 				resource);
+		
 		mapObject.setDominating(primaryMapObject);
 		
 		placeMapObjectInOrbit(mapObject, primaryMapObject, distance, angularOffset, clockwise);
@@ -251,14 +257,6 @@ public class MapObjectFactory {
 				true, 
 				Defs.MIN_RENDER_SCALE_DEFAULT, Defs.MAX_RENDER_SCALE_DEFAULT, 
 				textureName);	
-	}
-	
-	private int randomInt(int min, int max) {
-		return rand.nextInt(max + 1 - min) + min;
-	}
-	
-	private float randomFloat(float min, float max) {
-		return rand.nextFloat() * (max - min) + min;
 	}
 	
 	private float calculateMass(float radius, float densityFactor) {

@@ -11,6 +11,7 @@ import se.fkstudios.gravityexplorer.model.resources.TextureResource;
 
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -99,13 +100,13 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		return resources;
 	}
 	
-	public void addMapObject(MapObjectModel mapObject, MapLayer neighbourhood) {
+	public void registerMapObject(MapObjectModel mapObject, MapLayer neighbourhood) {
 		allMapObjects.add(mapObject);
 		neighbourhood.getObjects().add(mapObject);		
 		mapObjectLayerMap.put(mapObject, neighbourhood);
 	}
 	
-	public void removeMapObject(MapObjectModel mapObject) {
+	public void unregisterMapObject(MapObjectModel mapObject) {
 		MapLayer neighbourhood = mapObjectLayerMap.get(mapObject);
 		neighbourhood.getObjects().remove(mapObject);
 		allMapObjects.removeValue(mapObject, true);
@@ -113,6 +114,9 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 	}
 	
 	public void switchNeighbourhood(MapObjectModel mapObject, MapLayer oldNeighbourhood, MapLayer newNeighbourhood) {
+//		System.out.println("SWITCH");
+//		System.out.println("From: " + oldNeighbourhood.getName());
+//		System.out.println("To: " + newNeighbourhood.getName());
 		oldNeighbourhood.getObjects().remove(mapObject);
 		newNeighbourhood.getObjects().add(mapObject);
 		mapObjectLayerMap.put(mapObject, newNeighbourhood);
@@ -131,10 +135,13 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		
 		updateSpaceshipsNeighbourhood();
 		
-		for (MapLayer neighbourhood : getLayers()) {
+		MapLayers neighbourhoods = getLayers();
+		for (int i = 0; i < neighbourhoods.getCount(); i++) {
+			MapLayer neighbourhood = neighbourhoods.get(i);
 			Array<MapObjectModel> neighbourhoodObjects = neighbourhood.getObjects().getByType(MapObjectModel.class);
 			
-			for (MapObjectModel mapObject : neighbourhoodObjects) {
+			for (int j = 0; j < neighbourhoodObjects.size; j++) {
+				MapObjectModel mapObject = neighbourhoodObjects.get(j);
 				
 				updateAcceleration(mapObject, neighbourhoodObjects, delta);
 				
@@ -174,9 +181,7 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		MapLayer dominatingNeighbourhood = mapObjectLayerMap.get(dominatingObject);
 		
 		if (currentNeighbourhood != dominatingNeighbourhood) {
-			System.out.println("SWITCH");
-			System.out.println("From: " + currentNeighbourhood.getName());
-			System.out.println("To: " + dominatingNeighbourhood.getName());
+
 			dominatingObject = physicsEngine.findGravitationallyStrongestObject(playerSpaceship, 
 					getAllMapObject(), 
 					getWidth(), getHeight());
@@ -211,12 +216,12 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		startNeighbourhood.setName("start neighbourhood");
 		getLayers().add(startNeighbourhood);
 		
-		MapObjectModel startPlanet = factory.createStationaryPlanet(15, 15, 1f, new Vector2(width * 0.1f, width * 0.1f), 3f);
-		addMapObject(startPlanet, startNeighbourhood);
+		MapObjectModel startPlanet = factory.createStationaryPlanet(15, new Vector2(width * 0.1f, width * 0.1f), 3f);
+		registerMapObject(startPlanet, startNeighbourhood);
 		
 		playerSpaceship = factory.createPlayerSpaceship();
 		factory.placeMapObjectInOrbit(playerSpaceship, startPlanet, 25, 0f, true);
-		addMapObject(playerSpaceship, startNeighbourhood);
+		registerMapObject(playerSpaceship, startNeighbourhood);
 
 		//Create the entire "gameplay" neighborhood.
 		
@@ -224,13 +229,45 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		gameplayNeighborhood.setName("gameplay neighborhood");
 		getLayers().add(gameplayNeighborhood);
 		
-		MapObjectModel dominatringPlanet = factory.createStationaryPlanet(270, 270, 0.2f, new Vector2(width / 2, height / 2), 2f);
-		addMapObject(dominatringPlanet, gameplayNeighborhood);
+		MapObjectModel dominatringPlanet = factory.createStationaryPlanet(200, new Vector2(width / 2, height / 2), 2, 0.2f);
+		registerMapObject(dominatringPlanet, gameplayNeighborhood);
+	
+		MapObjectModel firstTarget = factory.createOrbitingPlanet(dominatringPlanet, 140, 0, 0.015f, true, 1);
+		registerMapObject(firstTarget, gameplayNeighborhood);
+		
+		MapObjectModel secondTarget = factory.createOrbitingPlanet(dominatringPlanet, 300, 0f, 0.05f, true, 3.3f);
+		registerMapObject(secondTarget, gameplayNeighborhood);
+		for (int i = 0; i < 3; i++) {
+			MapObjectModel moon = factory.createOrbitingPlanet(secondTarget, 15 + 7*i, 45*i, 0.05f + i / 100, true, 0.2f);
+			registerMapObject(moon, gameplayNeighborhood);
+		}
+
+		float degrees = 0;
+		int asteriodCount = 300;
+		for (int i = 0; i < asteriodCount; i++) {
+			int distanceOffset = factory.randomInt(-10, 10);
+			
+			if (factory.randomInt(0, 10) < 5) {
+				distanceOffset += factory.randomInt(-20, 20);
+			}
+			
+			if (factory.randomInt(0, 10) < 1) {
+				distanceOffset += factory.randomInt(-40, 40);
+			}
+			
+			degrees += i * 360 / asteriodCount;
+			float relativeMass = 0.0006f * factory.randomFloat(0.5f, 1.5f);
+			MapObjectModel astrioid = factory.createOrbitingAsteroid(dominatringPlanet, 190 + distanceOffset, degrees, relativeMass, true, 0.5f);
+//			astrioid.setGravitationalMode(GravitationalMode.NEIGHBOURHOOD);
+			registerMapObject(astrioid, gameplayNeighborhood);
+		}
+		
+		MapObjectModel thirdTarget = factory.createOrbitingPlanet(dominatringPlanet, 430, 0f, 0.007f, true, 3.0f);
+		registerMapObject(thirdTarget, gameplayNeighborhood);
 	}
 	
 	/**
 	 * Loads the map objects to the map. 
-	 * TODO: in a distant future we want the map to be loaded from a file.
 	 */
 //	private void loadMapObjects() {
 //		MapObjectFactory factory = MapObjectFactory.getInstance();

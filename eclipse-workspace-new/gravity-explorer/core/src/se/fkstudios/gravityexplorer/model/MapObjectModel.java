@@ -182,6 +182,10 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		return gravitationalMode;
 	}
 	
+	public void setGravitationalMode(GravitationalMode value) {
+		gravitationalMode = value;
+	}
+	
 	public boolean isGeneratingParticles() {
 		return generatesParticles;
 	}
