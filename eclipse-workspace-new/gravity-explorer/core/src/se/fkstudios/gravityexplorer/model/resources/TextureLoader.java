@@ -23,23 +23,26 @@ public class TextureLoader {
 	private static final TextureLoader instance = new TextureLoader();
 	
 	private TextureAtlas textureAtlas;
-	private HashMap<String, Texture> textureMapper;
-	private HashMap<String, Animation> animationMapper;
+	private HashMap<String, Texture> textureMap;
+	private HashMap<String, TextureRegion> textureRegionMap;
+	private HashMap<String, Animation> animationMap;
 	
 	private TextureLoader() {
 		
 		textureAtlas = new TextureAtlas(Gdx.files.internal(Defs.TEXTURE_PACK_FILE_PATH));
 		
-		textureMapper = new HashMap<String, Texture>(Defs.TEXTURE_FILE_PATHS.length);
+		textureMap = new HashMap<String, Texture>(Defs.TEXTURE_FILE_PATHS.length);
 		for (int i = 0; i < Defs.TEXTURE_FILE_PATHS.length; i++) {
 
 			String name = Defs.TEXTURE_NAMES[i];
 			String path = Defs.TEXTURE_FILE_PATHS[i];
 			Texture texture = new Texture(Gdx.files.internal(path));
-			textureMapper.put(name, texture);
+			textureMap.put(name, texture);
 		}
 	
-		animationMapper = new HashMap<String, Animation>(Defs.ANIMATION_TEXTURE_REGION_NAMES.length);
+		textureRegionMap = new HashMap<String, TextureRegion>();
+		
+		animationMap = new HashMap<String, Animation>(Defs.ANIMATION_TEXTURE_REGION_NAMES.length);
 		for (int i = 0; i < Defs.ANIMATION_TEXTURE_REGION_NAMES.length; i++) {
 			String animationName = Defs.ANIMATION_NAMES[i];
 			float frameDuration = Defs.ANIMATION_FRAME_DURATIONS[i];
@@ -52,9 +55,8 @@ public class TextureLoader {
 					textureRegions.add(textureRegion);
 				else
 					throw new NullPointerException("texture region with name '" + textureRegionNames[j] + "' not found");
-			}
-			
-			animationMapper.put(animationName, new Animation(frameDuration, textureRegions));
+			}	
+			animationMap.put(animationName, new Animation(frameDuration, textureRegions));
 		}
 	}
 	
@@ -66,7 +68,7 @@ public class TextureLoader {
 	 * @return the texture with the given name, null if not found.
 	 */
 	public Texture getTexture(String textureName) {
-		return textureMapper.get(textureName);
+		return textureMap.get(textureName);
 	}
 	
 	/**
@@ -78,7 +80,12 @@ public class TextureLoader {
 	 * @return the texture region with the given name, null if not found.
 	 */
 	public TextureRegion getTextureRegion(String textureRegionName) {
-		return textureAtlas.findRegion(textureRegionName);
+		TextureRegion region = textureRegionMap.get(textureRegionName);
+		if (region == null) {
+			region = textureAtlas.findRegion(textureRegionName);
+			textureRegionMap.put(textureRegionName, region);
+		}
+		return region;
 	}
 	
 	/**
@@ -87,7 +94,7 @@ public class TextureLoader {
 	 * @return
 	 */
 	public Animation getAnimation(String animationName) {
-		return animationMapper.get(animationName);
+		return animationMap.get(animationName);
 	}
 	
 	/**

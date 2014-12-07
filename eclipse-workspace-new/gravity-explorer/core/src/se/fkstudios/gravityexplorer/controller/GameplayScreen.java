@@ -19,6 +19,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -37,7 +38,7 @@ public class GameplayScreen implements Screen {
 
 	// Controller
 	private InputProcessor inputProccessor;
-	
+	private float deltaLeft;
 	// Camera
 	private GameplayCamera camera;
 
@@ -47,20 +48,17 @@ public class GameplayScreen implements Screen {
 	private ColorRenderer colorRenderer;
 	
 	
-	
 	@Override
 	public void show() throws IllegalStateException {
 
-		map = new PeriodicMapModel(Defs.TEXTURE_NAMES[0],
-				Defs.TEXTURE_NAMES[1], Defs.MAP_WIDTH, Defs.MAP_HEIGHT);
+		map = new PeriodicMapModel(Defs.TEXTURE_NAMES[0], Defs.TEXTURE_NAMES[1], Defs.MAP_WIDTH, Defs.MAP_HEIGHT);
 
 		playerSpaceship = map.getPlayerSpaceship();
 		Vector2 playerMapObjectPos = playerSpaceship.getPosition();
 
 		camera = new GameplayCamera(Defs.VIEWPORT_WIDTH, Defs.VIEWPORT_HEIGHT);
 
-		camera.position.set(playerMapObjectPos.x * Defs.PIXELS_PER_UNIT,
-				playerMapObjectPos.y * Defs.PIXELS_PER_UNIT, 0.0f);
+		camera.position.set(playerMapObjectPos.x * Defs.PIXELS_PER_UNIT, playerMapObjectPos.y * Defs.PIXELS_PER_UNIT, 0.0f);
 
 		camera.update();
 
@@ -89,6 +87,8 @@ public class GameplayScreen implements Screen {
 
 		Gdx.input.setInputProcessor(inputProccessor);
 
+		deltaLeft = 0f;
+		
 		float longestViewportSide = Math.max(Defs.VIEWPORT_WIDTH, Defs.VIEWPORT_HEIGHT);
 		
 		mapRenderer = new PeriodicMapRenderer(longestViewportSide, longestViewportSide);
@@ -106,12 +106,27 @@ public class GameplayScreen implements Screen {
 	 */
 	@Override
 	public void render(float delta) {
-		camera.updatePosition(delta, playerSpaceship.getPosition(), map.getWidth(), map.getHeight());
-		camera.update();
-		updateModel(delta);
-		realRender(delta);
+		float fixedDelta = 0.0147f;
+		deltaLeft += delta;
+		
+		while(deltaLeft > fixedDelta) {
+			doRender(fixedDelta, delta);
+			deltaLeft =- fixedDelta;
+		}
+		
+		if (deltaLeft > 0) {
+			doRender(deltaLeft, delta);
+			deltaLeft = 0f;
+		}
 	}
 
+	public void doRender(float deltaPart, float realDelta) {
+		camera.updatePosition(deltaPart, playerSpaceship.getPosition(), map.getWidth(), map.getHeight());
+		camera.update();
+		updateModel(deltaPart);
+		realRender(realDelta);	
+	}
+	
 	/**
 	 * Updates model state.
 	 * @param delta The time in seconds since the last call to updateGameState.
@@ -128,29 +143,30 @@ public class GameplayScreen implements Screen {
 		// clear buffer.
 	    Gdx.gl.glClearColor(0, 0, 0.2f, 1);
 	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+	    
 		mapRenderer.setProjectionMatrix(camera.combined);
 		mapRenderer.setConsoleText("Running in " + Float.toString(round(1 / delta, 0)) + " FPS"
 				+ ", fuel left: " + playerSpaceship.getFuelLeft()
-				+ ", zoom: " + camera.zoom);
+				+ ", zoom: " + camera.zoom
+				+ ", render calls: " + textureRegionRenderer.spriteBatch.totalRenderCalls);
 		mapRenderer.render(map, camera);
-		
 
 		textureRegionRenderer.setProjectionMatrix(camera.combined);
 		colorRenderer.setProjectionMatrix(camera.combined);
-		
+		textureRegionRenderer.spriteBatch.begin();
 		for (MapLayer layer : map.getLayers()) {
 			MapObjects allMapObjects = layer.getObjects();
-			Array<MapObjectModel> mapObjects = allMapObjects.getByType(MapObjectModel.class);
-			for (MapObjectModel mapObject : mapObjects) {
-				Array<GraphicResource> resources = mapObject.getResources();
+			for (MapObject mapObject : allMapObjects)
+			{
+				MapObjectModel mapObjectModel = (MapObjectModel)mapObject;
+				Array<GraphicResource> resources = mapObjectModel.getResources();
 				for (GraphicResource resource : resources) {
 					if (resource.isVisible()) {
-						if (resource instanceof ColorResource) {
-							colorRenderer.renderObjectPeriodically(mapObject, resource, camera);
+						if (resource instanceof TextureRegionResource) {
+							textureRegionRenderer.renderObjectPeriodically(mapObjectModel, resource, camera);
 						}
-						else if (resource instanceof TextureRegionResource) {
-							textureRegionRenderer.renderObjectPeriodically(mapObject, resource, camera);
+						else if (resource instanceof ColorResource) {
+							colorRenderer.renderObjectPeriodically(mapObjectModel, resource, camera);
 						}
 						else {
 							throw new IllegalStateException("Could not find renderer for given resource class.");
@@ -159,6 +175,7 @@ public class GameplayScreen implements Screen {
 				}
 			}
 		}
+		textureRegionRenderer.spriteBatch.end();
 	}
 	
 	@Override

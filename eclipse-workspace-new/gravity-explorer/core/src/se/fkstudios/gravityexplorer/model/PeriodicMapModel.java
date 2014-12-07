@@ -12,6 +12,7 @@ import se.fkstudios.gravityexplorer.model.resources.TextureResource;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
+import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -27,7 +28,7 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 	private float height;
 	private Array<GraphicResource> resources;
 	private SpaceshipModel playerSpaceship;
-	private Array<MapObjectModel> allMapObjects;
+	private MapObjects allMapObjects;
 	private HashMap<MapObjectModel, MapLayer> mapObjectLayerMap;
 	
 	private float spawnParticleCounter;
@@ -44,7 +45,7 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 			float width, float height) {
 		this.width = width;
 		this.height = height;
-		allMapObjects = new Array<MapObjectModel>();
+		allMapObjects = new MapObjects();
 		mapObjectLayerMap = new HashMap<MapObjectModel, MapLayer>();
 		
 		float longestViewportSide = Utility.getModelCoordinate(Math.max(Defs.VIEWPORT_WIDTH, Defs.VIEWPORT_HEIGHT));
@@ -109,7 +110,7 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 	public void unregisterMapObject(MapObjectModel mapObject) {
 		MapLayer neighbourhood = mapObjectLayerMap.get(mapObject);
 		neighbourhood.getObjects().remove(mapObject);
-		allMapObjects.removeValue(mapObject, true);
+		allMapObjects.remove(mapObject);
 		mapObjectLayerMap.remove(mapObject);
 	}
 	
@@ -120,10 +121,6 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		oldNeighbourhood.getObjects().remove(mapObject);
 		newNeighbourhood.getObjects().add(mapObject);
 		mapObjectLayerMap.put(mapObject, newNeighbourhood);
-	}
-	
-	public Array<MapObjectModel> getAllMapObject() {
-		return allMapObjects;
 	}
 	
 	/**
@@ -138,10 +135,10 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		MapLayers neighbourhoods = getLayers();
 		for (int i = 0; i < neighbourhoods.getCount(); i++) {
 			MapLayer neighbourhood = neighbourhoods.get(i);
-			Array<MapObjectModel> neighbourhoodObjects = neighbourhood.getObjects().getByType(MapObjectModel.class);
+			MapObjects neighbourhoodObjects = neighbourhood.getObjects();
 			
-			for (int j = 0; j < neighbourhoodObjects.size; j++) {
-				MapObjectModel mapObject = neighbourhoodObjects.get(j);
+			for (int j = 0; j < neighbourhoodObjects.getCount(); j++) {
+				MapObjectModel mapObject = (MapObjectModel)neighbourhoodObjects.get(j);
 				
 				updateAcceleration(mapObject, neighbourhoodObjects, delta);
 				
@@ -161,20 +158,22 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		}
 	}
 	
-	private void updateAcceleration(MapObjectModel mapObject, Array<MapObjectModel> neighbourhood, float delta) {
+	private void updateAcceleration(MapObjectModel mapObject, MapObjects neighbourhood, float delta) {
 		float width = getWidth();
 		float height = getHeight();
-		Array<MapObjectModel> allMapObjects = getAllMapObject();
 		
 		mapObject.setAcceleration(new Vector2(0,0));
-		physicsEngine.applyGravity(mapObject, neighbourhood, allMapObjects, width, height, delta);
+		
+		MapObjects influencingMapObjects = mapObject.getInfluencingObjects(allMapObjects, neighbourhood);
+		
+		physicsEngine.applyGravity(mapObject, influencingMapObjects, width, height, delta);
 		if (mapObject.isSelfStabilizing())
-			physicsEngine.applyStabilizingAcceleration(mapObject, neighbourhood, allMapObjects, width, height, delta);
+			physicsEngine.applyStabilizingAcceleration(mapObject, influencingMapObjects, width, height, delta);
 	}
 	
 	private void updateSpaceshipsNeighbourhood() {
 		MapObjectModel dominatingObject = physicsEngine.findGravitationallyStrongestObject(playerSpaceship, 
-				getAllMapObject(), 
+				allMapObjects, 
 				getWidth(), getHeight());
 		
 		MapLayer currentNeighbourhood = mapObjectLayerMap.get(playerSpaceship);
@@ -183,7 +182,7 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		if (currentNeighbourhood != dominatingNeighbourhood) {
 
 			dominatingObject = physicsEngine.findGravitationallyStrongestObject(playerSpaceship, 
-					getAllMapObject(), 
+					allMapObjects, 
 					getWidth(), getHeight());
 			switchNeighbourhood(playerSpaceship, currentNeighbourhood, dominatingNeighbourhood);
 		}
@@ -238,7 +237,7 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		MapObjectModel secondTarget = factory.createOrbitingPlanet(dominatringPlanet, 300, 0f, 0.05f, true, 3.3f);
 		registerMapObject(secondTarget, gameplayNeighborhood);
 		for (int i = 0; i < 3; i++) {
-			MapObjectModel moon = factory.createOrbitingPlanet(secondTarget, 15 + 7*i, 45*i, 0.05f + i / 100, true, 0.2f);
+			MapObjectModel moon = factory.createOrbitingPlanet(secondTarget, 15 + 10*i, 45*i, 0.05f - i / 100, true, 0.2f);
 			registerMapObject(moon, gameplayNeighborhood);
 		}
 
@@ -257,9 +256,9 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 			
 			degrees += i * 360 / asteriodCount;
 			float relativeMass = 0.0006f * factory.randomFloat(0.5f, 1.5f);
-			MapObjectModel astrioid = factory.createOrbitingAsteroid(dominatringPlanet, 190 + distanceOffset, degrees, relativeMass, true, 0.5f);
-//			astrioid.setGravitationalMode(GravitationalMode.NEIGHBOURHOOD);
-			registerMapObject(astrioid, gameplayNeighborhood);
+			MapObjectModel asteroid = factory.createOrbitingAsteroid(dominatringPlanet, 190 + distanceOffset, 
+					degrees, relativeMass, true, 0.5f);
+			registerMapObject(asteroid, gameplayNeighborhood);
 		}
 		
 		MapObjectModel thirdTarget = factory.createOrbitingPlanet(dominatringPlanet, 430, 0f, 0.007f, true, 3.0f);

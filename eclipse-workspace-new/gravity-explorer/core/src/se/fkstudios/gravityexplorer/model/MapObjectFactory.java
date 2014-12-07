@@ -3,7 +3,6 @@ package se.fkstudios.gravityexplorer.model;
 import java.util.Random;
 
 import se.fkstudios.gravityexplorer.Defs;
-import se.fkstudios.gravityexplorer.model.MapObjectModel.GravitationalMode;
 import se.fkstudios.gravityexplorer.model.resources.AnimationResource;
 import se.fkstudios.gravityexplorer.model.resources.ColorResource;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
@@ -121,9 +120,9 @@ public class MapObjectFactory {
 				0f, 
 				rotationSpeed, 
 				false,
-				GravitationalMode.STATIONARY, 
-				false,
 				resource);
+		
+		planet.setGravitationalModeToStationary();
 		
 		return planet;
 	}
@@ -233,13 +232,11 @@ public class MapObjectFactory {
 				new Vector2(0,0), 
 				mass, 
 				0f, 
-				rotationSpeed, 
-				true,
-				GravitationalMode.DOMINATING,
+				rotationSpeed,
 				false, 
 				resource);
 		
-		mapObject.setDominating(primaryMapObject);
+		mapObject.setGravitationalModeToObject(primaryMapObject);
 		
 		placeMapObjectInOrbit(mapObject, primaryMapObject, distance, angularOffset, clockwise);
 

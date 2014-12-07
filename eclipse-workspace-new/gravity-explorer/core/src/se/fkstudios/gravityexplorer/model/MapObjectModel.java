@@ -5,6 +5,7 @@ import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
 import se.fkstudios.gravityexplorer.model.resources.ResourceContainer;
 
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -14,9 +15,8 @@ import com.badlogic.gdx.utils.Array;
  */
 public class MapObjectModel extends MapObject implements ResourceContainer {
 	
-	public enum GravitationalMode { ALL, NEIGHBOURHOOD, DOMINATING, STATIONARY } 
+	public enum GravitationalMode { ALL, NEIGHBOURHOOD, OBJECT, STATIONARY } 
 	
-	private MapObjectModel dominating;
 	private float width;
 	private float height;
 	private Vector2 position;
@@ -26,8 +26,10 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 	private float rotation;
 	private float rotationalSpeed; // in degrees per second
 	private boolean selfStabilizing;
-	private GravitationalMode gravitationalMode;
 	private boolean generatesParticles;
+	private GravitationalMode gravitationalMode;
+	private MapObjects influencingMapObjects;
+	private MapObjectModel dominatingMapObject;
 	
 	private Array<GraphicResource> resources;
 	
@@ -37,8 +39,6 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 			int mass,
 			float rotation,
 			float rotationSpeed,
-			boolean selfStabilizing,
-			GravitationalMode gravitationalMode,
 			boolean ganeratesParticles,
 			Array<GraphicResource> resources) 
 	{
@@ -50,10 +50,12 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		this.mass = mass;
 		this.rotation = rotation;
 		this.rotationalSpeed = rotationSpeed;
-		this.selfStabilizing = selfStabilizing;
-		this.gravitationalMode = gravitationalMode;
+		this.selfStabilizing = false;
 		this.resources = resources;
 		this.generatesParticles = ganeratesParticles;
+		this.gravitationalMode = GravitationalMode.NEIGHBOURHOOD;
+		this.influencingMapObjects = new MapObjects();
+		this.dominatingMapObject = null;
 	}
 
 	public MapObjectModel(float width, float height,
@@ -62,24 +64,14 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 			int mass,
 			float rotation,
 			float rotationSpeed,
-			boolean selfStabilizing,
-			GravitationalMode gravitationalMode,
 			boolean generatesParticles,
 			GraphicResource resource) 
 	{
-		this(width, height, position, velocity, mass, rotation, rotationSpeed, selfStabilizing, 
-				gravitationalMode, generatesParticles, new Array<GraphicResource>(1));
+		this(width, height, position, velocity, mass, rotation, rotationSpeed, 
+				generatesParticles, new Array<GraphicResource>(1));
 		this.resources.add(resource);
 	}
 	
-	public MapObjectModel getDominating() {
-		return dominating;
-	}
-
-	public void setDominating(MapObjectModel dominating) {
-		this.dominating = dominating;
-	}
-
 	public float getWidth() {
 		return width;
 	}
@@ -178,16 +170,66 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 		selfStabilizing = value;
 	}
 	
+	public boolean isGeneratingParticles() {
+		return generatesParticles;
+	}
+	
 	public GravitationalMode getGravitationalMode() {
 		return gravitationalMode;
 	}
-	
-	public void setGravitationalMode(GravitationalMode value) {
-		gravitationalMode = value;
+
+	public void setGravitationalModeToAll() {
+		gravitationalMode = GravitationalMode.ALL;
+		ClearInfluencingMapObjects();
+		dominatingMapObject = null;
 	}
 	
-	public boolean isGeneratingParticles() {
-		return generatesParticles;
+	public void setGravitationalModeToNeighbourhood() {
+		gravitationalMode = GravitationalMode.NEIGHBOURHOOD;
+		ClearInfluencingMapObjects();
+		dominatingMapObject = null;
+	}
+	
+	public void setGravitationalModeToStationary() {
+		gravitationalMode = GravitationalMode.STATIONARY;
+		ClearInfluencingMapObjects();
+		dominatingMapObject = null;
+	}
+	
+//	public void setGravitationalModeToObjects(MapObjectModel dominatingMapObject, Array<MapObjectModel> otherMapObjects) {
+//		gravitationalMode = GravitationalMode.OBJECTS;
+//		influencingMapObjects = otherMapObjects;
+//		influencingMapObjects.add(dominatingMapObject);
+//		this.dominatingMapObject = dominatingMapObject;
+//	}
+
+	public void setGravitationalModeToObject(MapObjectModel dominatingMapObject) {
+		gravitationalMode = GravitationalMode.OBJECT;
+		ClearInfluencingMapObjects();
+		influencingMapObjects.add(dominatingMapObject);
+		this.dominatingMapObject = dominatingMapObject;
+	}
+	
+	public MapObjectModel getDominatingMapObject() {
+		return dominatingMapObject;
+	}
+	
+	public MapObjects getInfluencingObjects(MapObjects allMapObjects, MapObjects neighbourhood) {
+		GravitationalMode mode = getGravitationalMode();
+		switch (mode) {
+		case ALL:
+			return allMapObjects;
+		case NEIGHBOURHOOD:
+			return neighbourhood;
+		case OBJECT:
+		case STATIONARY:
+		default:
+			return influencingMapObjects;
+		}
+	}
+	
+	public MapObjects getInfluencingObjectsSourceCollection() {
+		return influencingMapObjects;
 	}
 	
 	/**
@@ -199,7 +241,7 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 			//add current acceleration
 			Vector2 newVelocity = getVelocity().cpy();
 			newVelocity.add(acceleration.cpy().scl(delta));
-			//setts the new velocity
+			//Sets the new velocity
 			setVelocity(newVelocity);
 			//update position according to velocity and delta.
 			setPosition(position.cpy().add(velocity.cpy().scl(delta)));	
@@ -210,6 +252,13 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 			if (resource.getClass() == AnimationResource.class) {
 				((AnimationResource)resource).incStateTime(delta);
 			}
+		}
+	}
+	
+	private void ClearInfluencingMapObjects() {
+		while(influencingMapObjects.getCount() > 0) {
+			int index = influencingMapObjects.getCount() - 1;
+			influencingMapObjects.remove(index);
 		}
 	}
 }

@@ -11,10 +11,12 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class AnimationResource extends GraphicResource implements TextureRegionResource {
 	
-	public final String animationName;
-	public final String[] textureNames;
+	private Animation animation;
 	private boolean looping;
 	private float stateTime;
+	
+	public final String animationName;
+	public final String[] textureNames;
 	
 	public AnimationResource(boolean usingOwnerPosition, Vector2 position,
 			Vector2 positionOffset, boolean usingOwnerSize, float width,
@@ -28,6 +30,8 @@ public class AnimationResource extends GraphicResource implements TextureRegionR
 		this.textureNames = textureNames;
 		this.looping = looping;
 		this.stateTime = 0;
+
+		animation = TextureLoader.getInstance().getAnimation(animationName);
 	}	
 	
 	public boolean isLooping() {
@@ -52,7 +56,6 @@ public class AnimationResource extends GraphicResource implements TextureRegionR
 	
 	@Override
 	public TextureRegion getTextureRegion() {
-		Animation animation = TextureLoader.getInstance().getAnimation(animationName);
 		return animation.getKeyFrame(stateTime, looping);
 	}
 }
