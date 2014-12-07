@@ -1,5 +1,6 @@
 package se.fkstudios.gravityexplorer;
 
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.tools.imagepacker.TexturePacker2;
 import com.badlogic.gdx.tools.imagepacker.TexturePacker2.Settings;
 
@@ -26,7 +27,9 @@ public class TexturePacker {
 		// http://stackoverflow.com/questions/17292404/texture-packer-size-issue-in-libgdx
 		settings.maxHeight = 1024;
 		settings.maxWidth = 1024;
-	
+		settings.filterMag = TextureFilter.MipMapLinearNearest;
+		settings.filterMin = TextureFilter.MipMapLinearNearest;
+		
 		TexturePacker2.process(settings, 
 				"../gravity-explorer/android/assets/images/spritesheets", 
 				"../gravity-explorer/android/assets/images/spritesheets/textures", 
