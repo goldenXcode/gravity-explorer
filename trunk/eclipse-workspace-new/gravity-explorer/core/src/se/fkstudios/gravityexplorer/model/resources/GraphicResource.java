@@ -18,7 +18,8 @@ public abstract class GraphicResource {
 	
 	public GraphicResource(boolean usingOwnerPosition, Vector2 position, Vector2 positionOffset, 
 			boolean usingOwnerSize, float width, float height,
-			boolean visible, float minRenderScale, float maxRenderScale) {
+			boolean visible, float minRenderScale, float maxRenderScale) 
+	{
 		this.usingOwnerPosition = usingOwnerPosition;
 		this.position = position;
 		this.positionOffset = positionOffset;

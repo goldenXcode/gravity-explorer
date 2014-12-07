@@ -58,7 +58,7 @@ public class SpaceshipModel extends MapObjectModel {
 			int maxThrust, 
 			Array<GraphicResource> allResources, 
 			Array<AnimationResource> thrustAnimations) {
-		super(width, height, position, velocity, mass, rotation, 0f, false, GravitationalMode.NEIGHBOURHOOD, false, allResources);
+		super(width, height, position, velocity, mass, rotation, 0f, false, allResources);
 		this.thrust = new Vector2(0, 0);
 		this.maxThrust = maxThrust;
 		this.fuelLeft = Defs.STARTING_FUEL;

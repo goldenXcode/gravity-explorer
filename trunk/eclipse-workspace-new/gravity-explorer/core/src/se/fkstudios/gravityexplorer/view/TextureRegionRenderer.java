@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 	public class TextureRegionRenderer extends PeriodicResourceRenderer {
 
-	private SpriteBatch spriteBatch;
+	public SpriteBatch spriteBatch;
 	
 	public TextureRegionRenderer(float periodicityWidth, float periodicityHeight) {
 		super(periodicityWidth, periodicityHeight);
@@ -36,7 +36,7 @@ import com.badlogic.gdx.math.Rectangle;
 		TextureRegionResource textureRegionResouce = (TextureRegionResource)resource;
 		TextureRegion textureRegion = textureRegionResouce.getTextureRegion();
 		
-		spriteBatch.begin();
+//		spriteBatch.begin();
 		
 		spriteBatch.draw(textureRegion, 
 			drawArea.x, 
@@ -49,6 +49,6 @@ import com.badlogic.gdx.math.Rectangle;
 			scale, 
 			rotation);
 		
-		spriteBatch.end();
+//		spriteBatch.end();
 	}
 }

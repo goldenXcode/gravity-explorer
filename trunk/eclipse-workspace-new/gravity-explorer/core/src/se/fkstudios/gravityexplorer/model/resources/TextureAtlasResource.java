@@ -11,7 +11,8 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class TextureAtlasResource extends GraphicResource implements TextureRegionResource {
 
-
+	private TextureRegion textureRegion;
+	
 	public final String textureRegionName;
 	
 	public TextureAtlasResource(boolean usingOwnerPosition, Vector2 position,
@@ -22,10 +23,11 @@ public class TextureAtlasResource extends GraphicResource implements TextureRegi
 		super(usingOwnerPosition, position, positionOffset, usingOwnerSize, width,
 				height, visible, minRenderScale, maxRenderScale);
 		this.textureRegionName = textureRegionName;
+		textureRegion = TextureLoader.getInstance().getTextureRegion(textureRegionName);
 	}	
 
 	@Override
 	public TextureRegion getTextureRegion() {
-		return TextureLoader.getInstance().getTextureRegion(textureRegionName);
+		return textureRegion;
 	}
 }

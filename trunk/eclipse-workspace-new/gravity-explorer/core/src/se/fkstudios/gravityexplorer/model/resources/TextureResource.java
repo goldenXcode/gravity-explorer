@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class TextureResource extends GraphicResource implements TextureRegionResource {
 
+	private Texture texture;
 	private TextureRegion textureRegion;
 	public final String textureName;
 	
@@ -17,13 +18,13 @@ public class TextureResource extends GraphicResource implements TextureRegionRes
 		super(usingOwnerPosition, position, positionOffset, usingOwnerSize, width,
 				height, visible, minRenderScale, maxRenderScale);
 		this.textureName = textureName;
-		textureRegion = new TextureRegion();
+		
+		texture = TextureLoader.getInstance().getTexture(textureName);
+		textureRegion = new TextureRegion(texture);
 	}	
 
 	@Override
 	public TextureRegion getTextureRegion() {
-		Texture texture = TextureLoader.getInstance().getTexture(textureName);
-		textureRegion.setRegion(texture);
 		return textureRegion;
 	}
 }

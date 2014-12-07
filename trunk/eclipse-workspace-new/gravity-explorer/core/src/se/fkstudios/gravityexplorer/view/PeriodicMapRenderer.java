@@ -38,6 +38,16 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 	}
 	
 	public void render(PeriodicMapModel map, GameplayCamera camera) {
+		mapRender(map, camera);
+		if (RenderOptions.getInstance().debugRender) {
+			debugRender(map);
+		}
+		consoleRender();
+	}
+	
+	private void mapRender(PeriodicMapModel map, GameplayCamera camera) {
+		spriteBatch.begin();
+		
 		for (GraphicResource resource : map.getResources()) {
 			if (resource instanceof TextureRegionResource) {				
 				float proportionalPositionX = camera.position.x / Utility.getScreenCoordinate(map.getWidth());
@@ -63,12 +73,7 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 				renderResourcePeriodically(resource, drawArea, 0f, camera);			
 			}
 		}
-		
-		drawConsole();
-		
-		if (RenderOptions.getInstance().debugRender) {
-			debugRender(map);
-		}
+		spriteBatch.end();
 	}
 	
 	private void debugRender(PeriodicMapModel map) {
@@ -98,7 +103,7 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 		shapeRenderer.setProjectionMatrix(projectionMatrix);
 	}
 
-	private void drawConsole() {
+	private void consoleRender() {
 		consoleSpriteBatch.begin();
 		consolFont.draw(consoleSpriteBatch, consoleText, 20, 20);
 		consoleSpriteBatch.end();
