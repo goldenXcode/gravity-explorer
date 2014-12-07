@@ -238,13 +238,8 @@ public class MapObjectModel extends MapObject implements ResourceContainer {
 	 */
 	public void update(float delta) {
 		if (gravitationalMode != GravitationalMode.STATIONARY) {
-			//add current acceleration
-			Vector2 newVelocity = getVelocity().cpy();
-			newVelocity.add(acceleration.cpy().scl(delta));
-			//Sets the new velocity
-			setVelocity(newVelocity);
-			//update position according to velocity and delta.
-			setPosition(position.cpy().add(velocity.cpy().scl(delta)));	
+			setVelocity(velocity.x + acceleration.x * delta, velocity.y + acceleration.y * delta);
+			setPosition(position.x + velocity.x * delta, position.y + velocity.y * delta);
 		}
 		setRotation(((getRotation() + getRotationalSpeed()*delta) % 360f));
 		//update stateTime for any animation resources.

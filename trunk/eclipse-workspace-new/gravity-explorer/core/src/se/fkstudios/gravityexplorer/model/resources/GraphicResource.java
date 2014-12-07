@@ -92,15 +92,25 @@ public abstract class GraphicResource {
 		return height;
 	}
 	
+	private Vector2 combinedPosition1 = new Vector2();
 	public Vector2 getPosition(Vector2 ownerPosition) {
-		if (isUsingOwnerPosition())	
-			return ownerPosition.cpy().add(positionOffset);
-		else	
-			return position.cpy().add(positionOffset);
+		if (isUsingOwnerPosition())	{
+			combinedPosition1.x = ownerPosition.x + positionOffset.x;
+			combinedPosition1.y = ownerPosition.y + positionOffset.y;
+		}
+		else {
+
+			combinedPosition1.x = position.x + positionOffset.x;
+			combinedPosition1.y = position.y + positionOffset.y;
+		}
+		return combinedPosition1;
 	}
-	
+
+	private Vector2 combinedPosition2 = new Vector2();
 	public Vector2 getPosition() {	
-		return position.cpy().add(positionOffset);
+		combinedPosition2.x = position.x + positionOffset.x;
+		combinedPosition2.y = position.y + positionOffset.y;
+		return combinedPosition2;
 	}
 	
 	public void setPosition(Vector2 position) {
