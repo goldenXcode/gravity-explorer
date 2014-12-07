@@ -93,7 +93,7 @@ public class MapObjectFactory {
 
 		allResources.addAll(thrustAnimations);
 		
-		return new SpaceshipModel(1.32f,
+		SpaceshipModel spaceship = new SpaceshipModel(1.32f,
 				2.28f, 
 				Defs.STARTING_POSITION, 
 				Defs.STARTING_VELOCITY, 
@@ -102,6 +102,8 @@ public class MapObjectFactory {
 				Defs.MAX_THRUST, 
 				allResources, 
 				thrustAnimations);
+		spaceship.setSelfStabilizing(true);
+		return spaceship;
 	}
 	
 	public MapObjectModel createStationaryPlanet(float diameter, Vector2 position, float rotationSpeed) {	

@@ -61,54 +61,58 @@ public class PhysicsEngine {
 				mapObject.getAcceleration().y + applyGravityAccelerationDeltaHelper.y);
 	}
 
+	private Vector2 asa_CompAcceleration = new Vector2();
 	public void applyStabilizingAcceleration(MapObjectModel mapObject, MapObjects influencingMapObjects, 
 			float mapWidth, float mapHeight, float delta) 
 	{
 		MapObjectModel dominationgObject = findGravitationallyStrongestObject(mapObject, influencingMapObjects, mapWidth, mapHeight);
 		
 		if (dominationgObject != null) {
-			Vector2 compAcceleration = calculateOrbitCompensationAcceleration(mapObject, dominationgObject, mapWidth, mapHeight, delta);		
+			calculateOrbitCompensationAcceleration(mapObject, dominationgObject, 
+					mapWidth, mapHeight, delta, asa_CompAcceleration);		
 			Vector2 currentAcceleration = mapObject.getAcceleration();
-			mapObject.setAcceleration(compAcceleration.x + currentAcceleration.x, compAcceleration.y + currentAcceleration.y);
+			
+			mapObject.setAcceleration(currentAcceleration.x + asa_CompAcceleration.x, 
+					 currentAcceleration.y + asa_CompAcceleration.y);
 			
 			//TODO: compensate dominating object or parent object with force? 
 		}
 	}
-	
-	public Vector2 calculateOrbitCompensationAcceleration(MapObjectModel mapObject, MapObjects mapObjects,
-			float mapWidth, float mapHeight, float delta) 
-	{
-		MapObjectModel dominatingMapObject = findGravitationallyStrongestObject(mapObject, mapObjects, mapWidth, mapHeight);
-		return calculateOrbitCompensationAcceleration(mapObject, dominatingMapObject, mapWidth, mapHeight, delta);
-	}
 
-	private Vector2 calculateOrbitCompensationAcceleration(MapObjectModel mapObject, MapObjectModel dominatingMapObject,
-			float mapWidth, float mapHeight, float delta) 
+	private Vector2 cocaHelper_PositionDiff = new Vector2();
+	private Vector2 cocaHelper_VelocityDiff = new Vector2();
+	private Vector2 cocaHelper_Tangent = new Vector2();
+	private Vector2 cocaHelper_Force = new Vector2();
+	private void calculateOrbitCompensationAcceleration(MapObjectModel mapObject, MapObjectModel dominatingMapObject,
+			float mapWidth, float mapHeight, float delta, Vector2 resultVector) 
 	{
-		if (dominatingMapObject == null)
-			return new Vector2(0, 0);
+		if (dominatingMapObject == null) {
+			resultVector.x = 0;
+			resultVector.y = 0;
+			return;
+		}
 
-		Vector2 positionDiff = new Vector2();
 		computeShortestDistanceVector(dominatingMapObject.getPosition().x, dominatingMapObject.getPosition().y, 
-				mapObject.getPosition().x, mapObject.getPosition().y, mapWidth, mapHeight, positionDiff);
+				mapObject.getPosition().x, mapObject.getPosition().y, mapWidth, mapHeight, cocaHelper_PositionDiff);
 		
-		Vector2 velocityDiff = dominatingMapObject.getVelocity().cpy().sub(mapObject.getVelocity());
-		Vector2 tangentialVector = positionDiff.cpy().rotate(90).nor();
+		float targetSpeed = calculateOrbitingSpeed(cocaHelper_PositionDiff.len(), dominatingMapObject.getMass());
 
-		float targetSpeed = calculateOrbitingSpeed(positionDiff.len(), dominatingMapObject.getMass());
+		cocaHelper_Tangent = cocaHelper_PositionDiff.rotate(90).nor();
+		cocaHelper_VelocityDiff.x = dominatingMapObject.getVelocity().x - mapObject.getVelocity().x;
+		cocaHelper_VelocityDiff.y = dominatingMapObject.getVelocity().y - mapObject.getVelocity().y;
+		float currentSpeed = Math.abs(cocaHelper_VelocityDiff.dot(cocaHelper_Tangent));
 		
-		float currentSpeed = Math.abs(velocityDiff.cpy().dot(tangentialVector));
-		
-		Vector2 force = tangentialVector.scl(Math.abs(targetSpeed - currentSpeed) * Defs.ORBITAL_COMPENSATIONAL_FACTOR2);
+		cocaHelper_Force = cocaHelper_Tangent.scl(Math.abs(targetSpeed - currentSpeed) * Defs.ORBITAL_COMPENSATIONAL_FACTOR2);
 
-		boolean clockwise = velocityDiff.dot(tangentialVector) <= 0;
+		boolean clockwise = cocaHelper_VelocityDiff.dot(cocaHelper_Tangent) <= 0;
 		boolean accelerating = targetSpeed > currentSpeed;
 
 		if ((!accelerating && clockwise) || (accelerating && !clockwise)) {
-			force.scl(-1);
+			cocaHelper_Force.scl(-1);
 		}
 
-		return force.scl(delta);
+		resultVector.x = cocaHelper_Force.x * delta;
+		resultVector.y = cocaHelper_Force.y * delta;
 	}
 
 	/**

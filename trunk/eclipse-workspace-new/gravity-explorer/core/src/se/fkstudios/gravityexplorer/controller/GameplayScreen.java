@@ -18,6 +18,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -154,6 +155,7 @@ public class GameplayScreen implements Screen {
 		textureRegionRenderer.setProjectionMatrix(camera.combined);
 		colorRenderer.setProjectionMatrix(camera.combined);
 		textureRegionRenderer.spriteBatch.begin();
+		colorRenderer.shapeRenderer.begin(ShapeType.Filled);
 		for (MapLayer layer : map.getLayers()) {
 			MapObjects allMapObjects = layer.getObjects();
 			for (MapObject mapObject : allMapObjects)
@@ -176,6 +178,7 @@ public class GameplayScreen implements Screen {
 			}
 		}
 		textureRegionRenderer.spriteBatch.end();
+		colorRenderer.shapeRenderer.end();
 	}
 	
 	@Override
