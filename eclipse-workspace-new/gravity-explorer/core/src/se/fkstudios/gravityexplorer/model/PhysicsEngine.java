@@ -27,28 +27,6 @@ public class PhysicsEngine {
 
 	/**
 	 * Updates a given MapObjectModel's acceleration imposed by gravity with
-	 * respect to given MapObjectModels.
-	 * 
-	 * @param mapObject
-	 *            the MapObjectModel to update.
-	 * @param mapObjects
-	 *            the objects with gravitational influence over mapObject.
-	 * @param mapWidth
-	 *            the maps width.
-	 * @param mapHeight
-	 *            the maps height.
-	 */
-	public void applyGravity(MapObjectModel mapObject,
-			Array<MapObjectModel> mapObjects, float mapWidth, float mapHeight) {
-		Vector2 accelerationDelta = computGravitationalAcceleration(mapObject,
-				mapObjects, mapWidth, mapHeight);
-		mapObject.setAcceleration(mapObject.getAcceleration().x
-				+ accelerationDelta.x, mapObject.getAcceleration().y
-				+ accelerationDelta.y);
-	}
-
-	/**
-	 * Updates a given MapObjectModel's acceleration imposed by gravity with
 	 * respect to given MapObjectModels. Using the Euler backward method.
 	 * 
 	 * @param mapObject the MapObjectModel to update acceleration for.
@@ -58,20 +36,29 @@ public class PhysicsEngine {
 	 * @param mapHeight the maps height.
 	 * @param delta time delta since last update in seconds.
 	 */
+	private Vector2 applyGravityAccelerationDeltaHelper = new Vector2();
+	private Vector2 applyGravityDominatingAccelerationsHelper = new Vector2();
 	public void applyGravity(MapObjectModel mapObject, MapObjects influencingMapObjects,
 			float mapWidth, float mapHeight, float delta) 
 	{
-		Vector2 accelerationDelta = computeGravitationalAcceleration(mapObject, influencingMapObjects, mapWidth, mapHeight, delta);
+		applyGravityAccelerationDeltaHelper.x = 0;
+		applyGravityAccelerationDeltaHelper.y = 0;
+		applyGravityDominatingAccelerationsHelper.x = 0;
+		applyGravityDominatingAccelerationsHelper.y = 0;
+		
+		computeGravitationalAcceleration(mapObject, influencingMapObjects, mapWidth, mapHeight, delta, applyGravityAccelerationDeltaHelper);
 	
 		MapObjectModel dominatingMapObject = mapObject.getDominatingMapObject();
-		Vector2 dominatingAcceleration = new Vector2(0, 0);
 		while (dominatingMapObject != null) {
-			dominatingAcceleration.add(dominatingMapObject.getAcceleration());
+			applyGravityDominatingAccelerationsHelper.x += + dominatingMapObject.getAcceleration().x;
+			applyGravityDominatingAccelerationsHelper.y +=  dominatingMapObject.getAcceleration().y;
 			dominatingMapObject = dominatingMapObject.getDominatingMapObject();
 		}
-		accelerationDelta.add(dominatingAcceleration);
+		applyGravityAccelerationDeltaHelper.x += applyGravityDominatingAccelerationsHelper.x;
+		applyGravityAccelerationDeltaHelper.y += applyGravityDominatingAccelerationsHelper.y;
 
-		mapObject.setAcceleration(mapObject.getAcceleration().x + accelerationDelta.x, mapObject.getAcceleration().y + accelerationDelta.y);
+		mapObject.setAcceleration(mapObject.getAcceleration().x + applyGravityAccelerationDeltaHelper.x, 
+				mapObject.getAcceleration().y + applyGravityAccelerationDeltaHelper.y);
 	}
 
 	public void applyStabilizingAcceleration(MapObjectModel mapObject, MapObjects influencingMapObjects, 
@@ -80,43 +67,39 @@ public class PhysicsEngine {
 		MapObjectModel dominationgObject = findGravitationallyStrongestObject(mapObject, influencingMapObjects, mapWidth, mapHeight);
 		
 		if (dominationgObject != null) {
-			Vector2 compAcceleration = calculateOrbitCompensationAcceleration(mapObject, dominationgObject, 
-					mapWidth, mapHeight, delta);		
+			Vector2 compAcceleration = calculateOrbitCompensationAcceleration(mapObject, dominationgObject, mapWidth, mapHeight, delta);		
 			Vector2 currentAcceleration = mapObject.getAcceleration();
-			mapObject.setAcceleration(compAcceleration.x + currentAcceleration.x, 
-					compAcceleration.y + currentAcceleration.y);
+			mapObject.setAcceleration(compAcceleration.x + currentAcceleration.x, compAcceleration.y + currentAcceleration.y);
 			
 			//TODO: compensate dominating object or parent object with force? 
 		}
 	}
 	
 	public Vector2 calculateOrbitCompensationAcceleration(MapObjectModel mapObject, MapObjects mapObjects,
-			float mapWidth, float mapHeight, float delta) {
-		MapObjectModel dominatingMapObject = findGravitationallyStrongestObject(
-				mapObject, mapObjects, mapWidth, mapHeight);
-		return calculateOrbitCompensationAcceleration(mapObject,
-				dominatingMapObject, mapWidth, mapHeight, delta);
+			float mapWidth, float mapHeight, float delta) 
+	{
+		MapObjectModel dominatingMapObject = findGravitationallyStrongestObject(mapObject, mapObjects, mapWidth, mapHeight);
+		return calculateOrbitCompensationAcceleration(mapObject, dominatingMapObject, mapWidth, mapHeight, delta);
 	}
 
-	public Vector2 calculateOrbitCompensationAcceleration(
-			MapObjectModel mapObject, MapObjectModel dominatingMapObject,
-			float mapWidth, float mapHeight, float delta) {
+	private Vector2 calculateOrbitCompensationAcceleration(MapObjectModel mapObject, MapObjectModel dominatingMapObject,
+			float mapWidth, float mapHeight, float delta) 
+	{
 		if (dominatingMapObject == null)
 			return new Vector2(0, 0);
 
-		Vector2 positionDiff = shortestDistanceVector(
-				dominatingMapObject.getPosition(), mapObject.getPosition(),
-				mapWidth, mapHeight);
-		Vector2 velocityDiff = dominatingMapObject.getVelocity().cpy()
-				.sub(mapObject.getVelocity());
+		Vector2 positionDiff = new Vector2();
+		computeShortestDistanceVector(dominatingMapObject.getPosition().x, dominatingMapObject.getPosition().y, 
+				mapObject.getPosition().x, mapObject.getPosition().y, mapWidth, mapHeight, positionDiff);
+		
+		Vector2 velocityDiff = dominatingMapObject.getVelocity().cpy().sub(mapObject.getVelocity());
 		Vector2 tangentialVector = positionDiff.cpy().rotate(90).nor();
 
-		float targetSpeed = calculateOrbitingSpeed(positionDiff.len(),
-				dominatingMapObject.getMass());
+		float targetSpeed = calculateOrbitingSpeed(positionDiff.len(), dominatingMapObject.getMass());
+		
 		float currentSpeed = Math.abs(velocityDiff.cpy().dot(tangentialVector));
-		Vector2 force = tangentialVector.scl(Math.abs(targetSpeed
-				- currentSpeed)
-				* Defs.ORBITAL_COMPENSATIONAL_FACTOR2);
+		
+		Vector2 force = tangentialVector.scl(Math.abs(targetSpeed - currentSpeed) * Defs.ORBITAL_COMPENSATIONAL_FACTOR2);
 
 		boolean clockwise = velocityDiff.dot(tangentialVector) <= 0;
 		boolean accelerating = targetSpeed > currentSpeed;
@@ -131,14 +114,12 @@ public class PhysicsEngine {
 	/**
 	 * Detect if two objects has collided.
 	 */
-	public boolean isCollision(MapObjectModel mapObject1,
-			MapObjectModel mapObject2, float mapWidth, float mapHeight) {
+	public boolean isCollision(MapObjectModel mapObject1, MapObjectModel mapObject2, float mapWidth, float mapHeight) {
 		Vector2 position1 = mapObject1.getPosition();
 		Vector2 position2 = mapObject2.getPosition();
+		float distance = computeShortestDistance(position1.x, position1.y, position2.x, position2.y, mapWidth, mapHeight);
 		float width1 = mapObject1.getWidth();
 		float width2 = mapObject2.getWidth();
-		float distance = shortestDistance(position1, position2, mapWidth,
-				mapHeight);
 		return (distance < width1 / 2 + width2 / 2) && distance > 0.1f;
 	}
 
@@ -146,13 +127,13 @@ public class PhysicsEngine {
 	 * Finds the closest map object to mapObject in mapObjects. Return null if
 	 * mapObjects is empty.
 	 */
-	public MapObjectModel findClosestObject(MapObjectModel mapObject,
-			Array<MapObjectModel> mapObjects, float mapWidth, float mapHeight) {
+	public MapObjectModel findClosestObject(MapObjectModel mapObject, Array<MapObjectModel> mapObjects, float mapWidth, float mapHeight) {
 		MapObjectModel closestMapObject = null;
 		float shortestDistance = Float.MAX_VALUE;
 		for (MapObjectModel otherMapObject : mapObjects) {
-			float distance = shortestDistance(mapObject.getPosition(),
-					otherMapObject.getPosition(), mapWidth, mapHeight);
+			Vector2 position1 = mapObject.getPosition();
+			Vector2 position2 = otherMapObject.getPosition();
+			float distance = computeShortestDistance(position1.x, position1.y, position2.x, position2.y, mapWidth, mapHeight);
 			if ((mapObject != otherMapObject) && (distance < shortestDistance)) {
 				closestMapObject = otherMapObject;
 				shortestDistance = distance;
@@ -165,15 +146,15 @@ public class PhysicsEngine {
 	 * Finds the map object in mapObjects influencing mapObject with the
 	 * greatest gravitational force. Return null if mapObjects is empty.
 	 */
-	public MapObjectModel findGravitationallyStrongestObject(
-			MapObjectModel mapObject, MapObjects mapObjects,
-			float mapWidth, float mapHeight) {
+	public MapObjectModel findGravitationallyStrongestObject(MapObjectModel mapObject, MapObjects mapObjects,
+			float mapWidth, float mapHeight)
+	{
 		MapObjectModel resultObjectModel = null;
 		float currentForce = 0;
 		for (MapObject otherMapObject : mapObjects) {
 			MapObjectModel otherMapObjectModel = (MapObjectModel)otherMapObject;
 			if (mapObject != otherMapObjectModel) {
-				float force = computeGravitationalForce(mapObject, otherMapObjectModel, mapWidth, mapHeight).len();
+				float force = computeGravitationalForce(mapObject, otherMapObjectModel, mapWidth, mapHeight);
 				if (force > currentForce 
 					/*	&& mapObject.getMass() > otherMapObject.getMass() * Defs.COMPENSATIONAL_CUTOFF_FACTOR */) {
 					currentForce = force;
@@ -184,8 +165,9 @@ public class PhysicsEngine {
 		return resultObjectModel;
 	}
 
-	public void elasticCollision(Vector2 v1, Vector2 v2, Vector2 v12,
-			Vector2 v22, float mass1, float mass2, Vector2 x1, Vector2 x2) {
+	public void elasticCollision(Vector2 v1, Vector2 v2, Vector2 v12, Vector2 v22, 
+			float mass1, float mass2, Vector2 x1, Vector2 x2) 
+	{
 		// first calculation
 		float factor1 = (2 * mass2 / (mass1 + mass2));
 		float factor2 = (v1.sub(v2)).dot(x1.sub(x2));
@@ -206,144 +188,129 @@ public class PhysicsEngine {
 		return (float) Math.sqrt(Defs.GRAVITATIONAL_CONSTANT * planetMass / distance);
 	}
 
-	private Vector2 computGravitationalAcceleration(MapObjectModel mapObject,
-			Array<MapObjectModel> mapObjects, float mapWidth, float mapHeight) {
-		Vector2 acceleration = new Vector2(0, 0);
-		for (int i = 0; i < mapObjects.size; i++) {
-			MapObjectModel mapObject2 = mapObjects.get(i);
-			Vector2 gravitationalForce = computeGravitationalForce(mapObject2,
-					mapObject, mapWidth, mapHeight);
-			Vector2 accelerationDelta = gravitationalForce.scl(1f / mapObject
-					.getMass());
-			acceleration.add(accelerationDelta);
-		}
-		return acceleration;
-	}
-
-	private Vector2 computeGravitationalAcceleration(MapObjectModel mapObject,
-			MapObjects mapObjects, float mapWidth, float mapHeight,
-			float delta) {
-		Vector2 acceleration = new Vector2(0, 0);
-		for (int i = 0; i < mapObjects.getCount(); i++) {
+	private Vector2 computeGravitationalAccelerationHelper = new Vector2();
+	private Vector2 computeGravitationalAcceleration(MapObjectModel mapObject, MapObjects mapObjects, 
+			float mapWidth, float mapHeight, float delta, Vector2 resultVector) 
+	{
+		resultVector.x = 0;
+		resultVector.y = 0;
+		for (int i = 0; i < mapObjects.getCount(); i++) {	
 			MapObjectModel mapObject2 = (MapObjectModel) mapObjects.get(i);
-
-			Vector2 accelerationDelta = computeGravitationalAcceleration(
-					mapObject, mapObject2, mapWidth, mapHeight, delta);
-
-			// Vector2 gravitationalForce =
-			// computeGravitationalForce(mapObject2, mapObject,
-			// mapWidth, mapHeight,
-			// delta);
-			// Vector2 accelerationDelta =
-			// gravitationalForce.div(mapObject.getMass());
-			acceleration.add(accelerationDelta);
+			computeGravitationalAcceleration(mapObject, mapObject2, mapWidth, mapHeight, delta, computeGravitationalAccelerationHelper);
+			resultVector.x += computeGravitationalAccelerationHelper.x;
+			resultVector.y += computeGravitationalAccelerationHelper.y;
 		}
-		return acceleration;
+		return resultVector;
 	}
 
-	private Vector2 computeGravitationalAcceleration(MapObjectModel mapObject1,
-			MapObjectModel mapObject2, float mapWidth, float mapHeight,
-			float delta) {
-		Vector2 gravitationalForce = computeGravitationalForce(mapObject2,
-				mapObject1, mapWidth, mapHeight, delta);
-		return gravitationalForce.scl(1f / mapObject1.getMass());
+	private void computeGravitationalAcceleration(MapObjectModel mapObject1,
+			MapObjectModel mapObject2, float mapWidth, float mapHeight, float delta, Vector2 resultVector) 
+	{
+		computeGravitationalForceVector(mapObject2, mapObject1, mapWidth, mapHeight, delta, resultVector);
+		resultVector.scl(1f / mapObject1.getMass());
 	}
 
-	private Vector2 computeGravitationalForce(MapObjectModel mapObject1,
-			MapObjectModel mapObject2, float mapWidth, float mapHeight) {
-		return computeGravitationalForce(mapObject1.getPosition(),
-				mapObject2.getPosition(), mapObject1.getMass(),
-				mapObject2.getMass(), mapObject1.getRadius() + mapObject2.getRadius(),
-				mapWidth, mapHeight);
+	private Vector2 computeGravitationalForceHelper = new Vector2();
+	private float computeGravitationalForce(MapObjectModel mapObject1, MapObjectModel mapObject2, 
+			float mapWidth, float mapHeight) 
+	{
+		computeGravitationalForceVector(mapObject1.getPosition().x, mapObject1.getPosition().y,
+				mapObject2.getPosition().x, mapObject2.getPosition().y, 
+				mapObject1.getMass(), mapObject2.getMass(), 
+				mapObject1.getRadius() + mapObject2.getRadius(),
+				mapWidth, mapHeight, computeGravitationalForceHelper);
+		return computeGravitationalForceHelper.len();
 	}
 
 	/**
 	 * The Euler-Backward version
 	 */
-	private Vector2 computeGravitationalForce(MapObjectModel mapObject1,
-			MapObjectModel mapObject2, float mapWidth, float mapHeight,
-			float delta) {
-		Vector2 velocity = mapObject1.getVelocity().cpy();
-		Vector2 positionIncrement = velocity.scl(delta);
-		return computeGravitationalForce(
-				mapObject1.getPosition().cpy().add(positionIncrement),
-				mapObject2.getPosition(), mapObject1.getMass(),
-				mapObject2.getMass(), mapObject1.getRadius() + mapObject2.getRadius(),
-				mapWidth, mapHeight);
+	private void computeGravitationalForceVector(MapObjectModel mapObject1, MapObjectModel mapObject2, 
+			float mapWidth, float mapHeight, float delta, Vector2 resultVector) 
+	{
+		float xVel1 = mapObject1.getVelocity().x;
+		float yVel1 = mapObject1.getVelocity().y;
+		
+		float xPos1Inc = xVel1 * delta;
+		float yPos1Inc = yVel1 * delta;
+		
+		float xPos1 = mapObject1.getPosition().x;
+		float yPos1 = mapObject1.getPosition().y;
+		
+		float xPos2 = mapObject2.getPosition().x;
+		float yPos2 = mapObject2.getPosition().y;
+		
+		computeGravitationalForceVector(xPos1 + xPos1Inc, yPos1 + yPos1Inc, xPos2, yPos2, 
+				mapObject1.getMass(), mapObject2.getMass(), 
+				mapObject1.getRadius() + mapObject2.getRadius(),
+				mapWidth, mapHeight, resultVector);
 	}
 
-	private Vector2 computeGravitationalForce(Vector2 position1,
-			Vector2 position2, float mass1, float mass2, float cutoff,
-			float mapWidth, float mapHeight) {
-		Vector2 distanceVector = shortestDistanceVector(position1, position2,
-				mapWidth, mapHeight);
-		float distance = distanceVector.len();
+	private void computeGravitationalForceVector(float xPos1, float yPos1, float xPos2, float yPos2,
+			float mass1, float mass2, float cutoff, float mapWidth, float mapHeight, Vector2 resultVector) 
+	{
+		computeShortestDistanceVector(xPos1, yPos1, xPos2, yPos2, mapWidth, mapHeight, resultVector);
+		float distance = resultVector.len();
 		float force = 0;
 		if (distance > cutoff) { // cutoff to prevent singularities arising from
 								 // zero distance between objects
 			force = (Defs.GRAVITATIONAL_CONSTANT * mass1 * mass2) / (distance * distance); // Newtons law of gravity
 		}
-		Vector2 direction = distanceVector.nor();
-		return direction.scl(force);
+		resultVector.nor();
+		resultVector.scl(force);
 	}
 
-	private float shortestDistance(Vector2 position1, Vector2 position2,
-			float mapWidth, float mapHeight) {
-		return shortestDistanceVector(position1, position2, mapWidth, mapHeight).len();
+	private Vector2 shortestDistanceHelper = new Vector2(0,0);
+	private float computeShortestDistance(float xPos1, float yPos1, float xPos2, float yPos2, float mapWidth, float mapHeight) {
+		computeShortestDistanceVector(xPos1, yPos1, xPos2, yPos2, mapWidth, mapHeight, shortestDistanceHelper);
+		return shortestDistanceHelper.len();
 	}
-
+	
+	private Vector2 shortestDistanceVectorHelper1 = new Vector2(0, 0);
+	private Vector2 shortestDistanceVectorHelper2 = new Vector2(0, 0);
 	/**
-	 * Computes the shortest vector from position1 to position2 with respect to
-	 * periodicity.
-	 * 
-	 * @param position1
-	 *            from position.
-	 * @param position2
-	 *            to position.
+	 * Computes the shortest vector from position1 to position2 with respect to periodicity.
+	 * @param position1 from position.
+	 * @param position2 to position.
 	 * @return the shortest vector from position1 to position2.
 	 */
-	private Vector2 shortestDistanceVector(Vector2 position1,
-			Vector2 position2, float mapWidth, float mapHeight) {
-		Vector2 result1 = shortestDistanceVectorHelper(position1, position2,
-				mapWidth, mapHeight);
-		Vector2 result2 = shortestDistanceVectorHelper(position2, position1,
-				mapWidth, mapHeight).scl(-1);
-		if (result1.len2() < result2.len2())
-			return result1;
-		else
-			return result2;
+	private void computeShortestDistanceVector(float xPos1, float yPos1, float xPos2, float yPos2, float mapWidth, float mapHeight, Vector2 resultVector) {	
+		shortestDistanceVectorHelper(xPos1, yPos1, xPos2, yPos2, mapWidth, mapHeight, shortestDistanceVectorHelper1);
+		
+		shortestDistanceVectorHelper(xPos2, yPos2, xPos1,yPos1, mapWidth, mapHeight, shortestDistanceVectorHelper2);
+		shortestDistanceVectorHelper2.scl(-1);
+		
+		if (shortestDistanceVectorHelper1.len2() < shortestDistanceVectorHelper2.len2()) {
+			resultVector.x = shortestDistanceVectorHelper1.x;
+			resultVector.y = shortestDistanceVectorHelper1.y;
+		}
+		else {
+			resultVector.x = shortestDistanceVectorHelper2.x;
+			resultVector.y = shortestDistanceVectorHelper2.y;
+		}
 	}
 
 	/**
 	 * Computes the shortest vector from position1 to position2 considering
 	 * alternative positions for position2 only.
 	 */
-	private Vector2 shortestDistanceVectorHelper(Vector2 position1,
-			Vector2 position2, float mapWidth, float mapHeight) {
-		float x1 = position1.x;
-		float x2 = position2.x;
-		float y1 = position1.y;
-		float y2 = position2.y;
+	private void shortestDistanceVectorHelper(float xPos1, float yPos1, float xPos2, float yPos2, 
+			float mapWidth, float mapHeight, Vector2 resultVector) 
+	{
+		float xDistance1 = xPos1 - xPos2;
+		float xDistance2 = -(xPos1 - xPos2) + mapWidth;
 
-		float xDistance1 = x1 - x2;
-		float xDistance2 = -(x1 - x2) + mapWidth;
-
-		float yDistance1 = y1 - y2;
-		float yDistance2 = -(y1 - y2) + mapHeight; // yDistance2 == yDistance1 +
-													// 5, not good
-
-		Vector2 result = new Vector2();
-
+		float yDistance1 = yPos1 - yPos2;
+		float yDistance2 = -(yPos1 - yPos2) + mapHeight;
+		
 		if (Math.abs(xDistance1) < Math.abs(xDistance2))
-			result.x = xDistance1;
+			resultVector.x = xDistance1;
 		else
-			result.x = -xDistance2;
+			resultVector.x = -xDistance2;
 
 		if (Math.abs(yDistance1) < Math.abs(yDistance2))
-			result.y = yDistance1;
+			resultVector.y = yDistance1;
 		else
-			result.y = -yDistance2;
-
-		return result;
+			resultVector.y = -yDistance2;
 	}
 }

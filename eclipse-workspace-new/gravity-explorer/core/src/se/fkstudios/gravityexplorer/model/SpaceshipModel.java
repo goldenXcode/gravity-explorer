@@ -68,9 +68,13 @@ public class SpaceshipModel extends MapObjectModel {
 	@Override
 	public void update(float delta) {
 		int mass = getMass();
-		Vector2 acceleration = thrust.cpy().scl(1f / mass);
-//		setFuelLeft(getFuelLeft() - thrust.cpy().len() * Defs.FUEL_SCALING_FACTOR*fuelEfficiencyMapping(getFuelLeft()) ); 
-		getAcceleration().add(acceleration).scl(fuelEfficiencyMapping(fuelLeft));
+		float xAccelerationInc = thrust.x / mass;
+		float yAccelerationInc = thrust.y / mass;
+//		setFuelLeft(getFuelLeft() - thrust.len() * Defs.FUEL_SCALING_FACTOR * fuelEfficiencyMapping(getFuelLeft()) ); 
+		Vector2 acceleration = getAcceleration();
+		setAcceleration(acceleration.x + (xAccelerationInc * fuelEfficiencyMapping(fuelLeft)),
+				acceleration.y + (yAccelerationInc * fuelEfficiencyMapping(fuelLeft)));
+		
 		super.update(delta);
 		if (thrust.len2() > 0) 
 			setRotation(thrust.angle() - 90); //LibGdx render with rotation 0 from y-axis while Vector2 calculates angle from x-axis, thus -90.
