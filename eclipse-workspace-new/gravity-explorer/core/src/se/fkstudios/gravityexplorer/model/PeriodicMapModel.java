@@ -162,7 +162,7 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 		float width = getWidth();
 		float height = getHeight();
 		
-		mapObject.setAcceleration(new Vector2(0,0));
+		mapObject.setAcceleration(0, 0);
 		
 		MapObjects influencingMapObjects = mapObject.getInfluencingObjects(allMapObjects, neighbourhood);
 		

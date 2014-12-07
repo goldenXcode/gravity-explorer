@@ -6,12 +6,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class GameplayCamera extends OrthographicCamera {
 
 	public enum CameraMode { TIGHT, LOOSE };
 	
 	private CameraMode cameraMode;
+	private Vector3 screenTargetPosition;
 	
 	/*to get a proper logarithmic zoom we'll use a variable modified by the user (zoomDomain) and 
 	 a (exponential) mapping from zoomDomain to zoomRange which will be the actual zoom seen on screen. 
@@ -29,6 +31,7 @@ public class GameplayCamera extends OrthographicCamera {
 		cameraMode = CameraMode.LOOSE;
 		zoomDomain = zoom; 
 		tempViewport = new Rectangle(0,0, viewportWidth, viewportHeight);
+		screenTargetPosition = new Vector3(position.x, position.y, position.z);
 	}
 	
 	public GameplayCamera(float viewportWidth, float viewportHeight, CameraMode cameraMode) {
@@ -92,32 +95,34 @@ public class GameplayCamera extends OrthographicCamera {
 	 */
 	public void updatePosition(float delta, Vector2 targetPosition, float mapWidth, float mapHeight) {	
 		//update position
-		Vector2 targetScreenPosition = targetPosition.cpy().scl(Defs.PIXELS_PER_UNIT);
-		Vector2 cameraPosition = new Vector2(position.x, position.y);
-		 
-		float jumpThresholdX = mapWidth * Defs.PIXELS_PER_UNIT * 0.5f;
-		float jumpThresholdY = mapHeight * Defs.PIXELS_PER_UNIT * 0.5f;
+		screenTargetPosition.x = targetPosition.x * Defs.PIXELS_PER_UNIT;
+		screenTargetPosition.y = targetPosition.y * Defs.PIXELS_PER_UNIT;
 		
-		boolean jumpLeft = cameraPosition.x - targetScreenPosition.x < -jumpThresholdX;
-		boolean jumpRight = targetScreenPosition.x - cameraPosition.x < -jumpThresholdX;
-		boolean jumpUp = targetScreenPosition.y - cameraPosition.y < -jumpThresholdY; 
-		boolean jumpDown = cameraPosition.y - targetScreenPosition.y < -jumpThresholdY;
-		
-		if (jumpLeft) 
-			cameraPosition.x = cameraPosition.x + mapWidth * Defs.PIXELS_PER_UNIT;
-		else if (jumpRight)
-			cameraPosition.x = cameraPosition.x - mapWidth * Defs.PIXELS_PER_UNIT;
-		else if (jumpUp)
-			cameraPosition.y = cameraPosition.y - mapHeight * Defs.PIXELS_PER_UNIT;
-		else if (jumpDown)
-			cameraPosition.y = cameraPosition.y + mapHeight * Defs.PIXELS_PER_UNIT;
-		
-		cameraPosition.lerp(targetScreenPosition, 3 * delta);
+		if (cameraMode == CameraMode.LOOSE) {
+			float jumpThresholdX = mapWidth * Defs.PIXELS_PER_UNIT * 0.5f;
+			float jumpThresholdY = mapHeight * Defs.PIXELS_PER_UNIT * 0.5f;
 			
-		if (cameraMode == CameraMode.LOOSE)
-			position.set(cameraPosition.x, cameraPosition.y, 0);
-		else
-			position.set(targetScreenPosition.x, targetScreenPosition.y, 0);
+			boolean jumpLeft = position.x - screenTargetPosition.x < -jumpThresholdX;
+			boolean jumpRight = screenTargetPosition.x - position.x < -jumpThresholdX;
+			boolean jumpUp = screenTargetPosition.y - position.y < -jumpThresholdY; 
+			boolean jumpDown = position.y - screenTargetPosition.y < -jumpThresholdY;
+			
+			if (jumpLeft) 
+				position.x = position.x + mapWidth * Defs.PIXELS_PER_UNIT;
+			else if (jumpRight)
+				position.x = position.x - mapWidth * Defs.PIXELS_PER_UNIT;
+			else if (jumpUp)
+				position.y = position.y - mapHeight * Defs.PIXELS_PER_UNIT;
+			else if (jumpDown)
+				position.y += position.y + mapHeight * Defs.PIXELS_PER_UNIT;
+				
+			position.lerp(screenTargetPosition, 3 * delta);
+		}
+		else {
+			position.x = screenTargetPosition.x;
+			position.y = screenTargetPosition.y;
+		}
+			
 	}
 		
 	public float getRotation()
