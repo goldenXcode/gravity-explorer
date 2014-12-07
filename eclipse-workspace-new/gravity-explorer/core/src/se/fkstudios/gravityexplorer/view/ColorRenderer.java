@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class ColorRenderer extends PeriodicResourceRenderer {
 	
-	private ShapeRenderer shapeRenderer;
+	public ShapeRenderer shapeRenderer;
 	
 	public ColorRenderer(float periodicityWidth, float periodicityHeight) {
 		super(periodicityWidth, periodicityHeight);
@@ -35,8 +35,6 @@ public class ColorRenderer extends PeriodicResourceRenderer {
 		}
 		ColorResource colorResource = (ColorResource)resource;
 		shapeRenderer.setColor(colorResource.getColor());
-		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.rect(drawArea.x, drawArea.y, originX, originY, drawArea.width, drawArea.height, scale, scale, rotation);
-		shapeRenderer.end();
 	}
 }
