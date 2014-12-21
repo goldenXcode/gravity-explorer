@@ -18,16 +18,16 @@ import com.badlogic.gdx.utils.Array;
  * 
  * @author kristofer
  */
-public class TextureLoader {
+public class ResourceLoader {
 
-	private static final TextureLoader instance = new TextureLoader();
+	private static final ResourceLoader instance = new ResourceLoader();
 	
 	private TextureAtlas textureAtlas;
 	private HashMap<String, Texture> textureMap;
 	private HashMap<String, TextureRegion> textureRegionMap;
 	private HashMap<String, Animation> animationMap;
 	
-	private TextureLoader() {
+	private ResourceLoader() {
 		
 		textureAtlas = new TextureAtlas(Gdx.files.internal(Defs.TEXTURE_PACK_FILE_PATH));
 		
@@ -101,7 +101,7 @@ public class TextureLoader {
 	 * Returns the only allowed instance of this object.
 	 * @return self
 	 */
-	public static TextureLoader getInstance() {
+	public static ResourceLoader getInstance() {
 		return instance;
 	}
 }

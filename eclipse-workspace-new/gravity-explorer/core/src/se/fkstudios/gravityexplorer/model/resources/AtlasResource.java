@@ -9,13 +9,13 @@ import com.badlogic.gdx.math.Vector2;
  * 
  * @author kristofer
  */
-public class TextureAtlasResource extends GraphicResource implements TextureRegionResource {
+public class AtlasResource extends GraphicResource implements TextureRegionRenderable {
 
 	private TextureRegion textureRegion;
 	
 	public final String textureRegionName;
 	
-	public TextureAtlasResource(boolean usingOwnerPosition, Vector2 position,
+	public AtlasResource(boolean usingOwnerPosition, Vector2 position,
 			Vector2 positionOffset, boolean usingOwnerSize, float width,
 			float height, boolean visible, float minRenderScale,
 			float maxRenderScale, String textureRegionName) 
@@ -23,7 +23,7 @@ public class TextureAtlasResource extends GraphicResource implements TextureRegi
 		super(usingOwnerPosition, position, positionOffset, usingOwnerSize, width,
 				height, visible, minRenderScale, maxRenderScale);
 		this.textureRegionName = textureRegionName;
-		textureRegion = TextureLoader.getInstance().getTextureRegion(textureRegionName);
+		textureRegion = ResourceLoader.getInstance().getTextureRegion(textureRegionName);
 	}	
 
 	@Override
