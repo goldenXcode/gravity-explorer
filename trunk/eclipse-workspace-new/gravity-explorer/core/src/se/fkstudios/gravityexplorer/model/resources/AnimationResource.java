@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
  * 
  * @author kristofer
  */
-public class AnimationResource extends GraphicResource implements TextureRegionResource {
+public class AnimationResource extends GraphicResource implements TextureRegionRenderable {
 	
 	private Animation animation;
 	private boolean looping;
@@ -31,7 +31,7 @@ public class AnimationResource extends GraphicResource implements TextureRegionR
 		this.looping = looping;
 		this.stateTime = 0;
 
-		animation = TextureLoader.getInstance().getAnimation(animationName);
+		animation = ResourceLoader.getInstance().getAnimation(animationName);
 	}	
 	
 	public boolean isLooping() {

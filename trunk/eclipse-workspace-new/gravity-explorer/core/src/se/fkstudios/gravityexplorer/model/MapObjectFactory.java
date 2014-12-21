@@ -6,8 +6,8 @@ import se.fkstudios.gravityexplorer.Defs;
 import se.fkstudios.gravityexplorer.model.resources.AnimationResource;
 import se.fkstudios.gravityexplorer.model.resources.ColorResource;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.ResourceContainer;
-import se.fkstudios.gravityexplorer.model.resources.TextureAtlasResource;
+import se.fkstudios.gravityexplorer.model.resources.Renderable;
+import se.fkstudios.gravityexplorer.model.resources.AtlasResource;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -33,7 +33,7 @@ public class MapObjectFactory {
 	
 	public SpaceshipModel createPlayerSpaceship() {
 		Array<GraphicResource> allResources = new Array<GraphicResource>();
-		allResources.add(new TextureAtlasResource(true, 
+		allResources.add(new AtlasResource(true, 
 				new Vector2(0, 0), 
 				new Vector2(0, 0), 
 				true, 	
@@ -163,7 +163,7 @@ public class MapObjectFactory {
 				resource);
 	}
 	
-	public ColorResource createParticleResource(ResourceContainer owner,
+	public ColorResource createParticleResource(Renderable owner,
 			float width, float height, 
 			Vector2 position) 
 	{
@@ -171,7 +171,7 @@ public class MapObjectFactory {
 		return createParticleResource(owner, width, height, position, color);
 	}
 	
-	public ColorResource createParticleResource(ResourceContainer owner,
+	public ColorResource createParticleResource(Renderable owner,
 			float width, float height, 
 			Vector2 position, 
 			Color color) 
@@ -245,10 +245,10 @@ public class MapObjectFactory {
 		return mapObject;
 	}
 	
-	private TextureAtlasResource createRandomTextureRegion(String[] textureRegionNames) {
+	private AtlasResource createRandomTextureRegion(String[] textureRegionNames) {
 		int textureIndex = randomInt(0, textureRegionNames.length - 1);
 		String textureName = textureRegionNames[textureIndex];
-		return new TextureAtlasResource(true, 
+		return new AtlasResource(true, 
 				new Vector2(0,0), 
 				new Vector2(0,0), 
 				true, 

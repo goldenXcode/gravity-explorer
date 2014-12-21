@@ -9,7 +9,7 @@ import se.fkstudios.gravityexplorer.model.PeriodicMapModel;
 import se.fkstudios.gravityexplorer.model.SpaceshipModel;
 import se.fkstudios.gravityexplorer.model.resources.ColorResource;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.TextureRegionResource;
+import se.fkstudios.gravityexplorer.model.resources.TextureRegionRenderable;
 import se.fkstudios.gravityexplorer.view.ColorRenderer;
 import se.fkstudios.gravityexplorer.view.PeriodicMapRenderer;
 import se.fkstudios.gravityexplorer.view.TextureRegionRenderer;
@@ -164,7 +164,7 @@ public class GameplayScreen implements Screen {
 				Array<GraphicResource> resources = mapObjectModel.getResources();
 				for (GraphicResource resource : resources) {
 					if (resource.isVisible()) {
-						if (resource instanceof TextureRegionResource) {
+						if (resource instanceof TextureRegionRenderable) {
 							textureRegionRenderer.renderObjectPeriodically(mapObjectModel, resource, camera);
 						}
 						else if (resource instanceof ColorResource) {

@@ -5,7 +5,7 @@ import se.fkstudios.gravityexplorer.Utility;
 import se.fkstudios.gravityexplorer.controller.GameplayCamera;
 import se.fkstudios.gravityexplorer.model.PeriodicMapModel;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.TextureRegionResource;
+import se.fkstudios.gravityexplorer.model.resources.TextureRegionRenderable;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -49,7 +49,7 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 		spriteBatch.begin();
 		
 		for (GraphicResource resource : map.getResources()) {
-			if (resource instanceof TextureRegionResource) {				
+			if (resource instanceof TextureRegionRenderable) {				
 				float proportionalPositionX = camera.position.x / Utility.getScreenCoordinate(map.getWidth());
 				float proportionalPositionY = camera.position.y / Utility.getScreenCoordinate(map.getHeight());
 				float textureOriginX = Utility.getScreenCoordinate(resource.getWidth()) / 2;

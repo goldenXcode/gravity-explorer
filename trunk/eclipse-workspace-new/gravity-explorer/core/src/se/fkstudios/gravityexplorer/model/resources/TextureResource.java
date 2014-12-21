@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-public class TextureResource extends GraphicResource implements TextureRegionResource {
+public class TextureResource extends GraphicResource implements TextureRegionRenderable {
 
 	private Texture texture;
 	private TextureRegion textureRegion;
@@ -19,7 +19,7 @@ public class TextureResource extends GraphicResource implements TextureRegionRes
 				height, visible, minRenderScale, maxRenderScale);
 		this.textureName = textureName;
 		
-		texture = TextureLoader.getInstance().getTexture(textureName);
+		texture = ResourceLoader.getInstance().getTexture(textureName);
 		textureRegion = new TextureRegion(texture);
 	}	
 

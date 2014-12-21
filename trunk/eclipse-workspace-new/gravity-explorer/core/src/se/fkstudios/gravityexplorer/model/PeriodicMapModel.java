@@ -6,7 +6,7 @@ import se.fkstudios.gravityexplorer.Defs;
 import se.fkstudios.gravityexplorer.Utility;
 import se.fkstudios.gravityexplorer.controller.GameplayCamera;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.ResourceContainer;
+import se.fkstudios.gravityexplorer.model.resources.Renderable;
 import se.fkstudios.gravityexplorer.model.resources.TextureResource;
 
 import com.badlogic.gdx.maps.Map;
@@ -20,7 +20,7 @@ import com.badlogic.gdx.utils.Array;
  * Represent a (TODO: should be, is not now) periodic map with floating point width and height. 
  * @author kristofer
  */
-public class PeriodicMapModel extends Map implements ResourceContainer {
+public class PeriodicMapModel extends Map implements Renderable {
 	
 	private PhysicsEngine physicsEngine;
 	
@@ -186,7 +186,6 @@ public class PeriodicMapModel extends Map implements ResourceContainer {
 					getWidth(), getHeight());
 			switchNeighbourhood(playerSpaceship, currentNeighbourhood, dominatingNeighbourhood);
 		}
-
 	}
 	
 	private void applyMapObjectPeriodicity(MapObjectModel gameplayMapObject) {

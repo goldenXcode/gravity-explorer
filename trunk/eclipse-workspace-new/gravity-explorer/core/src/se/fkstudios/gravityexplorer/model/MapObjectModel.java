@@ -2,7 +2,7 @@ package se.fkstudios.gravityexplorer.model;
 
 import se.fkstudios.gravityexplorer.model.resources.AnimationResource;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.ResourceContainer;
+import se.fkstudios.gravityexplorer.model.resources.Renderable;
 
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.Array;
  * Modeling the properties of all gameplay map objects in game.
  * @author kristofer
  */
-public class MapObjectModel extends MapObject implements ResourceContainer {
+public class MapObjectModel extends MapObject implements Renderable {
 	
 	public enum GravitationalMode { ALL, NEIGHBOURHOOD, OBJECT, STATIONARY } 
 	

@@ -1,7 +1,7 @@
 package se.fkstudios.gravityexplorer.view;
 
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.TextureRegionResource;
+import se.fkstudios.gravityexplorer.model.resources.TextureRegionRenderable;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -28,15 +28,13 @@ import com.badlogic.gdx.math.Rectangle;
 			float scale,
 			float rotation) 
 	{
-		if (!(resource instanceof TextureRegionResource)) {
+		if (!(resource instanceof TextureRegionRenderable)) {
 			System.out.println("Warning: could not draw resource of given type");
 			return;
 		}
 		
-		TextureRegionResource textureRegionResouce = (TextureRegionResource)resource;
+		TextureRegionRenderable textureRegionResouce = (TextureRegionRenderable)resource;
 		TextureRegion textureRegion = textureRegionResouce.getTextureRegion();
-		
-//		spriteBatch.begin();
 		
 		spriteBatch.draw(textureRegion, 
 			drawArea.x, 
@@ -48,7 +46,5 @@ import com.badlogic.gdx.math.Rectangle;
 			scale, 
 			scale, 
 			rotation);
-		
-//		spriteBatch.end();
 	}
 }
