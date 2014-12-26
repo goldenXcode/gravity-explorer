@@ -15,7 +15,7 @@ public abstract class GraphicResource {
 	private boolean visible;
 	private float minRenderScale;
 	private float maxRenderScale;
-	
+
 	public GraphicResource(boolean usingOwnerPosition, Vector2 position, Vector2 positionOffset, 
 			boolean usingOwnerSize, float width, float height,
 			boolean visible, float minRenderScale, float maxRenderScale) 
@@ -66,10 +66,6 @@ public abstract class GraphicResource {
 		else
 			return width;
 	}
-
-	public float getWidth() {
-		return width;
-	}
 	
 	public void setWidth(float width) {
 		this.width = width;
@@ -87,10 +83,6 @@ public abstract class GraphicResource {
 		this.height = height;
 		setUsingOwnerSize(false);
 	}
-
-	public float getHeight() {
-		return height;
-	}
 	
 	private Vector2 combinedPosition1 = new Vector2();
 	public Vector2 getPosition(Vector2 ownerPosition) {
@@ -99,18 +91,10 @@ public abstract class GraphicResource {
 			combinedPosition1.y = ownerPosition.y + positionOffset.y;
 		}
 		else {
-
 			combinedPosition1.x = position.x + positionOffset.x;
 			combinedPosition1.y = position.y + positionOffset.y;
 		}
 		return combinedPosition1;
-	}
-
-	private Vector2 combinedPosition2 = new Vector2();
-	public Vector2 getPosition() {	
-		combinedPosition2.x = position.x + positionOffset.x;
-		combinedPosition2.y = position.y + positionOffset.y;
-		return combinedPosition2;
 	}
 	
 	public void setPosition(Vector2 position) {

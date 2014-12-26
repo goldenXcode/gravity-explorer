@@ -7,7 +7,8 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.collision.BoundingBox;
 
 public class ModelRenderer extends PeriodicRenderer {
 
@@ -32,21 +33,31 @@ public class ModelRenderer extends PeriodicRenderer {
 	}
 	
 	@Override
-	protected void renderResource(GraphicResource resource, Rectangle drawArea,
-			float originX, float originY, float scale, float rotation)
+	public void renderResource(GraphicResource resource, 
+		Vector2 screenPosition,
+		float screenWidth, float screenHeight,
+		Vector2 screenOrigin,
+		float rotation)
 	{
 		if (!(resource instanceof ModelResource)) {
-			System.out.println("Warning: could not draw resource of given type");
+			System.out.println("Error: could not draw resource of given type");
 			return;
 		}
-		
-		ModelResource modelResource = (ModelResource)resource;
-		ModelInstance modelInstance = modelResource.getModelInstance();
-//		modelInstance.transform.rotate(0, 0, 1, rotation);
 
+		ModelResource modelResource = (ModelResource)resource;
+		
+		BoundingBox boundingBox = modelResource.getModelBoundingBox();
+		
+		float scaleX = screenWidth / boundingBox.getWidth();
+		float scaleY = screenHeight / boundingBox.getHeight();
+		float scaleZ = ((screenWidth + screenHeight) / 2f) / boundingBox.getDepth();
+		
+		ModelInstance modelInstance = modelResource.getModelInstance();
+		
 		modelInstance.transform = new Matrix4();
-		modelInstance.transform.translate(drawArea.x + originX, drawArea.y + originY, 0);
-//		modelInstance.transform.scale(scale, scale, scale);
+		modelInstance.transform.translate(screenPosition.x, screenPosition.y, -100f);
+		modelInstance.transform.rotate(0f, 0f, 1f, rotation);
+		modelInstance.transform.scale(scaleX, scaleY, scaleZ);
 		modelBatch.render(modelInstance);
 	}	
 }

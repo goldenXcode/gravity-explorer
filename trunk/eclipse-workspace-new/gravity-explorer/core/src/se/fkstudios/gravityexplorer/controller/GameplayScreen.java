@@ -159,10 +159,27 @@ public class GameplayScreen implements Screen {
 
 		textureRegionRenderer.updateToCamera(camera);
 		colorRenderer.updateToCamera(camera);
+
+		modelRenderer.getModelBatch().begin(camera);
+		for (MapLayer layer : map.getLayers()) {
+			MapObjects allMapObjects = layer.getObjects();
+			for (MapObject mapObject : allMapObjects)
+			{
+				MapObjectModel mapObjectModel = (MapObjectModel)mapObject;
+				Array<GraphicResource> resources = mapObjectModel.getResources();
+				for (GraphicResource resource : resources) {
+					if (resource.isVisible()) {
+						if (resource instanceof ModelResource) {
+							modelRenderer.renderObjectPeriodically(mapObjectModel, resource, camera);
+						}
+					}
+				}
+			}
+		}
+		modelRenderer.getModelBatch().end();
 		
 		textureRegionRenderer.spriteBatch.begin();
 		colorRenderer.shapeRenderer.begin(ShapeType.Filled);
-		modelRenderer.getModelBatch().begin(camera);
 		
 		for (MapLayer layer : map.getLayers()) {
 			MapObjects allMapObjects = layer.getObjects();
@@ -188,10 +205,9 @@ public class GameplayScreen implements Screen {
 				}
 			}
 		}
-		
+
 		textureRegionRenderer.spriteBatch.end();
 		colorRenderer.shapeRenderer.end();
-		modelRenderer.getModelBatch().end();
 	}
 	
 	@Override

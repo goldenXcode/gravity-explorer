@@ -5,7 +5,7 @@ import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 public class ColorRenderer extends PeriodicRenderer {
 	
@@ -21,19 +21,28 @@ public class ColorRenderer extends PeriodicRenderer {
 	}
 	
 	@Override
-	protected void renderResource(GraphicResource resource, 
-			Rectangle drawArea,
-			float originX, 
-			float originY, 
-			float scale, 
-			float rotation) 
+	public void renderResource(GraphicResource resource, 
+		Vector2 screenPosition,
+		float screenWidth, float screenHeight,
+		Vector2 screenOrigin,
+		float rotation)
 	{
 		if (!(resource instanceof ColorResource)) {
 			System.out.println("Warning: could not draw resource of given type");
 			return;
 		}
+		
 		ColorResource colorResource = (ColorResource)resource;
+		
 		shapeRenderer.setColor(colorResource.getColor());
-		shapeRenderer.rect(drawArea.x, drawArea.y, originX, originY, drawArea.width, drawArea.height, scale, scale, rotation);
+		
+		shapeRenderer.rect(screenPosition.x - screenWidth / 2,
+				screenPosition.y - screenHeight / 2, 
+				screenOrigin.x, screenOrigin.y, 
+				screenWidth, 
+				screenHeight, 
+				1f, 
+				1f, 
+				rotation);
 	}
 }
