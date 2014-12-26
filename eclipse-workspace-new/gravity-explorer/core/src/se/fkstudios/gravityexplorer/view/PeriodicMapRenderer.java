@@ -12,11 +12,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 public class PeriodicMapRenderer extends TextureRegionRenderer {
-	
-	private Rectangle drawArea;
 	
 	private ShapeRenderer shapeRenderer;
 
@@ -24,12 +22,16 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 	private BitmapFont consolFont;
 	private String consoleText; 
 	
+	private Vector2 screenPosition;
+	private Vector2 screenOrigin;
+	
 	public PeriodicMapRenderer(float periodicityWidth, float periodicityHeight) {
 		super(periodicityWidth, periodicityHeight);
-		drawArea = new Rectangle();
 		consoleSpriteBatch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 		consolFont = new BitmapFont();
+		screenPosition = new Vector2();
+		screenOrigin = new Vector2();
 		setConsoleText("Welcome!");
 	}
 
@@ -38,39 +40,38 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 	}
 	
 	public void render(PeriodicMapModel map, GameplayCamera camera) {
-		mapRender(map, camera);
+		renderMap(map, camera);
 		if (RenderOptions.getInstance().debugRender) {
 			debugRender(map);
 		}
 		consoleRender();
 	}
 	
-	private void mapRender(PeriodicMapModel map, GameplayCamera camera) {
+	private void renderMap(PeriodicMapModel map, GameplayCamera camera) {
 		spriteBatch.begin();
 		
 		for (GraphicResource resource : map.getResources()) {
 			if (resource instanceof TextureRegionRenderable) {				
-				float proportionalPositionX = camera.position.x / Utility.getScreenCoordinate(map.getWidth());
-				float proportionalPositionY = camera.position.y / Utility.getScreenCoordinate(map.getHeight());
-				float textureOriginX = Utility.getScreenCoordinate(resource.getWidth()) / 2;
-				float textureOriginY = Utility.getScreenCoordinate(resource.getHeight()) / 2;
-				float texScreenWidth = Utility.getScreenCoordinate(resource.getWidth());
-				float texScreenHeight = Utility.getScreenCoordinate(resource.getHeight());
-				float longestTexSide = Math.max(texScreenWidth, texScreenHeight);
+				screenPosition.x = camera.position.x / Utility.getScreenCoordinate(map.getWidth());
+				screenPosition.y = camera.position.y / Utility.getScreenCoordinate(map.getHeight());
+				float screenWidth = Utility.getScreenCoordinate(resource.getWidth(map.getWidth()));
+				float screenHeight = Utility.getScreenCoordinate(resource.getHeight(map.getHeight()));
+				screenOrigin.x = screenWidth / 2;
+				screenOrigin.y = screenHeight / 2;
+				float longestTexSide = Math.max(screenWidth, screenHeight);
 				float longestViewportSide = Math.max(camera.viewportWidth, camera.viewportHeight);
 				float ratio = 1 - longestViewportSide / longestTexSide;
 				
-				setPeriodicityWidth(texScreenWidth * camera.zoom);
-				setPeriodicityHeight(texScreenHeight * camera.zoom);
+				setPeriodicityWidth(screenWidth * camera.zoom);
+				setPeriodicityHeight(screenHeight * camera.zoom);
 				
 				float periodicityWidth = getPeriodicityWidth();
 				float periodicityHeight = getPeriodicityHeight();
-				drawArea.x = camera.position.x - textureOriginX - proportionalPositionX * periodicityWidth * ratio;
-				drawArea.y = camera.position.y - textureOriginY - proportionalPositionY * periodicityHeight * ratio;
-				drawArea.width = Utility.getScreenCoordinate(resource.getWidth());
-				drawArea.height = Utility.getScreenCoordinate(resource.getHeight());
-				
-				renderResourcePeriodically(resource, drawArea, 0f, camera);			
+	
+				screenPosition.x = camera.position.x - screenPosition.x * periodicityWidth * ratio;
+				screenPosition.y = camera.position.y - screenPosition.y * periodicityHeight * ratio;
+			
+				renderResourcePeriodically(resource, screenPosition, screenWidth * camera.zoom, screenHeight * camera.zoom, screenOrigin, 0f);
 			}
 		}
 		spriteBatch.end();

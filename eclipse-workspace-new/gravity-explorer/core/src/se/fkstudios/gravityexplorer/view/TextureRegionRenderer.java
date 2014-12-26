@@ -6,7 +6,7 @@ import se.fkstudios.gravityexplorer.model.resources.TextureRegionRenderable;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 	public class TextureRegionRenderer extends PeriodicRenderer {
 
@@ -20,16 +20,16 @@ import com.badlogic.gdx.math.Rectangle;
 	public void updateToCamera(Camera camera) {
 		spriteBatch.setProjectionMatrix(camera.combined);
 	}
-	
+
 	@Override
-	protected void renderResource(GraphicResource resource, 
-			Rectangle drawArea,
-			float originX, float originY, 
-			float scale,
-			float rotation) 
+	public void renderResource(GraphicResource resource, 
+		Vector2 screenPosition,
+		float screenWidth, float screenHeight,
+		Vector2 screenOrigin,
+		float rotation)
 	{
 		if (!(resource instanceof TextureRegionRenderable)) {
-			System.out.println("Warning: could not draw resource of given type");
+			System.out.println("Error: could not draw resource of given type");
 			return;
 		}
 		
@@ -37,14 +37,14 @@ import com.badlogic.gdx.math.Rectangle;
 		TextureRegion textureRegion = textureRegionResouce.getTextureRegion();
 		
 		spriteBatch.draw(textureRegion, 
-			drawArea.x, 
-			drawArea.y, 
-			originX, 
-			originY,
-			drawArea.width, 
-			drawArea.height, 
-			scale, 
-			scale, 
-			rotation);
+			screenPosition.x - screenWidth / 2f, 
+			screenPosition.y - screenHeight / 2f, 
+			screenOrigin.x , 
+			screenOrigin.y,
+			screenWidth, 
+			screenHeight, 
+			1f, 
+			1f, 
+			rotation);	
 	}
 }

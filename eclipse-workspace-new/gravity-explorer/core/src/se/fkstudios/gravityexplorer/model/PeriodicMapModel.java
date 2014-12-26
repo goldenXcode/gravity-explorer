@@ -216,7 +216,15 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 		startNeighbourhood.setName("start neighbourhood");
 		getLayers().add(startNeighbourhood);
 		
-		MapObjectModel startPlanet = factory.createStationaryPlanet(15, new Vector2(width * 0.1f, width * 0.1f), 3f);
+		MapLayer gameplayNeighborhood = new MapLayer();
+		gameplayNeighborhood.setName("gameplay neighborhood");
+		getLayers().add(gameplayNeighborhood);
+		
+		MapObjectModel dominatringPlanet = factory.createStationary3DPlanet(20, new Vector2(width * 0.1f, width * 0.1f), 2, 0.2f, Color.GREEN);
+//		MapObjectModel dominatringPlanet = factory.createStationaryPlanet(15, new Vector2(40, 49), 2, 0.2f);
+		registerMapObject(dominatringPlanet, gameplayNeighborhood);
+		
+		MapObjectModel startPlanet = factory.createStationaryPlanet(20, new Vector2(width * 0.13f, width * 0.1f), 3f);
 		registerMapObject(startPlanet, startNeighbourhood);
 		
 		playerSpaceship = factory.createPlayerSpaceship();
@@ -224,16 +232,9 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 		registerMapObject(playerSpaceship, startNeighbourhood);
 
 		//Create the entire "gameplay" neighborhood.
-		
-		MapLayer gameplayNeighborhood = new MapLayer();
-		gameplayNeighborhood.setName("gameplay neighborhood");
-		getLayers().add(gameplayNeighborhood);
-		
-		MapObjectModel dominatringPlanet = factory.createStationary3DPlanet(25, new Vector2(width * 0.1f, width * 0.1f), 2, 0.2f, Color.GREEN);
+
+		dominatringPlanet = factory.createStationaryPlanet(100, new Vector2(width / 2f, height / 2f), 2, 0.2f);
 		registerMapObject(dominatringPlanet, gameplayNeighborhood);
-		
-//		MapObjectModel dominatringPlanet = factory.createStationaryPlanet(200, new Vector2(width / 2, height / 2), 2, 0.2f);
-//		registerMapObject(dominatringPlanet, gameplayNeighborhood);
 //	
 //		MapObjectModel firstTarget = factory.createOrbitingPlanet(dominatringPlanet, 140, 0, 0.015f, true, 1);
 //		registerMapObject(firstTarget, gameplayNeighborhood);
