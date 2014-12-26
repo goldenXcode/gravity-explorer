@@ -7,11 +7,11 @@ import se.fkstudios.gravityexplorer.model.PeriodicMapModel;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
 import se.fkstudios.gravityexplorer.model.resources.TextureRegionRenderable;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 
 public class PeriodicMapRenderer extends TextureRegionRenderer {
@@ -98,9 +98,9 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 		shapeRenderer.end();
 	}
 	
-	public void setProjectionMatrix(Matrix4 projectionMatrix) {
-		super.setProjectionMatrix(projectionMatrix);
-		shapeRenderer.setProjectionMatrix(projectionMatrix);
+	public void updateToCamera(Camera camera) {
+		super.updateToCamera(camera);
+		shapeRenderer.setProjectionMatrix(camera.combined);
 	}
 
 	private void consoleRender() {

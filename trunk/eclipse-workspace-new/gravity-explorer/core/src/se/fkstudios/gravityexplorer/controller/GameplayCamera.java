@@ -26,18 +26,17 @@ public class GameplayCamera extends OrthographicCamera {
 	 */
 	private Rectangle tempViewport; 
 	
-	public GameplayCamera(float viewportWidth, float viewportHeight) {
+	public GameplayCamera(float viewportWidth, float viewportHeight, Vector3 startPosition) {
 		super(viewportWidth, viewportHeight);
 		cameraMode = CameraMode.LOOSE;
 		zoomDomain = zoom; 
+		near = Defs.CAMERA_NEAR;
+		far = Defs.CAMERA_FAR;
+		position.x = startPosition.x;
+		position.y = startPosition.y;
+		position.z = startPosition.z;
 		tempViewport = new Rectangle(0,0, viewportWidth, viewportHeight);
 		screenTargetPosition = new Vector3(position.x, position.y, position.z);
-	}
-	
-	public GameplayCamera(float viewportWidth, float viewportHeight, CameraMode cameraMode) {
-		this(viewportWidth, viewportHeight);
-		this.cameraMode = cameraMode;
-		zoomDomain = zoom; 
 	}
 	
 	public void setCameraMode(CameraMode value) {
@@ -93,7 +92,7 @@ public class GameplayCamera extends OrthographicCamera {
 	/**
 	 * Update camera's position and zoom based on spaceship's (player's) position and speed.
 	 */
-	public void updatePosition(float delta, Vector2 targetPosition, float mapWidth, float mapHeight) {	
+	public void updatePosition(float delta, Vector2 targetPosition, float mapWidth, float mapHeight) {			
 		//update position
 		screenTargetPosition.x = targetPosition.x * Defs.PIXELS_PER_UNIT;
 		screenTargetPosition.y = targetPosition.y * Defs.PIXELS_PER_UNIT;
@@ -117,10 +116,13 @@ public class GameplayCamera extends OrthographicCamera {
 				position.y += position.y + mapHeight * Defs.PIXELS_PER_UNIT;
 				
 			position.lerp(screenTargetPosition, 3 * delta);
+			position.z = Defs.CAMERA_POSITION_Z;
 		}
 		else {
+		
 			position.x = screenTargetPosition.x;
 			position.y = screenTargetPosition.y;
+			position.z = Defs.CAMERA_POSITION_Z;
 		}
 			
 	}

@@ -55,6 +55,9 @@ public final class Defs {
 	public static final float SCROLLING_SPEED_MODIFIER_2 = 0.1f; 
 	// "number of universes" you're allowed to see (zoom-wise) 
 	public static final float CAMERA_LIMIT = 2; 
+	public static final float CAMERA_POSITION_Z = 100f;
+	public static final float CAMERA_FAR = 101f;
+	public static final float CAMERA_NEAR = 1f;
 
 	
     /* ************************************************************************************
@@ -73,9 +76,9 @@ public final class Defs {
 	public static final int UNIT_PER_DEBUG_LINE = 10;
 	
 	/* viewport  */ 
-	public static final int VIEWPORT_WIDTH = 1280;
-	public static final int VIEWPORT_HEIGHT = 720; 
-	public static final int PIXELS_PER_UNIT = 20;	
+//	public static final int VIEWPORT_WIDTH = 1280;
+//	public static final int VIEWPORT_HEIGHT = 720; 
+	public static final int PIXELS_PER_UNIT = 1;	
 	
 	
     /* ************************************************************************************

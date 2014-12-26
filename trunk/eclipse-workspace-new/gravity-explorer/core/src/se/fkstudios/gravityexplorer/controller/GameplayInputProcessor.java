@@ -54,7 +54,9 @@ public class GameplayInputProcessor implements InputProcessor {
 			RenderOptions.getInstance().debugRender = ! RenderOptions.getInstance().debugRender;
 		}
 		else if (keycode == Input.Keys.A) {
-			camera.zoomIn(); 
+			//camera.zoomIn(); 
+			camera.translate(1f, 0f, 0f);
+			
 		}
 		else if (keycode == Input.Keys.S) {
 			camera.zoomOut(); 

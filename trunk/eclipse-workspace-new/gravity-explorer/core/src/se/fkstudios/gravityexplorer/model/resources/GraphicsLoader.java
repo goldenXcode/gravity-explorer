@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -18,16 +19,21 @@ import com.badlogic.gdx.utils.Array;
  * 
  * @author kristofer
  */
-public class ResourceLoader {
+public class GraphicsLoader {
 
-	private static final ResourceLoader instance = new ResourceLoader();
+	private static final GraphicsLoader instance = new GraphicsLoader();
 	
 	private TextureAtlas textureAtlas;
+	
+	//TODO If needed, optimize CPU performance by generate integer keys for the maps. String's compare is slower than int's compare, much slower for long strings.
 	private HashMap<String, Texture> textureMap;
 	private HashMap<String, TextureRegion> textureRegionMap;
 	private HashMap<String, Animation> animationMap;
+//	private HashMap<String, Model> modelMap;
 	
-	private ResourceLoader() {
+	private ModelBuilder modelBuilder;
+	
+	private GraphicsLoader() {
 		
 		textureAtlas = new TextureAtlas(Gdx.files.internal(Defs.TEXTURE_PACK_FILE_PATH));
 		
@@ -58,6 +64,10 @@ public class ResourceLoader {
 			}	
 			animationMap.put(animationName, new Animation(frameDuration, textureRegions));
 		}
+		
+//		modelMap = new HashMap<String, Model>();
+		
+		modelBuilder = new ModelBuilder();
 	}
 	
 	/**
@@ -97,11 +107,36 @@ public class ResourceLoader {
 		return animationMap.get(animationName);
 	}
 	
+//	public Model getModel(String modelName) {
+//		return modelMap.get(modelName);
+//	}
+//	
+//	public void addModel(String modelName, Model model) {
+//		modelMap.put(modelName, model);
+//	}
+//	
+//	public void removeModel(String modelName) {
+//		Model model = modelMap.get(modelName);
+//		if (model != null) {
+//			modelMap.remove(modelName);
+//			model.dispose();
+//		}
+//	}
+	
+	public ModelBuilder getModelBuilder() {
+		return modelBuilder;
+	}
+	
+	public void dispose() {
+		//TODO: Dispose all loaded resources.
+	}
+	
 	/**
 	 * Returns the only allowed instance of this object.
 	 * @return self
 	 */
-	public static ResourceLoader getInstance() {
+	public static GraphicsLoader getInstance() {
 		return instance;
 	}
+	
 }

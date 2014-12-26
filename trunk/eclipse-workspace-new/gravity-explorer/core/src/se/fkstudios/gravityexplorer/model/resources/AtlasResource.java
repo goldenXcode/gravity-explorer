@@ -23,7 +23,7 @@ public class AtlasResource extends GraphicResource implements TextureRegionRende
 		super(usingOwnerPosition, position, positionOffset, usingOwnerSize, width,
 				height, visible, minRenderScale, maxRenderScale);
 		this.textureRegionName = textureRegionName;
-		textureRegion = ResourceLoader.getInstance().getTextureRegion(textureRegionName);
+		textureRegion = GraphicsLoader.getInstance().getTextureRegion(textureRegionName);
 	}	
 
 	@Override
