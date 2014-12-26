@@ -31,7 +31,7 @@ public class AnimationResource extends GraphicResource implements TextureRegionR
 		this.looping = looping;
 		this.stateTime = 0;
 
-		animation = ResourceLoader.getInstance().getAnimation(animationName);
+		animation = GraphicsLoader.getInstance().getAnimation(animationName);
 	}	
 	
 	public boolean isLooping() {

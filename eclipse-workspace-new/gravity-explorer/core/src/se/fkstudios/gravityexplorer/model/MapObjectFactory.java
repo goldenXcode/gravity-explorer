@@ -4,16 +4,23 @@ import java.util.Random;
 
 import se.fkstudios.gravityexplorer.Defs;
 import se.fkstudios.gravityexplorer.model.resources.AnimationResource;
+import se.fkstudios.gravityexplorer.model.resources.AtlasResource;
 import se.fkstudios.gravityexplorer.model.resources.ColorResource;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.Renderable;
-import se.fkstudios.gravityexplorer.model.resources.AtlasResource;
+import se.fkstudios.gravityexplorer.model.resources.GraphicsLoader;
+import se.fkstudios.gravityexplorer.model.resources.ModelResource;
+import se.fkstudios.gravityexplorer.model.resources.RenderableModel;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-
-public class MapObjectFactory {
+ class MapObjectFactory {
 	
 	private PhysicsEngine physicsEngine;
 	private Random rand;
@@ -129,6 +136,44 @@ public class MapObjectFactory {
 		return planet;
 	}
 	
+	public MapObjectModel createStationary3DPlanet(float diameter, Vector2 position, float rotationSpeed, float dencityFactor, Color color) 
+	{
+		int mass = (int)calculateMass(diameter / 2, dencityFactor);
+		
+		GraphicsLoader loader = GraphicsLoader.getInstance();
+		ModelBuilder builder = loader.getModelBuilder();
+		
+		Model model = builder.createSphere(diameter, diameter, diameter, 
+						32, 32, 
+						new Material(ColorAttribute.createDiffuse(color)),
+						Usage.Position | Usage.Normal);
+		
+		ModelInstance instance = new ModelInstance(model);
+		
+		ModelResource resource = new ModelResource(true, 
+				new Vector2(0,0), 
+				new Vector2(0,0), 
+				true, 
+				diameter, diameter, 
+				true, 
+				0.1f, 
+				Integer.MAX_VALUE, 
+				instance);
+		
+		MapObjectModel planet = new MapObjectModel(diameter, diameter, 
+				position, 
+				new Vector2(0, 0), 
+				mass, 
+				0f, 
+				rotationSpeed, 
+				false,
+				resource);
+		
+		planet.setGravitationalModeToStationary();
+		
+		return planet;
+	}
+	
 	public MapObjectModel createOrbitingPlanet(MapObjectModel primaryMapObject,
 			float distance,
 			float degrees,
@@ -146,6 +191,55 @@ public class MapObjectFactory {
 				resource);		
 	}
 	
+	public MapObjectModel crateOrbiting3DPlanet(MapObjectModel primaryMapObject,
+			float distance,
+			float degrees,
+			float relativeMass,
+			boolean clockwise,
+			float rotationSpeed,
+			Color color) 
+	{
+		int mass = (int) (primaryMapObject.getMass() * relativeMass);
+		float radius = calculateRadius(mass, 1f);
+		float diameter = radius * 2;
+		
+		GraphicsLoader loader = GraphicsLoader.getInstance();
+		
+		ModelBuilder builder = loader.getModelBuilder();
+		
+		Model model = builder.createSphere(diameter, diameter, diameter, 
+						20, 20, 
+						new Material(ColorAttribute.createDiffuse(color)),
+						Usage.Position | Usage.Normal | Usage.TextureCoordinates);
+		
+		ModelInstance instance = new ModelInstance(model);
+		
+		ModelResource resource = new ModelResource(true, 
+				new Vector2(0,0), 
+				new Vector2(0,0), 
+				true, 
+				diameter, diameter, 
+				true, 
+				0.1f, 
+				Integer.MAX_VALUE, 
+				instance);
+		
+		MapObjectModel mapObject = new MapObjectModel(diameter, diameter, 
+				new Vector2(0,0), 
+				new Vector2(0,0), 
+				mass, 
+				0f, 
+				rotationSpeed,
+				false,
+				resource);
+		
+		mapObject.setGravitationalModeToObject(primaryMapObject);
+		
+		placeMapObjectInOrbit(mapObject, primaryMapObject, distance, degrees, clockwise);
+
+		return mapObject;
+	}
+
 	public MapObjectModel createOrbitingAsteroid(MapObjectModel primaryMapObject,
 			float distance,
 			float degrees,
@@ -163,7 +257,7 @@ public class MapObjectFactory {
 				resource);
 	}
 	
-	public ColorResource createParticleResource(Renderable owner,
+	public ColorResource createParticleResource(RenderableModel owner,
 			float width, float height, 
 			Vector2 position) 
 	{
@@ -171,7 +265,7 @@ public class MapObjectFactory {
 		return createParticleResource(owner, width, height, position, color);
 	}
 	
-	public ColorResource createParticleResource(Renderable owner,
+	public ColorResource createParticleResource(RenderableModel owner,
 			float width, float height, 
 			Vector2 position, 
 			Color color) 

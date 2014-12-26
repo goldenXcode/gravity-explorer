@@ -3,12 +3,12 @@ package se.fkstudios.gravityexplorer.view;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
 import se.fkstudios.gravityexplorer.model.resources.TextureRegionRenderable;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 
-	public class TextureRegionRenderer extends PeriodicResourceRenderer {
+	public class TextureRegionRenderer extends PeriodicRenderer {
 
 	public SpriteBatch spriteBatch;
 	
@@ -17,8 +17,8 @@ import com.badlogic.gdx.math.Rectangle;
 		this.spriteBatch = new SpriteBatch();
 	}
 
-	public void setProjectionMatrix(Matrix4 projectionMatrix) {
-		spriteBatch.setProjectionMatrix(projectionMatrix);
+	public void updateToCamera(Camera camera) {
+		spriteBatch.setProjectionMatrix(camera.combined);
 	}
 	
 	@Override

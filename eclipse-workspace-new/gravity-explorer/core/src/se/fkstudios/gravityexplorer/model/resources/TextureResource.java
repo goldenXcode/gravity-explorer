@@ -19,7 +19,7 @@ public class TextureResource extends GraphicResource implements TextureRegionRen
 				height, visible, minRenderScale, maxRenderScale);
 		this.textureName = textureName;
 		
-		texture = ResourceLoader.getInstance().getTexture(textureName);
+		texture = GraphicsLoader.getInstance().getTexture(textureName);
 		textureRegion = new TextureRegion(texture);
 	}	
 

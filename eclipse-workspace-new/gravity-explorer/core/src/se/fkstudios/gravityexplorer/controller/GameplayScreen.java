@@ -9,8 +9,10 @@ import se.fkstudios.gravityexplorer.model.PeriodicMapModel;
 import se.fkstudios.gravityexplorer.model.SpaceshipModel;
 import se.fkstudios.gravityexplorer.model.resources.ColorResource;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
+import se.fkstudios.gravityexplorer.model.resources.ModelResource;
 import se.fkstudios.gravityexplorer.model.resources.TextureRegionRenderable;
 import se.fkstudios.gravityexplorer.view.ColorRenderer;
+import se.fkstudios.gravityexplorer.view.ModelRenderer;
 import se.fkstudios.gravityexplorer.view.PeriodicMapRenderer;
 import se.fkstudios.gravityexplorer.view.TextureRegionRenderer;
 
@@ -23,6 +25,7 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
 
@@ -40,6 +43,7 @@ public class GameplayScreen implements Screen {
 	// Controller
 	private InputProcessor inputProccessor;
 	private float deltaLeft;
+	
 	// Camera
 	private GameplayCamera camera;
 
@@ -47,7 +51,7 @@ public class GameplayScreen implements Screen {
 	private PeriodicMapRenderer mapRenderer;
 	private TextureRegionRenderer textureRegionRenderer;
 	private ColorRenderer colorRenderer;
-	
+	private ModelRenderer modelRenderer;
 	
 	@Override
 	public void show() throws IllegalStateException {
@@ -56,11 +60,9 @@ public class GameplayScreen implements Screen {
 
 		playerSpaceship = map.getPlayerSpaceship();
 		Vector2 playerMapObjectPos = playerSpaceship.getPosition();
-
-		camera = new GameplayCamera(Defs.VIEWPORT_WIDTH, Defs.VIEWPORT_HEIGHT);
-
-		camera.position.set(playerMapObjectPos.x * Defs.PIXELS_PER_UNIT, playerMapObjectPos.y * Defs.PIXELS_PER_UNIT, 0.0f);
-
+		
+		Vector3 cameraStartPos = new Vector3(playerMapObjectPos.x * Defs.PIXELS_PER_UNIT, playerMapObjectPos.y * Defs.PIXELS_PER_UNIT, Defs.CAMERA_POSITION_Z);
+		camera = new GameplayCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), cameraStartPos);
 		camera.update();
 
 		int screenWidth = Gdx.graphics.getWidth();
@@ -90,13 +92,16 @@ public class GameplayScreen implements Screen {
 
 		deltaLeft = 0f;
 		
-		float longestViewportSide = Math.max(Defs.VIEWPORT_WIDTH, Defs.VIEWPORT_HEIGHT);
+		float longestViewportSide = Math.max(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		
 		mapRenderer = new PeriodicMapRenderer(longestViewportSide, longestViewportSide);
-		textureRegionRenderer = new TextureRegionRenderer(Utility.getScreenCoordinate(map.getWidth()), 
-				Utility.getScreenCoordinate(map.getHeight()));
-		colorRenderer = new ColorRenderer(Utility.getScreenCoordinate(map.getWidth()), 
-				Utility.getScreenCoordinate(map.getHeight()));
+
+		float screenMapWidth = Utility.getScreenCoordinate(map.getWidth());
+		float screenMapHeight = Utility.getScreenCoordinate(map.getHeight());
+		
+		textureRegionRenderer = new TextureRegionRenderer(screenMapWidth, screenMapHeight);
+		colorRenderer = new ColorRenderer(screenMapWidth, screenMapHeight);
+		modelRenderer = new ModelRenderer(screenMapWidth, screenMapHeight);
 	}
 
 	/*
@@ -111,21 +116,21 @@ public class GameplayScreen implements Screen {
 		deltaLeft += delta;
 		
 		while(deltaLeft > fixedDelta) {
-			doRender(fixedDelta, delta);
+			renderHelper(fixedDelta, delta);
 			deltaLeft =- fixedDelta;
 		}
 		
-		if (deltaLeft > 0) {
-			doRender(deltaLeft, delta);
-			deltaLeft = 0f;
-		}
+//		if (deltaLeft > 0) {
+//			renderHelper(deltaLeft, delta);
+//			deltaLeft = 0f;
+//		}
 	}
 
-	public void doRender(float deltaPart, float realDelta) {
+	public void renderHelper(float deltaPart, float realDelta) {
 		camera.updatePosition(deltaPart, playerSpaceship.getPosition(), map.getWidth(), map.getHeight());
 		camera.update();
 		updateModel(deltaPart);
-		realRender(realDelta);	
+		realRender(realDelta); //delta used for fps only.
 	}
 	
 	/**
@@ -142,20 +147,23 @@ public class GameplayScreen implements Screen {
 	 */
 	private void realRender(float delta) {
 		// clear buffer.
-	    Gdx.gl.glClearColor(0, 0, 0.2f, 1);
-	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 	    
-		mapRenderer.setProjectionMatrix(camera.combined);
+		mapRenderer.updateToCamera(camera);
 		mapRenderer.setConsoleText("Running in " + Float.toString(round(1 / delta, 0)) + " FPS"
 				+ ", fuel left: " + playerSpaceship.getFuelLeft()
 				+ ", zoom: " + camera.zoom
 				+ ", render calls: " + textureRegionRenderer.spriteBatch.totalRenderCalls);
 		mapRenderer.render(map, camera);
 
-		textureRegionRenderer.setProjectionMatrix(camera.combined);
-		colorRenderer.setProjectionMatrix(camera.combined);
+		textureRegionRenderer.updateToCamera(camera);
+		colorRenderer.updateToCamera(camera);
+		
 		textureRegionRenderer.spriteBatch.begin();
 		colorRenderer.shapeRenderer.begin(ShapeType.Filled);
+		modelRenderer.getModelBatch().begin(camera);
+		
 		for (MapLayer layer : map.getLayers()) {
 			MapObjects allMapObjects = layer.getObjects();
 			for (MapObject mapObject : allMapObjects)
@@ -170,6 +178,9 @@ public class GameplayScreen implements Screen {
 						else if (resource instanceof ColorResource) {
 							colorRenderer.renderObjectPeriodically(mapObjectModel, resource, camera);
 						}
+						else if (resource instanceof ModelResource) {
+							modelRenderer.renderObjectPeriodically(mapObjectModel, resource, camera);
+						}
 						else {
 							throw new IllegalStateException("Could not find renderer for given resource class.");
 						}
@@ -177,8 +188,10 @@ public class GameplayScreen implements Screen {
 				}
 			}
 		}
+		
 		textureRegionRenderer.spriteBatch.end();
 		colorRenderer.shapeRenderer.end();
+		modelRenderer.getModelBatch().end();
 	}
 	
 	@Override

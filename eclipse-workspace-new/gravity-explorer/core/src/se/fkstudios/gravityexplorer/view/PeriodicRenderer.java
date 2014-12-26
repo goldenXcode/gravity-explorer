@@ -5,15 +5,16 @@ import se.fkstudios.gravityexplorer.controller.GameplayCamera;
 import se.fkstudios.gravityexplorer.model.MapObjectModel;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Rectangle;
 
-public abstract class PeriodicResourceRenderer {
+public abstract class PeriodicRenderer {
 
 	private Rectangle drawArea;
 	private float periodicityWidth;
 	private float periodicityHeight;
 	
-	public PeriodicResourceRenderer(float periodicityWidth, float periodicityHeight) {
+	public PeriodicRenderer(float periodicityWidth, float periodicityHeight) {
 		drawArea = new Rectangle();
 		this.periodicityWidth = periodicityWidth;
 		this.periodicityHeight = periodicityWidth;
@@ -34,7 +35,7 @@ public abstract class PeriodicResourceRenderer {
 	protected void setPeriodicityHeight(float periodicityHeight) {
 		this.periodicityHeight = periodicityHeight;
 	}
-
+	
 	public void renderObjectPeriodically(MapObjectModel mapObject, GraphicResource resource, GameplayCamera camera) {
 		float positionX = resource.getPosition(mapObject.getPosition()).x;
 		float positionY = resource.getPosition(mapObject.getPosition()).y;
@@ -105,6 +106,8 @@ public abstract class PeriodicResourceRenderer {
 		drawArea.y = screenPosY - periodicityHeight;
 		renderResourceIfInViewport(resource, drawArea, originX, originY, scale, rotation, camera);
 	}
+	
+	public abstract void updateToCamera(Camera camera);
 	
 	protected abstract void renderResource(GraphicResource resource, 
 			Rectangle drawArea,
