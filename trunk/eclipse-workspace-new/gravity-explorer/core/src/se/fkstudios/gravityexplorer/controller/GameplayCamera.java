@@ -28,7 +28,7 @@ public class GameplayCamera extends OrthographicCamera {
 	
 	public GameplayCamera(float viewportWidth, float viewportHeight, Vector3 startPosition) {
 		super(viewportWidth, viewportHeight);
-		cameraMode = CameraMode.LOOSE;
+		cameraMode = CameraMode.TIGHT;
 		zoomDomain = zoom; 
 		near = Defs.CAMERA_NEAR;
 		far = Defs.CAMERA_FAR;

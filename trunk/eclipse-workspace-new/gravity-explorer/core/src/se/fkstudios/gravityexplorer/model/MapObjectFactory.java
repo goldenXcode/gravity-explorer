@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -113,30 +114,11 @@ import com.badlogic.gdx.utils.Array;
 		return spaceship;
 	}
 	
-	public MapObjectModel createStationaryPlanet(float diameter, Vector2 position, float rotationSpeed) {	
-		return createStationaryPlanet(diameter, position, rotationSpeed, 1f);
+	public MapObjectModel createStationaryPlanet(float diameter, Vector2 position, float rotationSpeed, Color color, Boolean lightSource) {	
+		return createStationaryPlanet(diameter, position, rotationSpeed, 1f, color, lightSource);
 	}
 	
-	public MapObjectModel createStationaryPlanet(float diameter, Vector2 position, float rotationSpeed, float dencityFactor) 
-	{
-		int mass = (int)calculateMass(diameter / 2, dencityFactor);
-		GraphicResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_PLANETS);
-		
-		MapObjectModel planet = new MapObjectModel(diameter, diameter, 
-				position, 
-				new Vector2(0, 0), 
-				mass, 
-				0f, 
-				rotationSpeed, 
-				false,
-				resource);
-		
-		planet.setGravitationalModeToStationary();
-		
-		return planet;
-	}
-	
-	public MapObjectModel createStationary3DPlanet(float diameter, Vector2 position, float rotationSpeed, float dencityFactor, Color color) 
+	public MapObjectModel createStationaryPlanet(float diameter, Vector2 position, float rotationSpeed, float dencityFactor, Color color, Boolean lightSource) 
 	{
 		int mass = (int)calculateMass(diameter / 2, dencityFactor);
 		
@@ -144,9 +126,9 @@ import com.badlogic.gdx.utils.Array;
 		ModelBuilder builder = loader.getModelBuilder();
 		
 		Model model = builder.createSphere(diameter, diameter, diameter, 
-						32, 32, 
-						new Material(ColorAttribute.createDiffuse(color)),
-						Usage.Position | Usage.Normal);
+				64, 64, 
+				new Material(ColorAttribute.createDiffuse(color)),
+				Usage.Position | Usage.Normal);
 		
 		ModelInstance instance = new ModelInstance(model);
 		
@@ -158,7 +140,12 @@ import com.badlogic.gdx.utils.Array;
 				true, 
 				0.1f, 
 				Integer.MAX_VALUE, 
-				instance);
+				instance);	
+		
+		
+		if (lightSource) {
+			resource.setLigthSoruce(new PointLight().set(Color.WHITE, 0f, 0f, Defs.PLANE_POSITION_Z, 100000f));
+		}
 		
 		MapObjectModel planet = new MapObjectModel(diameter, diameter, 
 				position, 
@@ -179,23 +166,6 @@ import com.badlogic.gdx.utils.Array;
 			float degrees,
 			float relativeMass,
 			boolean clockwise,
-			float rotationSpeed) 
-	{
-		GraphicResource resource = createRandomTextureRegion(Defs.TEXTURE_REGION_NAMES_PLANETS);
-		return createOrbitingMapObject(primaryMapObject, 
-				distance, 
-				degrees, 
-				relativeMass, 
-				clockwise, 
-				rotationSpeed, 
-				resource);		
-	}
-	
-	public MapObjectModel crateOrbiting3DPlanet(MapObjectModel primaryMapObject,
-			float distance,
-			float degrees,
-			float relativeMass,
-			boolean clockwise,
 			float rotationSpeed,
 			Color color) 
 	{
@@ -208,7 +178,7 @@ import com.badlogic.gdx.utils.Array;
 		ModelBuilder builder = loader.getModelBuilder();
 		
 		Model model = builder.createSphere(diameter, diameter, diameter, 
-						20, 20, 
+						64, 64, 
 						new Material(ColorAttribute.createDiffuse(color)),
 						Usage.Position | Usage.Normal | Usage.TextureCoordinates);
 		

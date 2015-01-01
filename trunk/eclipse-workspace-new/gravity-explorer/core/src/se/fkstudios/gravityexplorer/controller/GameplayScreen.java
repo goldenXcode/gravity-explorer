@@ -1,6 +1,7 @@
 package se.fkstudios.gravityexplorer.controller;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import se.fkstudios.gravityexplorer.Defs;
 import se.fkstudios.gravityexplorer.Utility;
@@ -10,7 +11,7 @@ import se.fkstudios.gravityexplorer.model.SpaceshipModel;
 import se.fkstudios.gravityexplorer.model.resources.ColorResource;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
 import se.fkstudios.gravityexplorer.model.resources.ModelResource;
-import se.fkstudios.gravityexplorer.model.resources.TextureRegionRenderable;
+import se.fkstudios.gravityexplorer.model.resources.TextureRegionResource;
 import se.fkstudios.gravityexplorer.view.ColorRenderer;
 import se.fkstudios.gravityexplorer.view.ModelRenderer;
 import se.fkstudios.gravityexplorer.view.PeriodicMapRenderer;
@@ -20,6 +21,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.BaseLight;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -42,7 +46,7 @@ public class GameplayScreen implements Screen {
 
 	// Controller
 	private InputProcessor inputProccessor;
-	private float deltaLeft;
+	private float deltaBuffer;
 	
 	// Camera
 	private GameplayCamera camera;
@@ -52,6 +56,11 @@ public class GameplayScreen implements Screen {
 	private TextureRegionRenderer textureRegionRenderer;
 	private ColorRenderer colorRenderer;
 	private ModelRenderer modelRenderer;
+	
+	private HashMap<TextureRegionResource, MapObjectModel> textureRegionResourcesMap;
+	private HashMap<ModelResource, MapObjectModel> modelResourcesMap;
+	private HashMap<ColorResource, MapObjectModel> colorResourcesMap;
+	private Array<ModelResource> lightSources;
 	
 	@Override
 	public void show() throws IllegalStateException {
@@ -90,7 +99,7 @@ public class GameplayScreen implements Screen {
 
 		Gdx.input.setInputProcessor(inputProccessor);
 
-		deltaLeft = 0f;
+		deltaBuffer = 0f;
 		
 		float longestViewportSide = Math.max(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		
@@ -102,112 +111,36 @@ public class GameplayScreen implements Screen {
 		textureRegionRenderer = new TextureRegionRenderer(screenMapWidth, screenMapHeight);
 		colorRenderer = new ColorRenderer(screenMapWidth, screenMapHeight);
 		modelRenderer = new ModelRenderer(screenMapWidth, screenMapHeight);
+		
+		textureRegionResourcesMap = new HashMap<TextureRegionResource, MapObjectModel>();
+		modelResourcesMap = new HashMap<ModelResource, MapObjectModel>();
+		colorResourcesMap = new HashMap<ColorResource, MapObjectModel>();
+		lightSources = new Array<ModelResource>();
 	}
 
 	/*
 	 * (non-Javadoc) The game loop. Named render in libGDX due to stupidity...
-	 * But is the main game loop handling both rendering and game logic.
 	 * 
+	 * But is the main game loop handling both rendering and game logic.
 	 * @see com.badlogic.gdx.Screen#render(float)
 	 */
 	@Override
-	public void render(float delta) {
-		float fixedDelta = 0.0147f;
-		deltaLeft += delta;
+	public void render(float delta) {		
+		float fixedDelta = 1f / 100f;
+		deltaBuffer += delta;
 		
-		while(deltaLeft > fixedDelta) {
-			renderHelper(fixedDelta, delta);
-			deltaLeft =- fixedDelta;
+		while(deltaBuffer > fixedDelta) {		
+			map.update(fixedDelta);
+			deltaBuffer =- fixedDelta;
 		}
 		
-//		if (deltaLeft > 0) {
-//			renderHelper(deltaLeft, delta);
-//			deltaLeft = 0f;
-//		}
-	}
-
-	public void renderHelper(float deltaPart, float realDelta) {
-		camera.updatePosition(deltaPart, playerSpaceship.getPosition(), map.getWidth(), map.getHeight());
+		if (deltaBuffer > 0) {
+			map.update(deltaBuffer);
+		}
+		
+		camera.updatePosition(fixedDelta, playerSpaceship.getPosition(), map.getWidth(), map.getHeight());
 		camera.update();
-		updateModel(deltaPart);
-		realRender(realDelta); //delta used for fps only.
-	}
-	
-	/**
-	 * Updates model state.
-	 * @param delta The time in seconds since the last call to updateGameState.
-	 */
-	private void updateModel(float delta) {
-		map.update(delta, camera);
-	}
-
-	/**
-	 * The real render method for actual rendering of graphics, i.e. draws the
-	 * current state of model.
-	 */
-	private void realRender(float delta) {
-		// clear buffer.
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-	    
-		mapRenderer.updateToCamera(camera);
-		mapRenderer.setConsoleText("Running in " + Float.toString(round(1 / delta, 0)) + " FPS"
-				+ ", fuel left: " + playerSpaceship.getFuelLeft()
-				+ ", zoom: " + camera.zoom
-				+ ", render calls: " + textureRegionRenderer.spriteBatch.totalRenderCalls);
-		mapRenderer.render(map, camera);
-
-		textureRegionRenderer.updateToCamera(camera);
-		colorRenderer.updateToCamera(camera);
-
-		modelRenderer.getModelBatch().begin(camera);
-		for (MapLayer layer : map.getLayers()) {
-			MapObjects allMapObjects = layer.getObjects();
-			for (MapObject mapObject : allMapObjects)
-			{
-				MapObjectModel mapObjectModel = (MapObjectModel)mapObject;
-				Array<GraphicResource> resources = mapObjectModel.getResources();
-				for (GraphicResource resource : resources) {
-					if (resource.isVisible()) {
-						if (resource instanceof ModelResource) {
-							modelRenderer.renderObjectPeriodically(mapObjectModel, resource, camera);
-						}
-					}
-				}
-			}
-		}
-		modelRenderer.getModelBatch().end();
-		
-		textureRegionRenderer.spriteBatch.begin();
-		colorRenderer.shapeRenderer.begin(ShapeType.Filled);
-		
-		for (MapLayer layer : map.getLayers()) {
-			MapObjects allMapObjects = layer.getObjects();
-			for (MapObject mapObject : allMapObjects)
-			{
-				MapObjectModel mapObjectModel = (MapObjectModel)mapObject;
-				Array<GraphicResource> resources = mapObjectModel.getResources();
-				for (GraphicResource resource : resources) {
-					if (resource.isVisible()) {
-						if (resource instanceof TextureRegionRenderable) {
-							textureRegionRenderer.renderObjectPeriodically(mapObjectModel, resource, camera);
-						}
-						else if (resource instanceof ColorResource) {
-							colorRenderer.renderObjectPeriodically(mapObjectModel, resource, camera);
-						}
-						else if (resource instanceof ModelResource) {
-							modelRenderer.renderObjectPeriodically(mapObjectModel, resource, camera);
-						}
-						else {
-							throw new IllegalStateException("Could not find renderer for given resource class.");
-						}
-					}
-				}
-			}
-		}
-
-		textureRegionRenderer.spriteBatch.end();
-		colorRenderer.shapeRenderer.end();
+		realRender(delta); //delta only used to measure fps.
 	}
 	
 	@Override
@@ -239,7 +172,128 @@ public class GameplayScreen implements Screen {
 	public void dispose() {
 		Gdx.input.setInputProcessor(null);
 	}
+	
+	/**
+	 * The real render method for actual rendering of graphics, i.e. draws the
+	 * current state of model.
+	 */
+	private void realRender(float delta) {
+		// clear buffers.
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		
+		renderMap(delta);
+		
+		prepareResources();
+		
+		renderModelResources();
+		renderColorResources();
+		renderTextureRegionResources();
+	}
+	
+	/**
+	 * Map renderable resources to corresponding map objects based on resource type. 
+	 */
+	private void prepareResources() {
+		textureRegionResourcesMap.clear();
+		modelResourcesMap.clear(); 
+		colorResourcesMap.clear();
+		lightSources.clear();
+		
+		for (MapLayer layer : map.getLayers()) {
+			MapObjects allMapObjects = layer.getObjects();
+			for (MapObject mapObject : allMapObjects) {
+				MapObjectModel mapObjectModel = (MapObjectModel)mapObject;
+				Array<GraphicResource> resources = mapObjectModel.getResources();
+				for (GraphicResource resource : resources) {	
+					if (resource.isVisible()) {
+						if (resource instanceof ModelResource) {
+							ModelResource modelResource = (ModelResource)resource;
+							modelResourcesMap.put(modelResource, mapObjectModel);
+						}
+						else if (resource instanceof TextureRegionResource) {
+							textureRegionResourcesMap.put((TextureRegionResource)resource, mapObjectModel);
+						}
+						else if (resource instanceof ColorResource) {
+							colorResourcesMap.put((ColorResource)resource, mapObjectModel);
+						}
+						else {
+							throw new IllegalStateException("Could not find renderer for given resource class.");
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private void renderModelResources() {
+		modelRenderer.getModelBatch().begin(camera);
+		Environment environment = calculateEnvironment();
+		
+		for (ModelResource resource : modelResourcesMap.keySet()) {
+			MapObjectModel mapObject = modelResourcesMap.get(resource);	
+			
+			if (resource.isLightSource()) {
+				modelRenderer.setEnvironment(null);
+				modelRenderer.renderObjectPeriodically(mapObject, resource, camera);
+			}
+			else {
+				modelRenderer.setEnvironment(environment);
+				modelRenderer.renderObjectPeriodically(mapObject, resource, camera);
+			}
+		}
+		modelRenderer.getModelBatch().end();			
+	}
+	
+	private void renderTextureRegionResources() {
+		textureRegionRenderer.updateToCamera(camera);
+		textureRegionRenderer.spriteBatch.begin();
+		for (TextureRegionResource resource : textureRegionResourcesMap.keySet()) {
+			MapObjectModel mapObject = textureRegionResourcesMap.get(resource);
+			textureRegionRenderer.renderObjectPeriodically(mapObject, resource, camera);
+		}
+		textureRegionRenderer.spriteBatch.end();
+	}
+	
+	private void renderColorResources() {
+		colorRenderer.updateToCamera(camera);
+		colorRenderer.shapeRenderer.begin(ShapeType.Filled);
+		for (ColorResource resource : colorResourcesMap.keySet()) {
+			MapObjectModel mapObject = colorResourcesMap.get(resource);
+			colorRenderer.renderObjectPeriodically(mapObject, resource, camera);
+		}
+		colorRenderer.shapeRenderer.end();
+	}
 
+	private void renderMap(float delta) {
+		mapRenderer.updateToCamera(camera);
+		mapRenderer.setConsoleText("Running in " + Float.toString(round(1 / delta, 0)) + " FPS"
+				+ ", fuel left: " + playerSpaceship.getFuelLeft()
+				+ ", zoom: " + camera.zoom
+				+ ", render calls: " + textureRegionRenderer.spriteBatch.totalRenderCalls);
+		mapRenderer.render(map, camera);
+	}
+	
+	private Environment calculateEnvironment() {        
+		Environment environment = new Environment();
+		float colorIntencity = 0.6f;
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, colorIntencity, colorIntencity, colorIntencity, 1f));
+		
+		Array<BaseLight> lightSources = new Array<BaseLight>(modelResourcesMap.keySet().size());
+		
+		for (ModelResource resource : modelResourcesMap.keySet()) {
+			if (resource.isLightSource()) {
+				MapObjectModel model = modelResourcesMap.get(resource);
+				lightSources.add(resource.getLightSource(model.getPosition()));
+			}
+		}
+		
+		if (lightSources.size > 0)
+			environment.add(lightSources);
+		
+		return environment;
+	}
+	
 	private float round(float d, int decimalPlace) {
 		BigDecimal bd = new BigDecimal(Float.toString(d));
 		bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);

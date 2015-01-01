@@ -56,10 +56,10 @@ public final class Defs {
 	// "number of universes" you're allowed to see (zoom-wise) 
 	public static final float CAMERA_LIMIT = 2; 
 	public static final float CAMERA_POSITION_Z = 2f;
-	public static final float CAMERA_FAR = 110f;
+	public static final float PLANE_POSITION_Z = -1000f;
+	public static final float CAMERA_FAR = 1002f;
 	public static final float CAMERA_NEAR = 1f;
 
-	
     /* ************************************************************************************
      ************************************* Rendering ************************************** 
      ************************************************************************************** */
@@ -76,7 +76,7 @@ public final class Defs {
 	public static final int UNIT_PER_DEBUG_LINE = 10;
 	
 	/* viewport  */ 
-	public static final int PIXELS_PER_UNIT = 5;	
+	public static final int PIXELS_PER_UNIT = 1;	
 	
 	
     /* ************************************************************************************
