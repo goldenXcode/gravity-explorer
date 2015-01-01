@@ -1,9 +1,11 @@
 package se.fkstudios.gravityexplorer.view;
 
+import se.fkstudios.gravityexplorer.Defs;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
 import se.fkstudios.gravityexplorer.model.resources.ModelResource;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Matrix4;
@@ -13,7 +15,7 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 public class ModelRenderer extends PeriodicRenderer {
 
 	private ModelBatch modelBatch;
-	int counter = 0;
+	private Environment environment;
 	
 	public ModelRenderer(float periodicityWidth, float periodicityHeight) {
 		super(periodicityWidth, periodicityHeight);
@@ -26,6 +28,14 @@ public class ModelRenderer extends PeriodicRenderer {
 	
 	public void setModelBatch(ModelBatch modelBatch) {
 		this.modelBatch = modelBatch;
+	}
+	
+	public Environment getEnvironment() {
+		return environment;
+	}
+	
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
 	}
 	
 	public void updateToCamera(Camera camera) {
@@ -55,9 +65,15 @@ public class ModelRenderer extends PeriodicRenderer {
 		ModelInstance modelInstance = modelResource.getModelInstance();
 		
 		modelInstance.transform = new Matrix4();
-		modelInstance.transform.translate(screenPosition.x, screenPosition.y, -100f);
+		modelInstance.transform.translate(screenPosition.x, screenPosition.y, Defs.PLANE_POSITION_Z);
 		modelInstance.transform.rotate(0f, 0f, 1f, rotation);
 		modelInstance.transform.scale(scaleX, scaleY, scaleZ);
-		modelBatch.render(modelInstance);
+		
+		if (environment != null) {
+			modelBatch.render(modelInstance, environment);
+		}
+		else {
+			modelBatch.render(modelInstance);
+		}
 	}	
 }

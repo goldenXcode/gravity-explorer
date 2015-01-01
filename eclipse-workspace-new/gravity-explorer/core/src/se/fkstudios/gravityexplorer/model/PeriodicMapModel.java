@@ -2,15 +2,15 @@ package se.fkstudios.gravityexplorer.model;
 
 import java.util.HashMap;
 
-import se.fkstudios.gravityexplorer.Defs;
 import se.fkstudios.gravityexplorer.Utility;
-import se.fkstudios.gravityexplorer.controller.GameplayCamera;
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
 import se.fkstudios.gravityexplorer.model.resources.RenderableModel;
 import se.fkstudios.gravityexplorer.model.resources.TextureResource;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
@@ -32,8 +32,8 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 	private SpaceshipModel playerSpaceship;
 	private MapObjects allMapObjects;
 	private HashMap<MapObjectModel, MapLayer> mapObjectLayerMap;
-	
 	private float spawnParticleCounter;
+	private Environment environment;
 	
 	/**
 	 * Creates a continuous map. 
@@ -44,7 +44,8 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 	public PeriodicMapModel(
 			String backgroundLayer1ImageName,
 			String backgroundLayer2ImageName,
-			float width, float height) {
+			float width, float height) 
+	{
 		this.width = width;
 		this.height = height;
 		allMapObjects = new MapObjects();
@@ -129,7 +130,7 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 	 * Updates the map and all owned MapObject for next game loop iteration.
 	 * @param delta Time in seconds since last update call.
 	 */
-	public void update(float delta, GameplayCamera camera) {
+	public void update(float delta) {
 		spawnParticleCounter += delta;
 		
 		updateSpaceshipsNeighbourhood();
@@ -207,7 +208,11 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 	}
 	
 	private void loadMapObjectsDemoMap() {
-		
+
+		environment = new Environment();
+		float ambientIntensity = 0.5f;
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, ambientIntensity, ambientIntensity, ambientIntensity, 1f));
+	
 		MapObjectFactory factory = MapObjectFactory.getInstance();
 		
 		//Create start neighborhood. spaceship and one planet.
@@ -216,15 +221,7 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 		startNeighbourhood.setName("start neighbourhood");
 		getLayers().add(startNeighbourhood);
 		
-		MapLayer gameplayNeighborhood = new MapLayer();
-		gameplayNeighborhood.setName("gameplay neighborhood");
-		getLayers().add(gameplayNeighborhood);
-		
-		MapObjectModel dominatringPlanet = factory.createStationary3DPlanet(20, new Vector2(width * 0.1f, width * 0.1f), 2, 0.2f, Color.GREEN);
-//		MapObjectModel dominatringPlanet = factory.createStationaryPlanet(15, new Vector2(40, 49), 2, 0.2f);
-		registerMapObject(dominatringPlanet, gameplayNeighborhood);
-		
-		MapObjectModel startPlanet = factory.createStationaryPlanet(20, new Vector2(width * 0.13f, width * 0.1f), 3f);
+		MapObjectModel startPlanet = factory.createStationaryPlanet(20, new Vector2(width * 0.13f, width * 0.1f), 3f, Color.MAROON, false);
 		registerMapObject(startPlanet, startNeighbourhood);
 		
 		playerSpaceship = factory.createPlayerSpaceship();
@@ -232,42 +229,46 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 		registerMapObject(playerSpaceship, startNeighbourhood);
 
 		//Create the entire "gameplay" neighborhood.
-
-		dominatringPlanet = factory.createStationaryPlanet(100, new Vector2(width / 2f, height / 2f), 2, 0.2f);
+		MapLayer gameplayNeighborhood = new MapLayer();
+		gameplayNeighborhood.setName("gameplay neighborhood");
+		getLayers().add(gameplayNeighborhood);
+		
+		MapObjectModel dominatringPlanet = factory.createStationaryPlanet(100, new Vector2(width / 2f, height / 2f), 2, 0.2f, Color.WHITE, true);
 		registerMapObject(dominatringPlanet, gameplayNeighborhood);
-//	
-//		MapObjectModel firstTarget = factory.createOrbitingPlanet(dominatringPlanet, 140, 0, 0.015f, true, 1);
-//		registerMapObject(firstTarget, gameplayNeighborhood);
-//		
-//		MapObjectModel secondTarget = factory.createOrbitingPlanet(dominatringPlanet, 300, 0f, 0.05f, true, 3.3f);
-//		registerMapObject(secondTarget, gameplayNeighborhood);
-//		for (int i = 0; i < 3; i++) {
-//			MapObjectModel moon = factory.createOrbitingPlanet(secondTarget, 15 + 10*i, 45*i, 0.05f - i / 100, true, 0.2f);
-//			registerMapObject(moon, gameplayNeighborhood);
-//		}
-//
-//		float degrees = 0;
-//		int asteriodCount = 300;
-//		for (int i = 0; i < asteriodCount; i++) {
-//			int distanceOffset = factory.randomInt(-10, 10);
-//			
-//			if (factory.randomInt(0, 10) < 5) {
-//				distanceOffset += factory.randomInt(-20, 20);
-//			}
-//			
-//			if (factory.randomInt(0, 10) < 1) {
-//				distanceOffset += factory.randomInt(-40, 40);
-//			}
-//			
-//			degrees += i * 360 / asteriodCount;
-//			float relativeMass = 0.0006f * factory.randomFloat(0.5f, 1.5f);
-//			MapObjectModel asteroid = factory.createOrbitingAsteroid(dominatringPlanet, 190 + distanceOffset, 
-//					degrees, relativeMass, true, 0.5f);
-//			registerMapObject(asteroid, gameplayNeighborhood);
-//		}
-//		
-//		MapObjectModel thirdTarget = factory.createOrbitingPlanet(dominatringPlanet, 430, 0f, 0.007f, true, 3.0f);
-//		registerMapObject(thirdTarget, gameplayNeighborhood);
+		
+		MapObjectModel firstTarget = factory.createOrbitingPlanet(dominatringPlanet, 140, 0, 0.015f, true, 1, Color.TEAL);
+		registerMapObject(firstTarget, gameplayNeighborhood);
+		
+		MapObjectModel secondTarget = factory.createOrbitingPlanet(dominatringPlanet, 300, 0f, 0.05f, true, 3.3f, Color.MAROON);
+		registerMapObject(secondTarget, gameplayNeighborhood);
+		for (int i = 0; i < 3; i++) {
+			Color color = new Color(factory.randomFloat(0f, 1f), factory.randomFloat(0f, 1f), factory.randomFloat(0f, 1f), 1f);
+			MapObjectModel moon = factory.createOrbitingPlanet(secondTarget, 15 + 10*i, 45*i, 0.05f - i / 100, true, 0.2f, color);
+			registerMapObject(moon, gameplayNeighborhood);
+		}
+
+		float degrees = 0;
+		int asteriodCount = 300;
+		for (int i = 0; i < asteriodCount; i++) {
+			int distanceOffset = factory.randomInt(-10, 10);
+			
+			if (factory.randomInt(0, 10) < 5) {
+				distanceOffset += factory.randomInt(-20, 20);
+			}
+			
+			if (factory.randomInt(0, 10) < 1) {
+				distanceOffset += factory.randomInt(-40, 40);
+			}
+			
+			degrees += i * 360 / asteriodCount;
+			float relativeMass = 0.0006f * factory.randomFloat(0.5f, 1.5f);
+			MapObjectModel asteroid = factory.createOrbitingAsteroid(dominatringPlanet, 190 + distanceOffset, 
+					degrees, relativeMass, true, 0.5f);
+			registerMapObject(asteroid, gameplayNeighborhood);
+		}
+		
+		MapObjectModel thirdTarget = factory.createOrbitingPlanet(dominatringPlanet, 430, 0f, 0.007f, true, 3.0f, Color.ORANGE);
+		registerMapObject(thirdTarget, gameplayNeighborhood);
 	}
 	
 	/**

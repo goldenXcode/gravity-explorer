@@ -1,7 +1,7 @@
 package se.fkstudios.gravityexplorer.view;
 
 import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.TextureRegionRenderable;
+import se.fkstudios.gravityexplorer.model.resources.TextureRegionResource;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -28,12 +28,12 @@ import com.badlogic.gdx.math.Vector2;
 		Vector2 screenOrigin,
 		float rotation)
 	{
-		if (!(resource instanceof TextureRegionRenderable)) {
+		if (!(resource instanceof TextureRegionResource)) {
 			System.out.println("Error: could not draw resource of given type");
 			return;
 		}
 		
-		TextureRegionRenderable textureRegionResouce = (TextureRegionRenderable)resource;
+		TextureRegionResource textureRegionResouce = (TextureRegionResource)resource;
 		TextureRegion textureRegion = textureRegionResouce.getTextureRegion();
 		
 		spriteBatch.draw(textureRegion, 

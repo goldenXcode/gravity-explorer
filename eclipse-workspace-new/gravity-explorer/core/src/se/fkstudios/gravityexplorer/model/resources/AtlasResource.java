@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
  * 
  * @author kristofer
  */
-public class AtlasResource extends GraphicResource implements TextureRegionRenderable {
+public class AtlasResource extends TextureRegionResource {
 
 	private TextureRegion textureRegion;
 	
