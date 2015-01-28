@@ -3,9 +3,9 @@ package se.fkstudios.gravityexplorer.model;
 import java.util.HashMap;
 
 import se.fkstudios.gravityexplorer.Utility;
-import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.RenderableModel;
-import se.fkstudios.gravityexplorer.model.resources.TextureResource;
+import se.fkstudios.gravityexplorer.model.resources.GraphicResourceBinding;
+import se.fkstudios.gravityexplorer.model.resources.GraphicsLoader;
+import se.fkstudios.gravityexplorer.model.resources.TextureRegionBinding;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -19,16 +19,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 /**
- * Represent a (TODO: should be, is not now) periodic map with floating point width and height. 
+ * Represent a periodic map with floating point width and height. 
  * @author kristofer
  */
-public class PeriodicMapModel extends Map implements RenderableModel {
+public class PeriodicMapModel extends Map {
 	
 	private PhysicsEngine physicsEngine;
 	
 	private float width;
 	private float height;
-	private Array<GraphicResource> resources;
+	private Array<GraphicResourceBinding> resources;
 	private SpaceshipModel playerSpaceship;
 	private MapObjects allMapObjects;
 	private HashMap<MapObjectModel, MapLayer> mapObjectLayerMap;
@@ -41,37 +41,23 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 	 * @param width Width of map.
 	 * @param height Height of map.
 	 */
-	public PeriodicMapModel(
-			String backgroundLayer1ImageName,
-			String backgroundLayer2ImageName,
-			float width, float height) 
-	{
+	public PeriodicMapModel(String layer1TextureName, String layer2TextureName, float width, float height) {
 		this.width = width;
 		this.height = height;
 		allMapObjects = new MapObjects();
 		mapObjectLayerMap = new HashMap<MapObjectModel, MapLayer>();
 		
-		float longestViewportSide = Utility.getModelCoordinate(Math.max(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-		resources = new Array<GraphicResource>();
-		resources.add(
-			new TextureResource(false, 
-					new Vector2(0,0), 
-					new Vector2(0,0), 
-					false, 
-					longestViewportSide, longestViewportSide, 
-					true, 
-					1f, 1f, 
-					backgroundLayer1ImageName));
+		GraphicsLoader graphicLoader = GraphicsLoader.getInstance();
+		float longestSide = Utility.getModelCoordinate(Math.max(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 		
-		resources.add(
-				new TextureResource(false, 
-					new Vector2(0,0), 
-					new Vector2(0,0), 
-					false, 
-					longestViewportSide * 2, longestViewportSide * 2, 
-					true, 
-					1f, 1f, 
-					backgroundLayer2ImageName));
+		TextureRegionBinding layer1Texure = graphicLoader.createTextureBinding(layer1TextureName, longestSide, longestSide, new Vector2(0,0));
+		TextureRegionBinding layer2Texure = graphicLoader.createTextureBinding(layer2TextureName, longestSide * 2, longestSide * 2, new Vector2(0,0));
+		layer1Texure.setMaxRenderScale(1f);
+		layer2Texure.setMaxRenderScale(1f);
+		
+		resources = new Array<GraphicResourceBinding>();
+		resources.add(layer1Texure);
+		resources.add(layer2Texure);
 		
 		spawnParticleCounter = 0f;
 
@@ -100,7 +86,7 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 		return playerSpaceship;
 	}
 	
-	public Array<GraphicResource> getResources() {
+	public Array<GraphicResourceBinding> getResources() {
 		return resources;
 	}
 	
@@ -151,7 +137,8 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 				
 				if ((spawnParticleCounter > 0.1f) && (mapObject.isGeneratingParticles())) {
 					Vector2 position = mapObject.getPosition().cpy();
-					MapObjectFactory.getInstance().createParticleResource(mapObject, 0.5f, 0.5f, position);
+					Color color = Utility.randomColor();
+					GraphicsLoader.getInstance().createColorBinding(mapObject, color, 0.5f, 0.5f, position);
 				}
 			}
 		}
@@ -242,7 +229,7 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 		MapObjectModel secondTarget = factory.createOrbitingPlanet(dominatringPlanet, 300, 0f, 0.05f, true, 3.3f, Color.MAROON);
 		registerMapObject(secondTarget, gameplayNeighborhood);
 		for (int i = 0; i < 3; i++) {
-			Color color = new Color(factory.randomFloat(0f, 1f), factory.randomFloat(0f, 1f), factory.randomFloat(0f, 1f), 1f);
+			Color color = Utility.randomColor();
 			MapObjectModel moon = factory.createOrbitingPlanet(secondTarget, 15 + 10*i, 45*i, 0.05f - i / 100, true, 0.2f, color);
 			registerMapObject(moon, gameplayNeighborhood);
 		}
@@ -250,18 +237,18 @@ public class PeriodicMapModel extends Map implements RenderableModel {
 		float degrees = 0;
 		int asteriodCount = 300;
 		for (int i = 0; i < asteriodCount; i++) {
-			int distanceOffset = factory.randomInt(-10, 10);
+			int distanceOffset = Utility.randomInt(-10, 10);
 			
-			if (factory.randomInt(0, 10) < 5) {
-				distanceOffset += factory.randomInt(-20, 20);
+			if (Utility.randomInt(0, 10) < 5) {
+				distanceOffset += Utility.randomInt(-20, 20);
 			}
 			
-			if (factory.randomInt(0, 10) < 1) {
-				distanceOffset += factory.randomInt(-40, 40);
+			if (Utility.randomInt(0, 10) < 1) {
+				distanceOffset += Utility.randomInt(-40, 40);
 			}
 			
 			degrees += i * 360 / asteriodCount;
-			float relativeMass = 0.0006f * factory.randomFloat(0.5f, 1.5f);
+			float relativeMass = 0.0006f * Utility.randomFloat(0.5f, 1.5f);
 			MapObjectModel asteroid = factory.createOrbitingAsteroid(dominatringPlanet, 190 + distanceOffset, 
 					degrees, relativeMass, true, 0.5f);
 			registerMapObject(asteroid, gameplayNeighborhood);

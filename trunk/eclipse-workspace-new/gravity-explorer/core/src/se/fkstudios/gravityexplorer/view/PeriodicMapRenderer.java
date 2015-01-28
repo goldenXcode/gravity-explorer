@@ -4,8 +4,8 @@ import se.fkstudios.gravityexplorer.Defs;
 import se.fkstudios.gravityexplorer.Utility;
 import se.fkstudios.gravityexplorer.controller.GameplayCamera;
 import se.fkstudios.gravityexplorer.model.PeriodicMapModel;
-import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.TextureRegionResource;
+import se.fkstudios.gravityexplorer.model.resources.GraphicResourceBinding;
+import se.fkstudios.gravityexplorer.model.resources.TextureRegionBinding;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -50,12 +50,12 @@ public class PeriodicMapRenderer extends TextureRegionRenderer {
 	private void renderMap(PeriodicMapModel map, GameplayCamera camera) {
 		spriteBatch.begin();
 		
-		for (GraphicResource resource : map.getResources()) {
-			if (resource instanceof TextureRegionResource) {				
+		for (GraphicResourceBinding resource : map.getResources()) {
+			if (resource instanceof TextureRegionBinding) {				
 				screenPosition.x = camera.position.x / Utility.getScreenCoordinate(map.getWidth());
 				screenPosition.y = camera.position.y / Utility.getScreenCoordinate(map.getHeight());
-				float screenWidth = Utility.getScreenCoordinate(resource.getWidth(map.getWidth()));
-				float screenHeight = Utility.getScreenCoordinate(resource.getHeight(map.getHeight()));
+				float screenWidth = Utility.getScreenCoordinate(resource.getWidth());
+				float screenHeight = Utility.getScreenCoordinate(resource.getHeight());
 				screenOrigin.x = screenWidth / 2;
 				screenOrigin.y = screenHeight / 2;
 				float longestTexSide = Math.max(screenWidth, screenHeight);

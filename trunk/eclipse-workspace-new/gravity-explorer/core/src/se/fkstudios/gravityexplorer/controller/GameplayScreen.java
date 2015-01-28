@@ -1,17 +1,16 @@
 package se.fkstudios.gravityexplorer.controller;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 
 import se.fkstudios.gravityexplorer.Defs;
 import se.fkstudios.gravityexplorer.Utility;
-import se.fkstudios.gravityexplorer.model.MapObjectModel;
 import se.fkstudios.gravityexplorer.model.PeriodicMapModel;
 import se.fkstudios.gravityexplorer.model.SpaceshipModel;
-import se.fkstudios.gravityexplorer.model.resources.ColorResource;
-import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.ModelResource;
-import se.fkstudios.gravityexplorer.model.resources.TextureRegionResource;
+import se.fkstudios.gravityexplorer.model.resources.AnimationBinding;
+import se.fkstudios.gravityexplorer.model.resources.ColorBinding;
+import se.fkstudios.gravityexplorer.model.resources.GraphicsLoader;
+import se.fkstudios.gravityexplorer.model.resources.ModelBinding;
+import se.fkstudios.gravityexplorer.model.resources.TextureRegionBinding;
 import se.fkstudios.gravityexplorer.view.ColorRenderer;
 import se.fkstudios.gravityexplorer.view.ModelRenderer;
 import se.fkstudios.gravityexplorer.view.PeriodicMapRenderer;
@@ -24,10 +23,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.BaseLight;
+import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -57,10 +54,7 @@ public class GameplayScreen implements Screen {
 	private ColorRenderer colorRenderer;
 	private ModelRenderer modelRenderer;
 	
-	private HashMap<TextureRegionResource, MapObjectModel> textureRegionResourcesMap;
-	private HashMap<ModelResource, MapObjectModel> modelResourcesMap;
-	private HashMap<ColorResource, MapObjectModel> colorResourcesMap;
-	private Array<ModelResource> lightSources;
+	Array<BaseLight> allLightSources;
 	
 	@Override
 	public void show() throws IllegalStateException {
@@ -112,10 +106,7 @@ public class GameplayScreen implements Screen {
 		colorRenderer = new ColorRenderer(screenMapWidth, screenMapHeight);
 		modelRenderer = new ModelRenderer(screenMapWidth, screenMapHeight);
 		
-		textureRegionResourcesMap = new HashMap<TextureRegionResource, MapObjectModel>();
-		modelResourcesMap = new HashMap<ModelResource, MapObjectModel>();
-		colorResourcesMap = new HashMap<ColorResource, MapObjectModel>();
-		lightSources = new Array<ModelResource>();
+		allLightSources = new Array<BaseLight>();
 	}
 
 	/*
@@ -171,6 +162,8 @@ public class GameplayScreen implements Screen {
 	@Override
 	public void dispose() {
 		Gdx.input.setInputProcessor(null);
+		GraphicsLoader.getInstance().dispose();
+		map = null;
 	}
 	
 	/**
@@ -179,88 +172,80 @@ public class GameplayScreen implements Screen {
 	 */
 	private void realRender(float delta) {
 		// clear buffers.
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		
 		renderMap(delta);
 		
-		prepareResources();
-		
 		renderModelResources();
 		renderColorResources();
 		renderTextureRegionResources();
+		renderAnimationResources(delta);
 	}
 	
-	/**
-	 * Map renderable resources to corresponding map objects based on resource type. 
-	 */
-	private void prepareResources() {
-		textureRegionResourcesMap.clear();
-		modelResourcesMap.clear(); 
-		colorResourcesMap.clear();
-		lightSources.clear();
-		
-		for (MapLayer layer : map.getLayers()) {
-			MapObjects allMapObjects = layer.getObjects();
-			for (MapObject mapObject : allMapObjects) {
-				MapObjectModel mapObjectModel = (MapObjectModel)mapObject;
-				Array<GraphicResource> resources = mapObjectModel.getResources();
-				for (GraphicResource resource : resources) {	
-					if (resource.isVisible()) {
-						if (resource instanceof ModelResource) {
-							ModelResource modelResource = (ModelResource)resource;
-							modelResourcesMap.put(modelResource, mapObjectModel);
-						}
-						else if (resource instanceof TextureRegionResource) {
-							textureRegionResourcesMap.put((TextureRegionResource)resource, mapObjectModel);
-						}
-						else if (resource instanceof ColorResource) {
-							colorResourcesMap.put((ColorResource)resource, mapObjectModel);
-						}
-						else {
-							throw new IllegalStateException("Could not find renderer for given resource class.");
-						}
-					}
-				}
+	private void renderAnimationResources(float delta) {
+		GraphicsLoader loader = GraphicsLoader.getInstance();
+		Iterable<AnimationBinding> bindings = loader.getOwnedResourceBindings(AnimationBinding.class); 
+				
+		textureRegionRenderer.updateToCamera(camera);
+		textureRegionRenderer.spriteBatch.begin();
+
+		for (AnimationBinding resource : bindings) {
+			resource.incStateTime(delta);
+			if (resource.isVisible()) {
+				textureRegionRenderer.renderObjectPeriodically(resource.getOwner(), resource, camera);
 			}
 		}
+		textureRegionRenderer.spriteBatch.end();
 	}
 	
 	private void renderModelResources() {
-		modelRenderer.getModelBatch().begin(camera);
-		Environment environment = calculateEnvironment();
+		GraphicsLoader loader = GraphicsLoader.getInstance();
+		Iterable<ModelBinding> resources = loader.getOwnedResourceBindings(ModelBinding.class);	
 		
-		for (ModelResource resource : modelResourcesMap.keySet()) {
-			MapObjectModel mapObject = modelResourcesMap.get(resource);	
-			
-			if (resource.isLightSource()) {
-				modelRenderer.setEnvironment(null);
-				modelRenderer.renderObjectPeriodically(mapObject, resource, camera);
-			}
-			else {
-				modelRenderer.setEnvironment(environment);
-				modelRenderer.renderObjectPeriodically(mapObject, resource, camera);
+		Environment environment = calculateEnvironment();
+		modelRenderer.setEnvironment(environment);
+		
+		modelRenderer.getModelBatch().begin(camera);
+		
+		for (ModelBinding resource : resources) {
+			if (resource.isVisible()) {
+				if (resource.isLightSource()) {
+					modelRenderer.renderObjectPeriodically(resource.getOwner(), resource, camera);
+				}
+				else {
+					modelRenderer.renderObjectPeriodically(resource.getOwner(), resource, camera);
+				}
 			}
 		}
 		modelRenderer.getModelBatch().end();			
 	}
 	
 	private void renderTextureRegionResources() {
+		GraphicsLoader loader = GraphicsLoader.getInstance();
+		Iterable<TextureRegionBinding> resources = loader.getOwnedResourceBindings(TextureRegionBinding.class);
+		
 		textureRegionRenderer.updateToCamera(camera);
 		textureRegionRenderer.spriteBatch.begin();
-		for (TextureRegionResource resource : textureRegionResourcesMap.keySet()) {
-			MapObjectModel mapObject = textureRegionResourcesMap.get(resource);
-			textureRegionRenderer.renderObjectPeriodically(mapObject, resource, camera);
+
+		for (TextureRegionBinding resource : resources) {
+			if (resource.isVisible()) {
+				textureRegionRenderer.renderObjectPeriodically(resource.getOwner(), resource, camera);
+			}
 		}
 		textureRegionRenderer.spriteBatch.end();
 	}
 	
 	private void renderColorResources() {
+		GraphicsLoader loader = GraphicsLoader.getInstance();
+		Iterable<ColorBinding> resources = loader.getOwnedResourceBindings(ColorBinding.class);
+		
 		colorRenderer.updateToCamera(camera);
 		colorRenderer.shapeRenderer.begin(ShapeType.Filled);
-		for (ColorResource resource : colorResourcesMap.keySet()) {
-			MapObjectModel mapObject = colorResourcesMap.get(resource);
-			colorRenderer.renderObjectPeriodically(mapObject, resource, camera);
+		for (ColorBinding resource : resources) {
+			if (resource.isVisible()) {
+				colorRenderer.renderObjectPeriodically(resource.getOwner(), resource, camera);
+			}
 		}
 		colorRenderer.shapeRenderer.end();
 	}
@@ -275,21 +260,28 @@ public class GameplayScreen implements Screen {
 	}
 	
 	private Environment calculateEnvironment() {        
+		GraphicsLoader loader = GraphicsLoader.getInstance();
+		Iterable<ModelBinding> resources = loader.getOwnedResourceBindings(ModelBinding.class);	
+
 		Environment environment = new Environment();
-		float colorIntencity = 0.6f;
+		float colorIntencity = 0.4f;
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, colorIntencity, colorIntencity, colorIntencity, 1f));
+
+		allLightSources.clear();
 		
-		Array<BaseLight> lightSources = new Array<BaseLight>(modelResourcesMap.keySet().size());
-		
-		for (ModelResource resource : modelResourcesMap.keySet()) {
-			if (resource.isLightSource()) {
-				MapObjectModel model = modelResourcesMap.get(resource);
-				lightSources.add(resource.getLightSource(model.getPosition()));
+		for (ModelBinding resource : resources) {
+			if (resource.isLightSource()) { 
+				float screenMapWidth = Utility.getScreenCoordinate(map.getWidth());
+				float screenMapHeight = Utility.getScreenCoordinate(map.getHeight());
+				Array<PointLight> lightSources = resource.getLightSources(screenMapWidth, screenMapHeight);
+				for (PointLight ligthSource : lightSources) {
+					allLightSources.add(ligthSource);
+				}
 			}
 		}
 		
-		if (lightSources.size > 0)
-			environment.add(lightSources);
+		if (allLightSources.size > 0)
+			environment.add(allLightSources);
 		
 		return environment;
 	}

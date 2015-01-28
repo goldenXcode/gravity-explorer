@@ -1,19 +1,14 @@
 package se.fkstudios.gravityexplorer.model;
 
-import se.fkstudios.gravityexplorer.model.resources.AnimationResource;
-import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.RenderableModel;
-
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 /**
  * Modeling the properties of all gameplay map objects in game.
  * @author kristofer
  */
-public class MapObjectModel extends MapObject implements RenderableModel {
+public class MapObjectModel extends MapObject {
 	
 	public enum GravitationalMode { ALL, NEIGHBOURHOOD, OBJECT, STATIONARY } 
 	
@@ -31,16 +26,13 @@ public class MapObjectModel extends MapObject implements RenderableModel {
 	private MapObjects influencingMapObjects;
 	private MapObjectModel dominatingMapObject;
 	
-	private Array<GraphicResource> resources;
-	
 	public MapObjectModel(float width, float height,
 			Vector2 position,
 			Vector2 velocity,
 			int mass,
 			float rotation,
 			float rotationSpeed,
-			boolean ganeratesParticles,
-			Array<GraphicResource> resources) 
+			boolean ganeratesParticles) 
 	{
 		this.width = width;
 		this.height = height;
@@ -51,27 +43,12 @@ public class MapObjectModel extends MapObject implements RenderableModel {
 		this.rotation = rotation;
 		this.rotationalSpeed = rotationSpeed;
 		this.selfStabilizing = false;
-		this.resources = resources;
 		this.generatesParticles = ganeratesParticles;
 		this.gravitationalMode = GravitationalMode.NEIGHBOURHOOD;
 		this.influencingMapObjects = new MapObjects();
 		this.dominatingMapObject = null;
 	}
 
-	public MapObjectModel(float width, float height,
-			Vector2 position,
-			Vector2 velocity,
-			int mass,
-			float rotation,
-			float rotationSpeed,
-			boolean generatesParticles,
-			GraphicResource resource) 
-	{
-		this(width, height, position, velocity, mass, rotation, rotationSpeed, 
-				generatesParticles, new Array<GraphicResource>(1));
-		this.resources.add(resource);
-	}
-	
 	public float getWidth() {
 		return width;
 	}
@@ -153,13 +130,7 @@ public class MapObjectModel extends MapObject implements RenderableModel {
 	}
 	
 	public float getRadius() {
-//		return (float) (Math.sqrt(Math.pow(getWidth(), 2) + Math.pow(getHeight(), 2))); 
-//		kristofer 2014-11-30. say what? radius = segment line or what?
 		return (getWidth() + getHeight()) / 4;
-	}
-	
-	public Array<GraphicResource> getResources() {
-		return resources;
 	}
 	
 	public boolean isSelfStabilizing() {
@@ -200,13 +171,6 @@ public class MapObjectModel extends MapObject implements RenderableModel {
 		dominatingMapObject = null;
 	}
 	
-//	public void setGravitationalModeToObjects(MapObjectModel dominatingMapObject, Array<MapObjectModel> otherMapObjects) {
-//		gravitationalMode = GravitationalMode.OBJECTS;
-//		influencingMapObjects = otherMapObjects;
-//		influencingMapObjects.add(dominatingMapObject);
-//		this.dominatingMapObject = dominatingMapObject;
-//	}
-
 	public void setGravitationalModeToObject(MapObjectModel dominatingMapObject) {
 		gravitationalMode = GravitationalMode.OBJECT;
 		ClearInfluencingMapObjects();
@@ -246,12 +210,6 @@ public class MapObjectModel extends MapObject implements RenderableModel {
 			setPosition(position.x + velocity.x * delta, position.y + velocity.y * delta);
 		}
 		setRotation(((getRotation() + getRotationalSpeed()*delta) % 360f));
-		//update stateTime for any animation resources.
-		for(GraphicResource resource : getResources()) {
-			if (resource.getClass() == AnimationResource.class) {
-				((AnimationResource)resource).incStateTime(delta);
-			}
-		}
 	}
 	
 	private void ClearInfluencingMapObjects() {

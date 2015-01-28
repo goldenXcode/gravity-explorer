@@ -3,11 +3,11 @@ package se.fkstudios.gravityexplorer.model.resources;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
-public class ColorResource extends GraphicResource {
+public class ColorBinding extends GraphicResourceBinding {
 	
 	private Color color;
 	
-	public ColorResource(boolean usingOwnerPosition, Vector2 position,
+	public ColorBinding(boolean usingOwnerPosition, Vector2 position,
 			Vector2 positionOffset, boolean usingOwnerSize, float width,
 			float height, boolean visible, float minRenderScale,
 			float maxRenderScale,  Color color) 

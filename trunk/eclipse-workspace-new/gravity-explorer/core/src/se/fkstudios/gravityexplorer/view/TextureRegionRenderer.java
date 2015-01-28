@@ -1,7 +1,7 @@
 package se.fkstudios.gravityexplorer.view;
 
-import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
-import se.fkstudios.gravityexplorer.model.resources.TextureRegionResource;
+import se.fkstudios.gravityexplorer.model.resources.GraphicResourceBinding;
+import se.fkstudios.gravityexplorer.model.resources.TextureRegionBinding;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,18 +22,18 @@ import com.badlogic.gdx.math.Vector2;
 	}
 
 	@Override
-	public void renderResource(GraphicResource resource, 
+	public void renderResource(GraphicResourceBinding resource, 
 		Vector2 screenPosition,
 		float screenWidth, float screenHeight,
 		Vector2 screenOrigin,
 		float rotation)
 	{
-		if (!(resource instanceof TextureRegionResource)) {
+		if (!(resource instanceof TextureRegionBinding)) {
 			System.out.println("Error: could not draw resource of given type");
 			return;
 		}
 		
-		TextureRegionResource textureRegionResouce = (TextureRegionResource)resource;
+		TextureRegionBinding textureRegionResouce = (TextureRegionBinding)resource;
 		TextureRegion textureRegion = textureRegionResouce.getTextureRegion();
 		
 		spriteBatch.draw(textureRegion, 
