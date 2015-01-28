@@ -133,8 +133,8 @@ public final class Defs {
 	
 	/** WARNING: Indexes in ANIMATION_TEXTURE_REGION_NAMES, ANIMATION_NAMES and ANIMATION_FRAME_DURATIONS must match! */
 	public static final float[] ANIMATION_FRAME_DURATIONS = {
-		0.05f,
-		0.025f
+		0.065f,
+		0.05f
 	};
 	
 	/** WARNING: Indexes in TEXTURE_FILE_PATHS and TEXTURE_NAMES must match! */

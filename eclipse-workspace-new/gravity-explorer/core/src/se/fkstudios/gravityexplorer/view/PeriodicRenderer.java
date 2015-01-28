@@ -3,22 +3,21 @@ package se.fkstudios.gravityexplorer.view;
 import se.fkstudios.gravityexplorer.Utility;
 import se.fkstudios.gravityexplorer.controller.GameplayCamera;
 import se.fkstudios.gravityexplorer.model.MapObjectModel;
-import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
+import se.fkstudios.gravityexplorer.model.resources.GraphicResourceBinding;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 public abstract class PeriodicRenderer {
 
 	private Vector2 screenPosition;
-	private Vector2 perodicScreenPosition;
 	private Vector2 screenOrigin;
 	private float periodicityWidth;
 	private float periodicityHeight;
 	
 	public PeriodicRenderer(float periodicityWidth, float periodicityHeight) {
 		screenPosition = new Vector2();
-		perodicScreenPosition = new Vector2();
 		screenOrigin = new Vector2();
 		this.periodicityWidth = periodicityWidth;
 		this.periodicityHeight = periodicityWidth;
@@ -42,14 +41,16 @@ public abstract class PeriodicRenderer {
 	
 	public abstract void updateToCamera(Camera camera);
 	
-	public void renderObjectPeriodically(MapObjectModel mapObject, GraphicResource resource, GameplayCamera camera) {
-
-		Vector2 modelPosition = resource.getPosition(mapObject.getPosition());
-		screenPosition.x = Utility.getScreenCoordinate(modelPosition.x);
-		screenPosition.y =  Utility.getScreenCoordinate(resource.getPosition(mapObject.getPosition()).y);
+	public void renderObjectPeriodically(MapObjectModel mapObject, GraphicResourceBinding resource, GameplayCamera camera) {
+		if (!resource.isVisible()) {
+			throw new IllegalStateException("Renderer was asked to render resource with visiblitiy set to false.");
+		}
+		
+		screenPosition.x = Utility.getScreenCoordinate(resource.getPosition().x);
+		screenPosition.y =  Utility.getScreenCoordinate(resource.getPosition().y);
 	
-		float screenWidth =  Utility.getScreenCoordinate(resource.getWidth(mapObject.getWidth()));
-		float screenHeight = Utility.getScreenCoordinate(resource.getHeight(mapObject.getHeight()));
+		float screenWidth =  Utility.getScreenCoordinate(resource.getWidth());
+		float screenHeight = Utility.getScreenCoordinate(resource.getHeight());
 		
 		//Origin should take into account if object has position offset in case several textures/animations should make up the same object 
 		//(which in that case must rotate around same origin).
@@ -61,60 +62,19 @@ public abstract class PeriodicRenderer {
 		renderResourcePeriodically(resource, screenPosition, screenWidth, screenHeight, screenOrigin, rotation);
 	}
 	
-	public void renderResourcePeriodically(GraphicResource resource, 
+	public void renderResourcePeriodically(GraphicResourceBinding resource, 
 			Vector2 screenPosition,
 			float screenWidth, float screenHeight,
 			Vector2 screenOrigin,
 			float rotation)
 	{
-		renderResource(resource, screenPosition, screenWidth, screenHeight, screenOrigin, rotation);
-		
-		//Render periodicity
-		perodicScreenPosition.x = screenPosition.x;
-		perodicScreenPosition.y = screenPosition.y;
-		
-		//Top
-		perodicScreenPosition.x = screenPosition.x;
-		perodicScreenPosition.y = screenPosition.y + periodicityHeight;
-		renderResource(resource, perodicScreenPosition, screenWidth, screenHeight, screenOrigin, rotation);
-		
-		//Left
-		perodicScreenPosition.x = screenPosition.x - periodicityWidth;
-		perodicScreenPosition.y = screenPosition.y;
-		renderResource(resource, perodicScreenPosition, screenWidth, screenHeight, screenOrigin, rotation);
-		
-		//Bottom
-		perodicScreenPosition.x = screenPosition.x;
-		perodicScreenPosition.y = screenPosition.y - periodicityHeight;
-		renderResource(resource, perodicScreenPosition, screenWidth, screenHeight, screenOrigin, rotation);
-		
-		//Right
-		perodicScreenPosition.x = screenPosition.x + periodicityWidth;
-		perodicScreenPosition.y = screenPosition.y;
-		renderResource(resource, perodicScreenPosition, screenWidth, screenHeight, screenOrigin, rotation);
-		
-		//Left top
-		perodicScreenPosition.x = screenPosition.x - periodicityWidth;
-		perodicScreenPosition.y = screenPosition.y + periodicityHeight;
-		renderResource(resource, perodicScreenPosition, screenWidth, screenHeight, screenOrigin, rotation);
-		
-		//Left bottom
-		perodicScreenPosition.x = screenPosition.x - periodicityWidth;
-		perodicScreenPosition.y = screenPosition.y - periodicityHeight;
-		renderResource(resource, perodicScreenPosition, screenWidth, screenHeight, screenOrigin, rotation);
-		
-		//Right top
-		perodicScreenPosition.x = screenPosition.x + periodicityWidth;
-		perodicScreenPosition.y = screenPosition.y + periodicityHeight;
-		renderResource(resource, perodicScreenPosition, screenWidth, screenHeight, screenOrigin, rotation);
-		
-		//Right bottom
-		perodicScreenPosition.x = screenPosition.x + periodicityWidth;
-		perodicScreenPosition.y = screenPosition.y - periodicityHeight;
-		renderResource(resource, perodicScreenPosition, screenWidth, screenHeight, screenOrigin, rotation);
+		Array<Vector2> positions = Utility.calculatePerodicPositions(screenPosition, periodicityWidth, periodicityHeight);
+		for (Vector2 currentScreenPosition : positions) {
+			renderResource(resource, currentScreenPosition, screenWidth, screenHeight, screenOrigin, rotation);
+		}
 	}
 	
-	protected abstract void renderResource(GraphicResource resource, 
+	protected abstract void renderResource(GraphicResourceBinding resource, 
 			Vector2 screenPosition,
 			float screenWidth, float screnHeight,
 			Vector2 screenOrigin,

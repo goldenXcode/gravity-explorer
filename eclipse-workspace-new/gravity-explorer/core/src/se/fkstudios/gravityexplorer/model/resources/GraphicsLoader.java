@@ -1,54 +1,232 @@
 package se.fkstudios.gravityexplorer.model.resources;
 
+import java.security.InvalidParameterException;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import se.fkstudios.gravityexplorer.Defs;
+import se.fkstudios.gravityexplorer.model.MapObjectModel;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 /**
  * Maps textures and texture regions to strings so that they are not loaded more than once. 
  * 
- * Implements the Singleton patterns. 
- * 
+ * Implements the Singleton pattern. 
  * @author kristofer
  */
 public class GraphicsLoader {
 
 	private static final GraphicsLoader instance = new GraphicsLoader();
 	
-	private TextureAtlas textureAtlas;
+	public static GraphicsLoader getInstance() {
+		return instance;
+	}
 	
-	//TODO If needed, optimize CPU performance by generate integer keys for the maps. String's compare is slower than int's compare, much slower for long strings.
+	//raw resources
+	private TextureAtlas textureAtlas;
 	private HashMap<String, Texture> textureMap;
-	private HashMap<String, TextureRegion> textureRegionMap;
 	private HashMap<String, Animation> animationMap;
-//	private HashMap<String, Model> modelMap;
+	private HashMap<Integer, Model> modelMap;
+	
+	private int modelCounter;
+	
+	private HashSet<AnimationBinding> ownedAnimationBindings;
+	private HashSet<TextureRegionBinding> ownedTextureBindings;
+	private HashSet<ColorBinding> ownedColorBindings;
+	private HashSet<ModelBinding> ownedModelBindings;
 	
 	private ModelBuilder modelBuilder;
 	
 	private GraphicsLoader() {
-		
 		textureAtlas = new TextureAtlas(Gdx.files.internal(Defs.TEXTURE_PACK_FILE_PATH));
-		
 		textureMap = new HashMap<String, Texture>(Defs.TEXTURE_FILE_PATHS.length);
-		for (int i = 0; i < Defs.TEXTURE_FILE_PATHS.length; i++) {
+		animationMap = new HashMap<String, Animation>(Defs.ANIMATION_TEXTURE_REGION_NAMES.length);
+		modelMap = new HashMap<Integer, Model>();
+		
+		modelCounter = 0;
+		
+		ownedAnimationBindings = new HashSet<AnimationBinding>();
+		ownedTextureBindings = new HashSet<TextureRegionBinding>();
+		ownedColorBindings = new HashSet<ColorBinding>();
+		ownedModelBindings = new HashSet<ModelBinding>();
+		
+		modelBuilder = new ModelBuilder();
+		
+		loadTextures();
+		loadAnimations();
+	}
+			
+	public ModelBinding createSphere(Color color, float diameter, Vector2 position) {
+		Material material = new Material(ColorAttribute.createDiffuse(color));
+		Model model = modelBuilder.createSphere(diameter, diameter, diameter, 32, 32, material, Usage.Position | Usage.Normal);
+		ModelInstance instance = new ModelInstance(model);
+		ModelBinding binding = new ModelBinding(false, position, new Vector2(0,0), false, diameter, diameter, true, 0f, Float.MAX_VALUE, instance);
+		modelMap.put(modelCounter++, model);
+		return binding;
+	}
+	
+	public ModelBinding createSphere(MapObjectModel owner, Color color) {
+		float diameter = owner.getHeight() + owner.getWidth() / 2f;
+		ModelBinding binding = createSphere(color, diameter, owner.getPosition());
+		ownedModelBindings.add(binding);
+		binding.setOwner(owner);
+		binding.setUsingOwnerPosition(true);
+		binding.setUsingOwnerSize(true);
+		return binding;
+	}
+	
+	public AnimationBinding createAnimation(String animationName, float width, float height, Vector2 position) {
+		Animation animation = animationMap.get(animationName);
+		AnimationBinding binding = new AnimationBinding(false, position, new Vector2(0,0), false, width, height, true, 0f, Float.MAX_VALUE, true, animation);
+		binding.setVisible(false);
+		return binding;
+	}
+	
+	public AnimationBinding createAnimation(MapObjectModel owner, String animationName, float width, float height, Vector2 positionOffset) {
+		AnimationBinding binding = createAnimation(animationName, width, height, owner.getPosition());
+		ownedAnimationBindings.add(binding);
+		binding.setOwner(owner);
+		binding.setUsingOwnerPosition(true);
+		binding.setPositionOffset(positionOffset);
+		return binding;
+	}
+	
+	public AnimationBinding createAnimation(MapObjectModel owner, String animationName) {
+		AnimationBinding binding = createAnimation(animationName, owner.getWidth(), owner.getHeight(), owner.getPosition());
+		ownedAnimationBindings.add(binding);
+		binding.setOwner(owner);
+		binding.setUsingOwnerPosition(true);
+		binding.setUsingOwnerSize(true);
+		return binding;
+	}
+	
+	public TextureRegionBinding createAtlasTextureBinding(String textureName, float width, float height, Vector2 position) {
+		TextureRegion textureRegion = textureAtlas.findRegion(textureName);
+		TextureRegionBinding binding = new TextureRegionBinding(false, position, new Vector2(0,0), false, width, height, true, 0f, Float.MAX_VALUE, textureRegion);
+		return binding;
+	}
+	
+	public TextureRegionBinding createAtlasTextureBinding(MapObjectModel owner, String textureName) {
+		TextureRegionBinding binding = createAtlasTextureBinding(textureName, owner.getWidth(), owner.getHeight(), owner.getPosition());
+		ownedTextureBindings.add(binding);
+		binding.setOwner(owner);
+		binding.setUsingOwnerPosition(true);
+		binding.setUsingOwnerSize(true);
+		return binding;
+	}
+	
+	public TextureRegionBinding createTextureBinding(String textureName, float width, float height, Vector2 position) {
+		Texture texture = textureMap.get(textureName);
+		TextureRegion textureRegion = new TextureRegion(texture);
+		TextureRegionBinding binding = new TextureRegionBinding(false, position, new Vector2(0,0), false, width, height, true, 0f, Float.MAX_VALUE, textureRegion);
+		return binding;
+	}
+	
+	public TextureRegionBinding createTextureBinding(MapObjectModel owner, String textureName) {
+		TextureRegionBinding binding = createTextureBinding(textureName, owner.getWidth(), owner.getHeight(), owner.getPosition());
+		ownedTextureBindings.add(binding);
+		binding.setOwner(owner);
+		binding.setUsingOwnerPosition(true);
+		binding.setUsingOwnerSize(true);
+		return binding;
+	}
+	
+	public ColorBinding createColorBinding(Color color, float width, float height, Vector2 position) {
+		ColorBinding binding = new ColorBinding(false, position, new Vector2(0,0), false, width, height, true, 0f, Float.MAX_VALUE, color);
+		return binding;
+	}
+	
+	public ColorBinding createColorBinding(MapObjectModel owner, Color color, float width, float height, Vector2 position) {
+		ColorBinding binding = createColorBinding(color, width, height, position);
+		binding.setOwner(owner);
+		ownedColorBindings.add(binding);
+		return binding;
+	}
 
+	@SuppressWarnings("unchecked")
+	public <E extends GraphicResourceBinding> Iterable<E> getOwnedResourceBindings(Class<E> type) {
+		
+		if (AnimationBinding.class == type) {
+			return (Iterable<E>) ownedAnimationBindings;
+		}
+		else if (ColorBinding.class == type) {
+			return (Iterable<E>) ownedColorBindings;
+		}
+		else if (ModelBinding.class == type) {
+			return (Iterable<E>) ownedModelBindings;
+		}
+		else if (TextureRegionBinding.class == type) {
+			return (Iterable<E>) ownedTextureBindings;
+		}
+		else {
+			throw new InvalidParameterException("type parameter not recognized");
+		}
+	}
+	
+	public boolean removeOwnedResourceBinding(GraphicResourceBinding resourceBinding) {
+
+		if (resourceBinding instanceof AnimationBinding) {
+			return ownedAnimationBindings.remove(resourceBinding);
+		}
+		else if (resourceBinding instanceof ColorBinding) {
+			return ownedColorBindings.remove(resourceBinding);
+		}
+		else if (resourceBinding instanceof ModelBinding) {
+			return ownedModelBindings.remove(resourceBinding);
+		}
+		else if (resourceBinding instanceof TextureRegionBinding) {
+			return ownedTextureBindings.remove(resourceBinding);
+		}
+		else {
+			throw new InvalidParameterException("type of given resource parameter not recognized");
+		}
+	}
+	
+	public void dispose() {
+		ownedAnimationBindings.clear();
+		ownedColorBindings.clear();
+		ownedModelBindings.clear();
+		ownedTextureBindings.clear();
+		
+		for (Texture texture : textureMap.values()) {
+			texture.dispose();
+		}
+		textureMap.clear();
+		
+		animationMap.clear(); //Texture regions stored in atlas. no dispose here.
+		
+		for (Model model : modelMap.values()) {
+			model.dispose();
+		}
+		modelMap.clear();
+		
+		modelCounter = 0;
+	}
+	
+	private void loadTextures() {
+		for (int i = 0; i < Defs.TEXTURE_FILE_PATHS.length; i++) {
 			String name = Defs.TEXTURE_NAMES[i];
 			String path = Defs.TEXTURE_FILE_PATHS[i];
 			Texture texture = new Texture(Gdx.files.internal(path));
 			textureMap.put(name, texture);
 		}
+	}
 	
-		textureRegionMap = new HashMap<String, TextureRegion>();
-		
-		animationMap = new HashMap<String, Animation>(Defs.ANIMATION_TEXTURE_REGION_NAMES.length);
+	private void loadAnimations() {
 		for (int i = 0; i < Defs.ANIMATION_TEXTURE_REGION_NAMES.length; i++) {
 			String animationName = Defs.ANIMATION_NAMES[i];
 			float frameDuration = Defs.ANIMATION_FRAME_DURATIONS[i];
@@ -64,79 +242,5 @@ public class GraphicsLoader {
 			}	
 			animationMap.put(animationName, new Animation(frameDuration, textureRegions));
 		}
-		
-//		modelMap = new HashMap<String, Model>();
-		
-		modelBuilder = new ModelBuilder();
 	}
-	
-	/**
-	 * Gets texture stored in game's texture atlas. Texture region names should be constants 
-	 * in ResourcesDefs.TEXTURE_NAMES.
-	 * 
-	 * @param textureName the name of the texture to search for.
-	 * @return the texture with the given name, null if not found.
-	 */
-	public Texture getTexture(String textureName) {
-		return textureMap.get(textureName);
-	}
-	
-	/**
-	 * Gets texture region stored in game's texture atlas. Texture region names should be constants 
-	 * in ResourcesDefs. Regions names also matches the file names of the .PNG files when running 
-	 * the texture packer. 
-	 * 
-	 * @param textureRegionName the name of the texture region to search for.
-	 * @return the texture region with the given name, null if not found.
-	 */
-	public TextureRegion getTextureRegion(String textureRegionName) {
-		TextureRegion region = textureRegionMap.get(textureRegionName);
-		if (region == null) {
-			region = textureAtlas.findRegion(textureRegionName);
-			textureRegionMap.put(textureRegionName, region);
-		}
-		return region;
-	}
-	
-	/**
-	 * TODO: write this shit!
-	 * @param animationName
-	 * @return
-	 */
-	public Animation getAnimation(String animationName) {
-		return animationMap.get(animationName);
-	}
-	
-//	public Model getModel(String modelName) {
-//		return modelMap.get(modelName);
-//	}
-//	
-//	public void addModel(String modelName, Model model) {
-//		modelMap.put(modelName, model);
-//	}
-//	
-//	public void removeModel(String modelName) {
-//		Model model = modelMap.get(modelName);
-//		if (model != null) {
-//			modelMap.remove(modelName);
-//			model.dispose();
-//		}
-//	}
-	
-	public ModelBuilder getModelBuilder() {
-		return modelBuilder;
-	}
-	
-	public void dispose() {
-		//TODO: Dispose all loaded resources.
-	}
-	
-	/**
-	 * Returns the only allowed instance of this object.
-	 * @return self
-	 */
-	public static GraphicsLoader getInstance() {
-		return instance;
-	}
-	
 }

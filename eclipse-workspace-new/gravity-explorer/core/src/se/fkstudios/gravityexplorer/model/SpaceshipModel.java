@@ -1,8 +1,7 @@
 package se.fkstudios.gravityexplorer.model;
 
 import se.fkstudios.gravityexplorer.Defs;
-import se.fkstudios.gravityexplorer.model.resources.AnimationResource;
-import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
+import se.fkstudios.gravityexplorer.model.resources.AnimationBinding;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -17,14 +16,20 @@ public class SpaceshipModel extends MapObjectModel {
 	private int maxThrust; //in Newton
 	private float fuelLeft; 
 	
-	private Array<AnimationResource> thrustAnimations;
-	
-	public void setFuelLeft(float fuelLeft) {
-		this.fuelLeft = fuelLeft; 
-	}
-	
-	public float getFuelLeft() {
-		return fuelLeft; 
+	private Array<AnimationBinding> thrustAnimations;
+
+	public SpaceshipModel(float width, float height, 
+			Vector2 position,
+			Vector2 velocity, 
+			int mass, 
+			float rotation, 
+			int maxThrust) 
+	{
+		super(width, height, position, velocity, mass, rotation, 0f, false);
+		this.thrust = new Vector2(0, 0);
+		this.maxThrust = maxThrust;
+		this.fuelLeft = Defs.STARTING_FUEL;
+		this.thrustAnimations = new Array<AnimationBinding>(4);
 	}
 	
 	public Vector2 getThrust() {
@@ -38,7 +43,7 @@ public class SpaceshipModel extends MapObjectModel {
 	public void setThrust(float thrustX, float thrustY) {
 		thrust.x = thrustX;
 		thrust.y = thrustY;
-		for (AnimationResource thrustAnimation : thrustAnimations)
+		for (AnimationBinding thrustAnimation : thrustAnimations)
 			thrustAnimation.setVisible(thrust.len2() > 0);
 	}
 	
@@ -50,19 +55,16 @@ public class SpaceshipModel extends MapObjectModel {
 		this.maxThrust = maxThrust;
 	}
 
-	public SpaceshipModel(float width, float height, 
-			Vector2 position,
-			Vector2 velocity, 
-			int mass, 
-			float rotation, 
-			int maxThrust, 
-			Array<GraphicResource> allResources, 
-			Array<AnimationResource> thrustAnimations) {
-		super(width, height, position, velocity, mass, rotation, 0f, false, allResources);
-		this.thrust = new Vector2(0, 0);
-		this.maxThrust = maxThrust;
-		this.fuelLeft = Defs.STARTING_FUEL;
-		this.thrustAnimations = thrustAnimations;
+	public float getFuelLeft() {
+		return fuelLeft; 
+	}
+
+	public void setFuelLeft(float fuelLeft) {
+		this.fuelLeft = fuelLeft; 
+	}
+	
+	public Array<AnimationBinding> getThrustAnimations() {
+		return thrustAnimations;
 	}
 	
 	@Override
@@ -93,5 +95,4 @@ public class SpaceshipModel extends MapObjectModel {
 //			return 0;
 //		}
 	}
-	
 }

@@ -1,7 +1,7 @@
 package se.fkstudios.gravityexplorer.view;
 
-import se.fkstudios.gravityexplorer.model.resources.ColorResource;
-import se.fkstudios.gravityexplorer.model.resources.GraphicResource;
+import se.fkstudios.gravityexplorer.model.resources.ColorBinding;
+import se.fkstudios.gravityexplorer.model.resources.GraphicResourceBinding;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -21,18 +21,18 @@ public class ColorRenderer extends PeriodicRenderer {
 	}
 	
 	@Override
-	public void renderResource(GraphicResource resource, 
+	public void renderResource(GraphicResourceBinding resource, 
 		Vector2 screenPosition,
 		float screenWidth, float screenHeight,
 		Vector2 screenOrigin,
 		float rotation)
 	{
-		if (!(resource instanceof ColorResource)) {
+		if (!(resource instanceof ColorBinding)) {
 			System.out.println("Warning: could not draw resource of given type");
 			return;
 		}
 		
-		ColorResource colorResource = (ColorResource)resource;
+		ColorBinding colorResource = (ColorBinding)resource;
 		
 		shapeRenderer.setColor(colorResource.getColor());
 		

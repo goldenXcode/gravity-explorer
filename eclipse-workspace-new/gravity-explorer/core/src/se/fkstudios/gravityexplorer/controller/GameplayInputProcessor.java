@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import se.fkstudios.gravityexplorer.Defs;
 import se.fkstudios.gravityexplorer.model.SpaceshipModel;
 import se.fkstudios.gravityexplorer.view.RenderOptions;
 
@@ -146,8 +145,8 @@ public class GameplayInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean scrolled(int amount) {
-		if (camera.getViewport().width / Defs.PIXELS_PER_UNIT < Defs.MAP_WIDTH * Defs.CAMERA_LIMIT || amount < 0)
-			camera.zoom(amount); 
+//		if (camera.getViewport().width / Defs.PIXELS_PER_UNIT < Defs.MAP_WIDTH * Defs.CAMERA_LIMIT || amount < 0)
+		camera.zoom(amount); 
 		return true;
 	}
 	
@@ -165,7 +164,6 @@ public class GameplayInputProcessor implements InputProcessor {
 		int pointer = sortedPointers.get(orderIndex);
 		return pointerMap.get(pointer);
 	}
-	
 	
 	private void registerPointer(int pointer, int positionX, int positionY) {
 		activePointerPositions.put(pointer, new Vector2(positionX, positionY));

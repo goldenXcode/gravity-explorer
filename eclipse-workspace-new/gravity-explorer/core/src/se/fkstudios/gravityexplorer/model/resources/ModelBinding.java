@@ -5,19 +5,19 @@ import se.fkstudios.gravityexplorer.Utility;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.utils.Array;
 
-public class ModelResource extends GraphicResource {
+public class ModelBinding extends GraphicResourceBinding {
 
 	private ModelInstance modelInstance;
-	private PointLight lightSource;
+	private Array<PointLight> lightSources;
 	private BoundingBox boundingBox;
 	private Boolean boundingBoxSet;
 	
-	public ModelResource(boolean usingOwnerPosition, Vector2 position,
+	public ModelBinding(boolean usingOwnerPosition, Vector2 position,
 			Vector2 positionOffset, boolean usingOwnerSize, float width,
 			float height, boolean visible, float minRenderScale,
 			float maxRenderScale, ModelInstance modelInstance) 
@@ -26,22 +26,22 @@ public class ModelResource extends GraphicResource {
 				width, height, visible, minRenderScale, maxRenderScale);
 		
 		this.modelInstance = modelInstance;
-		lightSource = null;
+		lightSources = new Array<PointLight>();
 		this.boundingBox = new BoundingBox();
 		boundingBoxSet = false;
 	}
 	
-	public ModelResource(boolean usingOwnerPosition, Vector2 position,
+	public ModelBinding(boolean usingOwnerPosition, Vector2 position,
 			Vector2 positionOffset, boolean usingOwnerSize, float width,
 			float height, boolean visible, float minRenderScale,
 			float maxRenderScale, ModelInstance modelInstance, float lightIntencity) 
 	{
 		this(usingOwnerPosition, position, positionOffset, usingOwnerSize, width,
 			 height, visible, minRenderScale, maxRenderScale, modelInstance);
-		lightSource = new PointLight();
-		lightSource.set(Color.YELLOW, 0, 0, Defs.PLANE_POSITION_Z, lightIntencity);
-		new DirectionalLight();
 		
+		PointLight lightSource = new PointLight();
+		lightSource.set(Color.YELLOW, 0, 0, Defs.PLANE_POSITION_Z, lightIntencity);
+		setLightSources(lightSource);
 	}
 	
 	public ModelInstance getModelInstance() {
@@ -53,21 +53,39 @@ public class ModelResource extends GraphicResource {
 	}
 	
 	public Boolean isLightSource() {
-		return lightSource != null;
+		return lightSources.size > 0;
 	}
 	
-	public PointLight getLightSource(Vector2 ownerPosition) {
+	public Array<PointLight> getLightSources(float screenPeriodicityWidth, float screenPeriodicityHeight) {
 		if (isLightSource()) {
-			Vector2 position = getPosition(ownerPosition);
-			lightSource.position.x = Utility.getScreenCoordinate(position.x);
-			lightSource.position.y = Utility.getScreenCoordinate(position.y);
-			return lightSource;
+			Vector2 centerScreenPosition = Utility.getScreenPosition(getPosition());
+			Array<Vector2> perodicScreenPositions = Utility.calculatePerodicPositions(centerScreenPosition, screenPeriodicityWidth, screenPeriodicityHeight);
+			
+			for (int i = 0; i < perodicScreenPositions.size; i++) {
+				PointLight lightSource = lightSources.get(i);
+				Vector2 screenPosition = perodicScreenPositions.get(i);
+				lightSource.position.x = screenPosition.x;
+				lightSource.position.y = screenPosition.y;
+			}
 		}
-		return null;
+		return lightSources;
 	}
 	
-	public void setLigthSoruce(PointLight lightSource) {
-		this.lightSource = lightSource;
+	public void setLightSources(PointLight copyFrom) {
+		if (copyFrom == null) {
+			clearLightSources();
+			return;
+		}
+		
+		if (lightSources.size == 0) {
+			for (int i = 0; i < 9; i++) {
+				lightSources.add(new PointLight().set(copyFrom));
+			}
+		}
+	}
+	
+	public void clearLightSources() {
+		lightSources.clear();
 	}
 	
 	public BoundingBox getModelBoundingBox() {

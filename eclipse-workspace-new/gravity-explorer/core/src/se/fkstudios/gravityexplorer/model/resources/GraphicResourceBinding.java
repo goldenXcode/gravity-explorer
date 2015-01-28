@@ -1,8 +1,12 @@
 package se.fkstudios.gravityexplorer.model.resources;
 
+import se.fkstudios.gravityexplorer.model.MapObjectModel;
+
 import com.badlogic.gdx.math.Vector2;
 
-public abstract class GraphicResource {
+public abstract class GraphicResourceBinding {
+	
+	private MapObjectModel owner;
 	
 	private boolean usingOwnerPosition;
 	private Vector2 position;
@@ -16,10 +20,11 @@ public abstract class GraphicResource {
 	private float minRenderScale;
 	private float maxRenderScale;
 
-	public GraphicResource(boolean usingOwnerPosition, Vector2 position, Vector2 positionOffset, 
+	public GraphicResourceBinding(boolean usingOwnerPosition, Vector2 position, Vector2 positionOffset, 
 			boolean usingOwnerSize, float width, float height,
 			boolean visible, float minRenderScale, float maxRenderScale) 
 	{
+		this.owner = null;
 		this.usingOwnerPosition = usingOwnerPosition;
 		this.position = position;
 		this.positionOffset = positionOffset;
@@ -31,6 +36,14 @@ public abstract class GraphicResource {
 		this.maxRenderScale = maxRenderScale;
 	}
 	
+	public GraphicResourceBinding(MapObjectModel owner, boolean usingOwnerPosition, Vector2 position, Vector2 positionOffset, 
+			boolean usingOwnerSize, float width, float height,
+			boolean visible, float minRenderScale, float maxRenderScale)
+	{
+		this(usingOwnerPosition, position, positionOffset, usingOwnerSize, width, height, visible, minRenderScale, maxRenderScale);
+		this.owner = owner;
+	}
+
 	public boolean isUsingOwnerPosition() {
 		return usingOwnerPosition;
 	}
@@ -60,9 +73,9 @@ public abstract class GraphicResource {
 		this.usingOwnerSize = ownerSize;
 	}
 
-	public float getWidth(float ownerWidth) {
+	public float getWidth() {
 		if (isUsingOwnerSize())
-			return ownerWidth;
+			return owner.getWidth();
 		else
 			return width;
 	}
@@ -72,9 +85,9 @@ public abstract class GraphicResource {
 		setUsingOwnerSize(false);
 	}	
 
-	public float getHeight(float parentHeight) {
+	public float getHeight() {
 		if (isUsingOwnerSize())
-			return parentHeight;
+			return owner.getHeight();
 		else
 			return height;
 	}
@@ -84,17 +97,17 @@ public abstract class GraphicResource {
 		setUsingOwnerSize(false);
 	}
 	
-	private Vector2 combinedPosition1 = new Vector2();
-	public Vector2 getPosition(Vector2 ownerPosition) {
+	private Vector2 gp_result = new Vector2();
+	public Vector2 getPosition() {
 		if (isUsingOwnerPosition())	{
-			combinedPosition1.x = ownerPosition.x + positionOffset.x;
-			combinedPosition1.y = ownerPosition.y + positionOffset.y;
+			gp_result.x = owner.getPosition().x + positionOffset.x;
+			gp_result.y = owner.getPosition().y + positionOffset.y;
 		}
 		else {
-			combinedPosition1.x = position.x + positionOffset.x;
-			combinedPosition1.y = position.y + positionOffset.y;
+			gp_result.x = position.x + positionOffset.x;
+			gp_result.y = position.y + positionOffset.y;
 		}
-		return combinedPosition1;
+		return gp_result;
 	}
 	
 	public void setPosition(Vector2 position) {
@@ -129,5 +142,13 @@ public abstract class GraphicResource {
 
 	public void setMaxRenderScale(float maxRenderScale) {
 		this.maxRenderScale = maxRenderScale;
+	}
+	
+	public MapObjectModel getOwner() {
+		return owner;
+	}
+	
+	public void setOwner(MapObjectModel owner) {
+		this.owner = owner;
 	}
 }
